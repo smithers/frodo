@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Book, Author, UserBookRating
+from django.http import JsonResponse
+from .utils import get_book_recommendations
 
 from .services import search_google_books
 
@@ -15,6 +17,27 @@ def add_rating_view(request):
         
     return render(request, 'add_rating.html', {'results': results, 'query': query})
 
+@login_required
+def book_autocomplete(request):
+    query = request.GET.get('term', '') # jQuery UI uses 'term' to send what the user types
+    
+    if len(query) < 3:
+        return JsonResponse([], safe=False)
+
+    # Use your existing service function!
+    results = search_google_books(query)
+    
+    # Reformat data specifically for jQuery UI Autocomplete
+    suggestions = []
+    for book in results:
+        suggestions.append({
+            'label': f"{book['title']} ({book['author']})", # What the user sees in the dropdown
+            'value': book['title'],      # What fills the box when they click
+            'author': book['author'],    # Hidden data we need
+            'isbn': book['isbn']         # Hidden data we need
+        })
+        
+    return JsonResponse(suggestions, safe=False)
 
 @login_required
 def save_rating_view(request):
@@ -64,3 +87,20 @@ def save_rating_view(request):
         
         messages.success(request, f"Saved rating for {book.title}")
         return redirect('recommendations')
+
+
+@login_required
+def recommendation_view(request):
+    # Ask the brain for the list
+    recommended_books = get_book_recommendations(request.user)
+    
+    context = {
+        'books': recommended_books,
+    }
+    return render(request, 'recommendations.html', context)
+
+@login_required
+def my_books_view(request):
+    # Fetch user's ratings ordered by newest first
+    user_ratings = UserBookRating.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_books.html', {'ratings': user_ratings})

@@ -1,49 +1,111 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>Rate a Book</title>
-</head>
+{% block title %}Rate a Book{% endblock %}
 
-<body>
+{% block extra_head %}
+<style>
+    /* Make the autocomplete dropdown look nice */
+    .ui-autocomplete { 
+        background-color: white; 
+        border: 1px solid #ccc; 
+        z-index: 1000; 
+        max-height: 200px; 
+        overflow-y: auto; 
+        cursor: pointer; 
+        list-style: none;
+        padding-left: 0;
+    }
+    .ui-menu-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    .ui-menu-item:hover {
+        background-color: #f0f0f0;
+    }
+    
+    /* Hide the form until a book is selected */
+    .rating-box { 
+        display: none; 
+        margin-top: 20px; 
+        padding: 20px; 
+        border: 1px solid #ccc; 
+        background: #f9f9f9; 
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
     <h1>Rate a New Book</h1>
+    <p>Search for a book to add it to your library.</p>
+    
+    <div style="margin-bottom: 20px; position: relative;">
+        <label><strong>Search by Title:</strong></label><br>
+        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 400px; padding: 10px; font-size: 16px;">
+        <span id="loading-msg" style="display:none; color: gray; margin-left: 10px;"> Searching Google...</span>
+    </div>
 
-    <form method="GET">
-        <input type="text" name="q" placeholder="Search for a book..." value="{{ query|default:'' }}">
-        <button type="submit">Search</button>
-    </form>
+    <div id="rating-form-container" class="rating-box">
+        <h3>Selected: <span id="display-title" style="color: #007bff;"></span></h3>
+        <p>By: <span id="display-author"></span></p>
 
-    <hr>
+        <form method="POST" action="{% url 'save_rating' %}">
+            {% csrf_token %}
+            
+            <input type="hidden" name="title" id="hidden-title">
+            <input type="hidden" name="author" id="hidden-author">
+            <input type="hidden" name="isbn" id="hidden-isbn">
+            
+            <label><strong>Your Rating:</strong></label>
+            <select name="rating" style="padding: 5px; font-size: 16px;">
+                <option value="5" selected>5 Stars (Loved it)</option>
+                <option value="4">4 Stars (Really Good)</option>
+                <option value="3">3 Stars (It was okay)</option>
+                <option value="2">2 Stars (Not for me)</option>
+                <option value="1">1 Star (Hated it)</option>
+            </select>
+            
+            <br><br>
+            <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px;">Save Rating</button>
+        </form>
+    </div>
+{% endblock %}
 
-    {% if results %}
-    <ul>
-        {% for book in results %}
-        <li style="margin-bottom: 20px;">
-            <strong>{{ book.title }}</strong> by {{ book.author }} <br>
-            <small>ISBN: {{ book.isbn }}</small>
+{% block scripts %}
+<script>
+$(function() {
+    // Note: We don't need to load jQuery here because base.html already did it!
+    
+    $("#book-search").autocomplete({
+        source: "{% url 'book_autocomplete' %}", 
+        minLength: 3, 
+        delay: 500,   
+        
+        search: function() {
+            $("#loading-msg").show();
+        },
+        
+        response: function() {
+            $("#loading-msg").hide();
+        },
 
-            <form method="POST" action="{% url 'save_rating' %}" style="margin-top: 5px;">
-                {% csrf_token %}
-                <input type="hidden" name="title" value="{{ book.title }}">
-                <input type="hidden" name="author" value="{{ book.author }}">
-                <input type="hidden" name="isbn" value="{{ book.isbn }}">
+        select: function(event, ui) {
+            // 1. User clicked a book!
+            var book = ui.item;
 
-                <label>Rate it:</label>
-                <select name="rating">
-                    <option value="1">1 Star</option>
-                    <option value="2">2 Stars</option>
-                    <option value="3">3 Stars</option>
-                    <option value="4">4 Stars</option>
-                    <option value="5" selected>5 Stars</option>
-                </select>
-                <button type="submit">Save Rating</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    {% elif query %}
-    <p>No books found via Google. Try a different spelling.</p>
-    {% endif %}
-</body>
+            // 2. Populate the visible text
+            $("#display-title").text(book.value);
+            $("#display-author").text(book.author);
 
-</html>
+            // 3. Populate the hidden form fields
+            $("#hidden-title").val(book.value);
+            $("#hidden-author").val(book.author);
+            $("#hidden-isbn").val(book.isbn);
+
+            // 4. Reveal the rating form
+            $("#rating-form-container").show();
+        }
+    });
+});
+</script>
+{% endblock %}

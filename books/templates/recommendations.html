@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Recommendations{% endblock %}
+
+{% block content %}
+    <h1>Recommended For You</h1>
+    <p>Based on your 5-star ratings, users similar to you also liked:</p>
+    <hr>
+
+    {% if books %}
+        <div class="book-list">
+            {% for book in books %}
+                <div class="card">
+                    <h3>{{ book.title }}</h3>
+                    <p>by <strong>{{ book.author.name }}</strong></p>
+                    
+                    <p style="color: green; font-style: italic; font-size: 0.9em;">
+                        Recommended because a similar user rated this ★★★★★
+                    </p>
+                    
+                    <a href="https://google.com/search?q={{ book.title }}+{{ book.author.name }}" target="_blank">
+                        Look up on Google
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="background: #fff3cd; padding: 20px; border-radius: 5px;">
+            <h3>No matches yet!</h3>
+            <p>Our algorithm matches you with users who share your 5-star books.</p>
+            <p><strong>Try this:</strong> <a href="{% url 'rate_book' %}">Rate more books</a> that you love!</p>
+        </div>
+    {% endif %}
+{% endblock %}

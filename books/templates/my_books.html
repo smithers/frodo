@@ -1,0 +1,37 @@
+{% extends 'base.html' %} 
+{% load book_extras %} {% block title %}My Library{% endblock %}
+
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>My Reading List</h1>
+        <a href="{% url 'rate_book' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">+ Add New Book</a>
+    </div>
+    
+    <hr>
+
+    {% if ratings %}
+        <div class="book-list">
+            {% for item in ratings %}
+                <div class="card">
+                    <div style="float: right; font-size: 1.2em;">
+                        {{ item.rating|to_stars }}
+                    </div>
+
+                    <h3 style="margin-top: 0;">{{ item.book.title }}</h3>
+                    <p style="margin: 5px 0;">by <strong>{{ item.book.author.name }}</strong></p>
+                    
+                    <p style="font-size: 0.8em; color: gray; margin-top: 10px;">
+                        Rated on {{ item.created_at|date:"F j, Y" }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 10px;">
+            <h3>Your library is empty!</h3>
+            <p>Start rating books to build your profile and get recommendations.</p>
+            <br>
+            <a href="{% url 'rate_book' %}" style="font-weight: bold;">Rate a Book Now &rarr;</a>
+        </div>
+    {% endif %}
+{% endblock %}

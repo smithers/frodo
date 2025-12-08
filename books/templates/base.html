@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Book Recommender{% endblock %}</title>
+    
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 20px; }
+        
+        /* Navigation Bar Styles */
+        .nav { background: #f8f9fa; padding: 15px; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+        .nav a { margin-right: 20px; text-decoration: none; color: #333; font-weight: bold; }
+        .nav a:hover { color: #007bff; }
+        .user-section { float: right; }
+        
+        /* Message Styles (Success/Error alerts) */
+        .messages { list-style: none; padding: 0; }
+        .messages li { padding: 10px; margin-bottom: 10px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px; }
+        
+        /* Card Styles (Reusable) */
+        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .star-rating { color: #FFD700; letter-spacing: 2px; }
+    </style>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <div class="nav">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'my_books' %}">My Books</a>
+        <a href="{% url 'recommendations' %}">Recommendations</a>
+        <a href="{% url 'rate_book' %}">Rate New Book</a>
+
+        <div class="user-section">
+            {% if user.is_authenticated %}
+                Logged in as <strong>{{ user.username }}</strong> | 
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline;">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

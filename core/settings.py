@@ -129,7 +129,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 
 # Where to go after successfully logging in
-LOGIN_REDIRECT_URL = 'recommendations'
+LOGIN_REDIRECT_URL = 'my_books'
 
 # Where to go after logging out
 LOGOUT_REDIRECT_URL = 'login'

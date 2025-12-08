@@ -2,6 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+path('', views.my_books_view, name='home'),
 path('rate/', views.add_rating_view, name='rate_book'),
 path('rate/save/', views.save_rating_view, name='save_rating'),
+path('my-books/', views.my_books_view, name='my_books'),
+path('recommend/', views.recommendation_view, name='recommendations'),
+path('api/search/', views.book_autocomplete, name='book_autocomplete'),
 ]
