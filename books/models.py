@@ -11,8 +11,16 @@ class Author(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=255)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
-    isbn = models.CharField(max_length=13, unique=True)
     
+    # We make ISBN nullable/blank because if we find a duplicate Title+Author,
+    # we might choose to ignore the new ISBN, or we might insert a book manually without one.
+    isbn = models.CharField(max_length=13, unique=True, null=True, blank=True)
+    
+    class Meta:
+        # This tells the DB: "You can have many books named 'It', 
+        # and many books by 'King', but only ONE 'It' by 'King'."
+        unique_together = ('title', 'author')
+
     def __str__(self):
         return self.title
 

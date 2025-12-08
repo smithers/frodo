@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Rate a Book</title>
+</head>
+
+<body>
+    <h1>Rate a New Book</h1>
+
+    <form method="GET">
+        <input type="text" name="q" placeholder="Search for a book..." value="{{ query|default:'' }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% if results %}
+    <ul>
+        {% for book in results %}
+        <li style="margin-bottom: 20px;">
+            <strong>{{ book.title }}</strong> by {{ book.author }} <br>
+            <small>ISBN: {{ book.isbn }}</small>
+
+            <form method="POST" action="{% url 'save_rating' %}" style="margin-top: 5px;">
+                {% csrf_token %}
+                <input type="hidden" name="title" value="{{ book.title }}">
+                <input type="hidden" name="author" value="{{ book.author }}">
+                <input type="hidden" name="isbn" value="{{ book.isbn }}">
+
+                <label>Rate it:</label>
+                <select name="rating">
+                    <option value="1">1 Star</option>
+                    <option value="2">2 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="5" selected>5 Stars</option>
+                </select>
+                <button type="submit">Save Rating</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% elif query %}
+    <p>No books found via Google. Try a different spelling.</p>
+    {% endif %}
+</body>
+
+</html>

@@ -41,7 +41,11 @@ class Command(BaseCommand):
 
         for i, (title, author) in enumerate(titles):
             # Generate a fake ISBN based on loop index
-            book = Book.objects.create(title=title, author=author, isbn=f"978-0-00-{i:06d}-1")
+            book, created = Book.objects.get_or_create(
+            title=title, 
+            author=author,
+            defaults={'isbn': f"978-0-00-{i:06d}-1"}
+            )
             books.append(book)
 
         self.stdout.write(self.style.SUCCESS(f'Created {len(books)} books.'))

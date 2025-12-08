@@ -122,3 +122,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# config/settings.py
+
+# Where to go if you are not logged in (overrides the default)
+LOGIN_URL = 'login'
+
+# Where to go after successfully logging in
+LOGIN_REDIRECT_URL = 'recommendations'
+
+# Where to go after logging out
+LOGOUT_REDIRECT_URL = 'login'
