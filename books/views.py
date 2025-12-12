@@ -1,11 +1,44 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login
+from django.db import IntegrityError
 from .models import Book, Author, UserBookRating
 from django.http import JsonResponse
 from .utils import get_book_recommendations
 
 from .services import search_google_books
+
+def homepage_view(request):
+    """Homepage view - accessible to all users, shows login form if not authenticated"""
+    form = AuthenticationForm()
+    
+    if request.method == 'POST' and not request.user.is_authenticated:
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            messages.success(request, f"Welcome back, {request.user.username}!")
+            return redirect('my_books')
+    
+    return render(request, 'homepage.html', {'form': form})
+
+def register_view(request):
+    """Registration view - allows new users to create accounts"""
+    if request.user.is_authenticated:
+        return redirect('my_books')
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f"Welcome, {user.username}! Your account has been created successfully.")
+            return redirect('my_books')
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'registration/register.html', {'form': form})
 
 @login_required
 def add_rating_view(request):

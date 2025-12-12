@@ -43,7 +43,9 @@
                     <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline;">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'login' %}">Login</a>
+                {% if request.resolver_match.url_name != 'home' %}
+                    <a href="{% url 'login' %}">Login</a>
+                {% endif %}
             {% endif %}
         </div>
     </div>

@@ -132,4 +132,4 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'my_books'
 
 # Where to go after logging out
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'home'
