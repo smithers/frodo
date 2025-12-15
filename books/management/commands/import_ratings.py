@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 
-from books.models import Author, Book, UserFavoriteBook
+from books.models import Author, Book, UserBookRating
 from books.utils import smart_title_case
 
 
 class Command(BaseCommand):
-    help = "Import books from CSV file and add 4-5 star ratings as favorite books"
+    help = "Import book ratings from a CSV file and seed the database."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -20,12 +20,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         csv_path = options["csv_path"]
-        self.stdout.write(self.style.WARNING(f"Importing favorites from {csv_path}"))
+        self.stdout.write(self.style.WARNING(f"Importing ratings from {csv_path}"))
 
         created_users = 0
         created_authors = 0
         created_books = 0
-        created_favorites = 0
+        created_ratings = 0
+        updated_ratings = 0
 
         with open(csv_path, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -61,10 +62,6 @@ class Command(BaseCommand):
                     rating_value = int(rating_raw)
                 except ValueError:
                     # Skip rows where rating is not a valid integer
-                    continue
-
-                # Only process ratings of 4 or 5 stars
-                if rating_value not in [4, 5]:
                     continue
 
                 # Optional genre / sub-genre columns
@@ -150,15 +147,21 @@ class Command(BaseCommand):
                     if updated:
                         book.save()
 
-                # --- FAVORITE (only for 4-5 star ratings) ---
-                favorite, favorite_created = UserFavoriteBook.objects.get_or_create(
+                # --- RATING ---
+                _, rating_created = UserBookRating.objects.update_or_create(
                     user=user,
                     book=book,
+                    defaults={"rating": rating_value},
                 )
-                if favorite_created:
-                    created_favorites += 1
+                if rating_created:
+                    created_ratings += 1
+                else:
+                    updated_ratings += 1
 
         self.stdout.write(self.style.SUCCESS(f"Users created:   {created_users}"))
         self.stdout.write(self.style.SUCCESS(f"Authors created: {created_authors}"))
         self.stdout.write(self.style.SUCCESS(f"Books created:   {created_books}"))
-        self.stdout.write(self.style.SUCCESS(f"Favorites created: {created_favorites}"))
+        self.stdout.write(self.style.SUCCESS(f"Ratings created: {created_ratings}"))
+        self.stdout.write(self.style.SUCCESS(f"Ratings updated: {updated_ratings}"))
+
+

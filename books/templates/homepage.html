@@ -15,7 +15,7 @@
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="{% url 'my_books' %}" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View My Books</a>
                 <a href="{% url 'recommendations' %}" style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Get Recommendations</a>
-                <a href="{% url 'rate_book' %}" style="background-color: #ffc107; color: #333; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Rate a Book</a>
+                <a href="{% url 'add_favorite' %}" style="background-color: #ffc107; color: #333; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Add a Book You Love</a>
             </div>
         </div>
     {% else %}
@@ -23,11 +23,11 @@
             <div style="background: #f8f9fa; border-radius: 10px; padding: 30px;">
                 <h2 style="margin-top: 0; color: #333;">Get Started</h2>
                 <p style="color: #666; line-height: 1.6;">
-                    Join our community of book lovers! Rate books you've read and get personalized recommendations 
+                    Join our community of book lovers! Add books you love and get personalized recommendations 
                     based on your reading preferences.
                 </p>
                 <ul style="color: #666; line-height: 1.8;">
-                    <li>Rate books you've read</li>
+                    <li>Add books you love</li>
                     <li>Build your personal library</li>
                     <li>Get personalized recommendations</li>
                     <li>Discover new authors and genres</li>

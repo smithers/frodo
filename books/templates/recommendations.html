@@ -4,31 +4,59 @@
 
 {% block content %}
     <h1>Recommended For You</h1>
-    <p>Based on your 5-star ratings, users similar to you also liked:</p>
+    <p>Based on books you love, users similar to you also loved:</p>
     <hr>
 
-    {% if books %}
-        <div class="book-list">
-            {% for book in books %}
-                <div class="card">
-                    <h3>{{ book.title }}</h3>
-                    <p>by <strong>{{ book.author.name }}</strong></p>
-                    
-                    <p style="color: green; font-style: italic; font-size: 0.9em;">
-                        Recommended because a similar user rated this ★★★★★
-                    </p>
-                    
-                    <a href="https://google.com/search?q={{ book.title }}+{{ book.author.name }}" target="_blank">
-                        Look up on Google
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
+    {% if recommendations %}
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.95em; margin-top: 20px;">
+            <thead>
+                <tr style="border-bottom: 2px solid #ddd; background-color: #f8f9fa;">
+                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Title</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Author</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Why Recommended</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rec in recommendations %}
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 12px 8px; font-weight: bold;">{{ rec.book.title }}</td>
+                        <td style="padding: 12px 8px;">{{ rec.book.author.name }}</td>
+                        <td style="padding: 12px 8px; font-size: 0.9em;">
+                            <strong>Username:</strong> {{ rec.similar_user.username }}<br>
+                            <strong>Same Favorites:</strong> {{ rec.overlapping_titles|join:", " }}
+                        </td>
+                        <td style="padding: 12px 8px;">
+                            <a href="https://google.com/search?q={{ rec.book.title }}+{{ rec.book.author.name }}" target="_blank" style="color: #007bff; text-decoration: none;">
+                                Look up on Google →
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <div style="background: #fff3cd; padding: 20px; border-radius: 5px;">
             <h3>No matches yet!</h3>
-            <p>Our algorithm matches you with users who share your 5-star books.</p>
-            <p><strong>Try this:</strong> <a href="{% url 'rate_book' %}">Rate more books</a> that you love!</p>
+            <p>Our algorithm matches you with users who share your favorite books.</p>
+            
+            {% if diagnostic %}
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 0.9em;">
+                    <strong>Your stats:</strong><br>
+                    • Total books you love: {{ diagnostic.total_favorites }}<br>
+                    • Similar users found: {{ diagnostic.similar_users_count }}<br>
+                    {% if diagnostic.message %}
+                        <p style="color: #856404; margin-top: 10px;"><strong>{{ diagnostic.message }}</strong></p>
+                    {% elif diagnostic.total_favorites > 0 and diagnostic.similar_users_count == 0 %}
+                        <p style="color: #856404; margin-top: 10px;">
+                            <strong>You have favorite books, but no other users have favorited the same books yet.</strong><br>
+                            This could mean the books you love aren't in our seed data, or other users haven't discovered them yet.
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <p style="margin-top: 15px;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}">Add more books</a> that you love!</p>
         </div>
     {% endif %}
 {% endblock %}

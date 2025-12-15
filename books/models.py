@@ -1,43 +1,60 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class Author(models.Model):
     name = models.CharField(max_length=255)
-    
+
     def __str__(self):
         return self.name
 
+
 class Book(models.Model):
+    GENRE_FICTION = "fiction"
+    GENRE_NONFICTION = "nonfiction"
+    GENRE_CHOICES = [
+        (GENRE_FICTION, "Fiction"),
+        (GENRE_NONFICTION, "Non-fiction"),
+    ]
+
     title = models.CharField(max_length=255)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
-    
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
+
+    # High-level genre: fiction vs non-fiction
+    genre = models.CharField(
+        max_length=20,
+        choices=GENRE_CHOICES,
+        default=GENRE_FICTION,
+    )
+
+    # Optional, more specific category (e.g., "Fantasy", "Biography")
+    sub_genre = models.CharField(max_length=100, null=True, blank=True)
+
     # We make ISBN nullable/blank because if we find a duplicate Title+Author,
     # we might choose to ignore the new ISBN, or we might insert a book manually without one.
     isbn = models.CharField(max_length=13, unique=True, null=True, blank=True)
-    
+
     class Meta:
-        # This tells the DB: "You can have many books named 'It', 
+        # This tells the DB: "You can have many books named 'It',
         # and many books by 'King', but only ONE 'It' by 'King'."
-        unique_together = ('title', 'author')
+        unique_together = ("title", "author")
 
     def __str__(self):
         return self.title
 
-class UserBookRating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings')
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='ratings')
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
+
+class UserFavoriteBook(models.Model):
+    """Tracks books that users love (no ratings, just favorites)"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorite_books")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="favorited_by")
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
-        unique_together = ('user', 'book')
+        unique_together = ("user", "book")
         indexes = [
-            models.Index(fields=['user', 'rating']),
-            models.Index(fields=['book', 'rating']),
+            models.Index(fields=["user"]),
+            models.Index(fields=["book"]),
         ]
 
     def __str__(self):
-        return f"{self.user.username} - {self.book.title}: {self.rating}"
+        return f"{self.user.username} loves {self.book.title}"

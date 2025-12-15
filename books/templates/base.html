@@ -33,7 +33,7 @@
         <a href="{% url 'home' %}">Home</a>
         <a href="{% url 'my_books' %}">My Books</a>
         <a href="{% url 'recommendations' %}">Recommendations</a>
-        <a href="{% url 'rate_book' %}">Rate New Book</a>
+        <a href="{% url 'add_favorite' %}">Add Favorite</a>
 
         <div class="user-section">
             {% if user.is_authenticated %}
@@ -44,7 +44,7 @@
                 </form>
             {% else %}
                 {% if request.resolver_match.url_name != 'home' %}
-                    <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'login' %}">Login</a>
                 {% endif %}
             {% endif %}
         </div>

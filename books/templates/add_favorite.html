@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Add a Book You Love{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Make the autocomplete dropdown look nice */
+    .ui-autocomplete { 
+        background-color: white; 
+        border: 1px solid #ccc; 
+        z-index: 1000; 
+        max-height: 200px; 
+        overflow-y: auto; 
+        cursor: pointer; 
+        list-style: none;
+        padding-left: 0;
+    }
+    .ui-menu-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    .ui-menu-item:hover {
+        background-color: #f0f0f0;
+    }
+    
+    .selected-books {
+        margin-top: 20px;
+    }
+    
+    .book-item {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .book-info h4 {
+        margin: 0 0 5px 0;
+        color: #333;
+    }
+    
+    .book-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9em;
+    }
+    
+    .remove-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.9em;
+    }
+    
+    .remove-btn:hover {
+        background: #c82333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1>Add Books You Love</h1>
+    <p>Search for books to add them to your favorites.</p>
+    
+    <div style="margin-bottom: 20px; position: relative;">
+        <label><strong>Search by Title:</strong></label><br>
+        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 400px; padding: 10px; font-size: 16px;">
+        <span id="loading-msg" style="display:none; color: gray; margin-left: 10px;"> Searching Google...</span>
+    </div>
+
+    <form method="POST" action="{% url 'save_favorite' %}" id="favorites-form">
+        {% csrf_token %}
+        <div id="selected-books-container" class="selected-books" style="display: none;">
+            <h3>Selected Books:</h3>
+            <div id="selected-books-list"></div>
+            <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-top: 15px;">
+                Add to My Favorites
+            </button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(function() {
+    var selectedBooks = [];
+    
+    $("#book-search").autocomplete({
+        source: "{% url 'book_autocomplete' %}", 
+        minLength: 3, 
+        delay: 500,   
+        
+        search: function() {
+            $("#loading-msg").show();
+        },
+        
+        response: function() {
+            $("#loading-msg").hide();
+        },
+
+        select: function(event, ui) {
+            event.preventDefault();
+            var book = ui.item;
+            
+            // Check if book is already selected
+            if (selectedBooks.find(b => b.isbn === book.isbn)) {
+                return;
+            }
+            
+            // Add to selected books
+            selectedBooks.push({
+                title: book.value,
+                author: book.author,
+                isbn: book.isbn
+            });
+            
+            // Clear search box
+            $("#book-search").val('');
+            
+            // Update display
+            updateSelectedBooksList();
+        }
+    });
+    
+    function updateSelectedBooksList() {
+        var container = $("#selected-books-list");
+        container.empty();
+        
+        selectedBooks.forEach(function(book, index) {
+            var item = $('<div class="book-item"></div>');
+            item.html(
+                '<div class="book-info">' +
+                    '<h4>' + book.title + '</h4>' +
+                    '<p>by ' + book.author + '</p>' +
+                '</div>' +
+                '<button type="button" class="remove-btn" data-index="' + index + '">Remove</button>'
+            );
+            container.append(item);
+        });
+        
+        // Add hidden inputs for form submission
+        $('input[name^="title"]').remove();
+        $('input[name^="author"]').remove();
+        $('input[name^="isbn"]').remove();
+        
+        selectedBooks.forEach(function(book) {
+            $('#favorites-form').append(
+                '<input type="hidden" name="title" value="' + book.title + '">' +
+                '<input type="hidden" name="author" value="' + book.author + '">' +
+                '<input type="hidden" name="isbn" value="' + book.isbn + '">'
+            );
+        });
+        
+        if (selectedBooks.length > 0) {
+            $("#selected-books-container").show();
+        } else {
+            $("#selected-books-container").hide();
+        }
+    }
+    
+    $(document).on('click', '.remove-btn', function() {
+        var index = $(this).data('index');
+        selectedBooks.splice(index, 1);
+        updateSelectedBooksList();
+    });
+});
+</script>
+{% endblock %}
+
+
