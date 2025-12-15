@@ -47,6 +47,7 @@ class UserFavoriteBook(models.Model):
     """Tracks books that users love (no ratings, just favorites)"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorite_books")
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="favorited_by")
+    explanation = models.TextField(max_length=500, blank=True, help_text="Why you love this book")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

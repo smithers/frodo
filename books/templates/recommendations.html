@@ -2,53 +2,116 @@
 
 {% block title %}Recommendations{% endblock %}
 
+{% block extra_head %}
+<style>
+    .accordion-header {
+        cursor: pointer;
+        padding: 8px 0;
+        color: #8b6f47;
+        font-size: 0.85em;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 600;
+    }
+    
+    .accordion-header:hover {
+        text-decoration: underline;
+        color: #6b4423;
+    }
+    
+    .accordion-icon {
+        display: inline-block;
+        transition: transform 0.3s;
+        font-size: 0.8em;
+    }
+    
+    .accordion-header.active .accordion-icon {
+        transform: rotate(90deg);
+    }
+    
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        padding: 0;
+        margin-top: 5px;
+    }
+    
+    .accordion-content.active {
+        max-height: 500px;
+        padding: 10px 0;
+    }
+    
+    .explanation-text {
+        font-style: italic;
+        color: #5a4a3a;
+        font-size: 0.9em;
+        line-height: 1.6;
+        padding-left: 15px;
+        border-left: 3px solid #8b6f47;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <h1>Recommended For You</h1>
     <p>Based on books you love, users similar to you also loved:</p>
     <hr>
 
-    {% if recommendations %}
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.95em; margin-top: 20px;">
-            <thead>
-                <tr style="border-bottom: 2px solid #ddd; background-color: #f8f9fa;">
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Title</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Author</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Why Recommended</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for rec in recommendations %}
-                    <tr style="border-bottom: 1px solid #f0f0f0;">
-                        <td style="padding: 12px 8px; font-weight: bold;">{{ rec.book.title }}</td>
-                        <td style="padding: 12px 8px;">{{ rec.book.author.name }}</td>
-                        <td style="padding: 12px 8px; font-size: 0.9em;">
-                            <strong>Username:</strong> {{ rec.similar_user.username }}<br>
-                            <strong>Same Favorites:</strong> {{ rec.overlapping_titles|join:", " }}
-                        </td>
-                        <td style="padding: 12px 8px;">
-                            <a href="https://google.com/search?q={{ rec.book.title }}+{{ rec.book.author.name }}" target="_blank" style="color: #007bff; text-decoration: none;">
-                                Look up on Google →
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    {% if grouped_recommendations %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; margin-top: 20px;">
+            {% for group in grouped_recommendations %}
+                <div class="card" style="border: 2px solid #c9b99b; border-radius: 10px; padding: 20px; background: #f5efe6; box-shadow: 3px 3px 8px rgba(0,0,0,0.15);">
+                    <div style="border-bottom: 3px solid #8b6f47; padding-bottom: 15px; margin-bottom: 15px;">
+                        <h3 style="margin: 0 0 10px 0; color: #6b4423;">{{ group.similar_user.username }}</h3>
+                        <p style="margin: 5px 0; font-size: 0.9em; color: #5a4a3a;">
+                            <strong>Same Favorites:</strong> {{ group.overlapping_titles|join:", " }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 1em; color: #6b4423;">Recommended Books:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            {% for book_data in group.recommended_books %}
+                                <li style="padding: 10px 0; border-bottom: 1px solid #d4c5b0;">
+                                    <div>
+                                        <strong style="color: #3d2f1f;">{{ book_data.book.title }}</strong><br>
+                                        <span style="font-size: 0.85em; color: #5a4a3a;">by {{ book_data.book.author.name }}</span>
+                                        {% if book_data.explanation %}
+                                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                                <span class="accordion-icon">▶</span>
+                                                <span>Why {{ group.similar_user.username }} loves this book</span>
+                                            </div>
+                                            <div class="accordion-content">
+                                                <div class="explanation-text">
+                                                    {{ book_data.explanation }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <div style="background: #fff3cd; padding: 20px; border-radius: 5px;">
-            <h3>No matches yet!</h3>
-            <p>Our algorithm matches you with users who share your favorite books.</p>
+        <div style="background: #e8ddd4; border: 2px solid #8b6f47; padding: 20px; border-radius: 10px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
+            <h3 style="color: #6b4423;">No matches yet!</h3>
+            <p style="color: #5a4a3a;">Our algorithm matches you with users who share your favorite books.</p>
             
             {% if diagnostic %}
-                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 0.9em;">
-                    <strong>Your stats:</strong><br>
+                <div style="margin-top: 15px; padding: 15px; background: #f5efe6; border: 2px solid #c9b99b; border-radius: 8px; font-size: 0.9em;">
+                    <strong style="color: #6b4423;">Your stats:</strong><br>
                     • Total books you love: {{ diagnostic.total_favorites }}<br>
                     • Similar users found: {{ diagnostic.similar_users_count }}<br>
                     {% if diagnostic.message %}
-                        <p style="color: #856404; margin-top: 10px;"><strong>{{ diagnostic.message }}</strong></p>
+                        <p style="color: #8b6f47; margin-top: 10px;"><strong>{{ diagnostic.message }}</strong></p>
                     {% elif diagnostic.total_favorites > 0 and diagnostic.similar_users_count == 0 %}
-                        <p style="color: #856404; margin-top: 10px;">
+                        <p style="color: #8b6f47; margin-top: 10px;">
                             <strong>You have favorite books, but no other users have favorited the same books yet.</strong><br>
                             This could mean the books you love aren't in our seed data, or other users haven't discovered them yet.
                         </p>
@@ -56,7 +119,30 @@
                 </div>
             {% endif %}
             
-            <p style="margin-top: 15px;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}">Add more books</a> that you love!</p>
+            <p style="margin-top: 15px; color: #5a4a3a;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}" style="color: #8b6f47; font-weight: 600;">Add more books</a> that you love!</p>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleAccordion(header) {
+    const content = header.nextElementSibling;
+    const isActive = header.classList.contains('active');
+    
+    // Close all accordions in the same list item
+    const listItem = header.closest('li');
+    const allHeaders = listItem.querySelectorAll('.accordion-header');
+    const allContents = listItem.querySelectorAll('.accordion-content');
+    
+    allHeaders.forEach(h => h.classList.remove('active'));
+    allContents.forEach(c => c.classList.remove('active'));
+    
+    // Toggle the clicked one
+    if (!isActive) {
+        header.classList.add('active');
+        content.classList.add('active');
+    }
+}
+</script>
 {% endblock %}

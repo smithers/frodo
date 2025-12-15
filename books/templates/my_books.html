@@ -4,35 +4,35 @@
 {% block content %}
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <h1>My Favorite Books</h1>
-        <a href="{% url 'add_favorite' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">+ Add New Book</a>
+        <a href="{% url 'add_favorite' %}" style="background-color: #8b6f47; color: #faf8f5; padding: 10px 15px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">+ Add New Book</a>
     </div>
     
-    <hr>
+    <hr style="border: none; border-top: 2px solid #c9b99b; margin: 20px 0;">
 
     {% if favorites %}
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.95em; background: #faf8f5; border-radius: 8px; overflow: hidden; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
             <thead>
-                <tr style="border-bottom: 2px solid #ddd; background-color: #f8f9fa;">
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Title</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Author</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Added On</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: bold;">Actions</th>
+                <tr style="border-bottom: 3px solid #8b6f47; background-color: #e8ddd4;">
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: #6b4423;">Title</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: #6b4423;">Author</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: #6b4423;">Added On</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: #6b4423;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for favorite in favorites %}
-                    <tr style="border-bottom: 1px solid #f0f0f0;">
-                        <td style="padding: 10px 8px; font-weight: bold;">{{ favorite.book.title }}</td>
-                        <td style="padding: 10px 8px;">{{ favorite.book.author.name }}</td>
-                        <td style="padding: 10px 8px; color: gray; font-size: 0.9em;">
+                    <tr style="border-bottom: 1px solid #d4c5b0;">
+                        <td style="padding: 12px 8px; font-weight: 600; color: #3d2f1f;">{{ favorite.book.title }}</td>
+                        <td style="padding: 12px 8px; color: #5a4a3a;">{{ favorite.book.author.name }}</td>
+                        <td style="padding: 12px 8px; color: #8b6f47; font-size: 0.9em;">
                             {{ favorite.created_at|date:"M j, Y" }}
                         </td>
-                        <td style="padding: 10px 8px;">
+                        <td style="padding: 12px 8px;">
                             <form method="post" action="{% url 'remove_favorite' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="title" value="{{ favorite.book.title }}">
                                 <input type="hidden" name="author" value="{{ favorite.book.author.name }}">
-                                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 0.9em;">
+                                <button type="submit" style="background: #9d7a5a; color: #faf8f5; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em; font-weight: 600; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
                                     Remove
                                 </button>
                             </form>
@@ -42,11 +42,11 @@
             </tbody>
         </table>
     {% else %}
-        <div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 10px;">
-            <h3>Your favorites list is empty!</h3>
-            <p>Start adding books you love to build your profile and get recommendations.</p>
+        <div style="text-align: center; padding: 40px; background: #f5efe6; border: 2px solid #c9b99b; border-radius: 12px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
+            <h3 style="color: #6b4423;">Your favorites list is empty!</h3>
+            <p style="color: #5a4a3a;">Start adding books you love to build your profile and get recommendations.</p>
             <br>
-            <a href="{% url 'add_favorite' %}" style="font-weight: bold;">Add a Book You Love &rarr;</a>
+            <a href="{% url 'add_favorite' %}" style="font-weight: 600; color: #8b6f47; text-decoration: none;">Add a Book You Love &rarr;</a>
         </div>
     {% endif %}
 {% endblock %}

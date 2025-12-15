@@ -3,77 +3,77 @@
 
 {% block content %}
 <div style="max-width: 500px; margin: 40px auto; padding: 20px;">
-    <div style="background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 30px;">
-        <h1 style="margin-top: 0; color: #333; text-align: center;">Create Account</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">Join our community of book lovers!</p>
+    <div style="background: #faf8f5; border: 2px solid #c9b99b; border-radius: 12px; padding: 30px; box-shadow: 3px 3px 8px rgba(0,0,0,0.15);">
+        <h1 style="margin-top: 0; color: #6b4423; text-align: center;">Create Account</h1>
+        <p style="text-align: center; color: #5a4a3a; margin-bottom: 30px; font-style: italic;">Join our community of book lovers!</p>
         
         <form method="post">
             {% csrf_token %}
             
             <div style="margin-bottom: 15px;">
-                <label for="id_username" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">
+                <label for="id_username" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">
                     Username:
                 </label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <div style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">
+                    <div style="color: #8b4513; font-size: 0.9em; margin-top: 5px;">
                         {{ form.username.errors }}
                     </div>
                 {% endif %}
                 {% if form.username.help_text %}
-                    <div style="color: #666; font-size: 0.85em; margin-top: 5px;">
+                    <div style="color: #8b6f47; font-size: 0.85em; margin-top: 5px;">
                         {{ form.username.help_text }}
                     </div>
                 {% endif %}
             </div>
             
             <div style="margin-bottom: 15px;">
-                <label for="id_password1" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">
+                <label for="id_password1" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">
                     Password:
                 </label>
                 {{ form.password1 }}
                 {% if form.password1.errors %}
-                    <div style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">
+                    <div style="color: #8b4513; font-size: 0.9em; margin-top: 5px;">
                         {{ form.password1.errors }}
                     </div>
                 {% endif %}
                 {% if form.password1.help_text %}
-                    <div style="color: #666; font-size: 0.85em; margin-top: 5px;">
+                    <div style="color: #8b6f47; font-size: 0.85em; margin-top: 5px;">
                         {{ form.password1.help_text }}
                     </div>
                 {% endif %}
             </div>
             
             <div style="margin-bottom: 20px;">
-                <label for="id_password2" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">
+                <label for="id_password2" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">
                     Password confirmation:
                 </label>
                 {{ form.password2 }}
                 {% if form.password2.errors %}
-                    <div style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">
+                    <div style="color: #8b4513; font-size: 0.9em; margin-top: 5px;">
                         {{ form.password2.errors }}
                     </div>
                 {% endif %}
                 {% if form.password2.help_text %}
-                    <div style="color: #666; font-size: 0.85em; margin-top: 5px;">
+                    <div style="color: #8b6f47; font-size: 0.85em; margin-top: 5px;">
                         {{ form.password2.help_text }}
                     </div>
                 {% endif %}
             </div>
             
             {% if form.non_field_errors %}
-                <div style="color: #dc3545; margin-bottom: 15px; padding: 10px; background: #f8d7da; border-radius: 5px;">
+                <div style="color: #8b4513; margin-bottom: 15px; padding: 10px; background: #e8ddd4; border: 2px solid #8b6f47; border-radius: 6px;">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
             
-            <button type="submit" style="width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer; margin-bottom: 15px;">
+            <button type="submit" style="width: 100%; background-color: #8b6f47; color: #faf8f5; padding: 12px; border: none; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer; margin-bottom: 15px; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
                 Create Account
             </button>
         </form>
         
-        <p style="text-align: center; font-size: 0.9em; color: #666; margin-top: 20px;">
-            Already have an account? <a href="{% url 'home' %}" style="color: #007bff;">Login here</a>
+        <p style="text-align: center; font-size: 0.9em; color: #5a4a3a; margin-top: 20px;">
+            Already have an account? <a href="{% url 'home' %}" style="color: #8b6f47; font-weight: 600;">Login here</a>
         </p>
     </div>
 </div>
@@ -82,21 +82,24 @@
     #id_username, #id_password1, #id_password2 {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+        border: 2px solid #c9b99b;
+        border-radius: 6px;
         font-size: 1em;
         box-sizing: border-box;
+        background: #faf8f5;
+        color: #3d2f1f;
     }
     
     #id_username:focus, #id_password1:focus, #id_password2:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        border-color: #8b6f47;
+        box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
     }
     
     ul {
         margin: 5px 0;
         padding-left: 20px;
+        color: #5a4a3a;
     }
     
     ul li {

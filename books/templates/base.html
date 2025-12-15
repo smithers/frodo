@@ -4,21 +4,66 @@
     <title>{% block title %}Book Recommender{% endblock %}</title>
     
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Open+Sans:wght@400;600&display=swap');
+        
+        body { 
+            font-family: 'Open Sans', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #faf8f5;
+            color: #3d2f1f;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Crimson Text', serif;
+            color: #6b4423;
+            font-weight: 600;
+        }
         
         /* Navigation Bar Styles */
-        .nav { background: #f8f9fa; padding: 15px; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
-        .nav a { margin-right: 20px; text-decoration: none; color: #333; font-weight: bold; }
-        .nav a:hover { color: #007bff; }
-        .user-section { float: right; }
+        .nav { 
+            background: #e8ddd4; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            border-bottom: 3px solid #8b6f47; 
+            border-radius: 0 0 8px 8px;
+        }
+        .nav a { 
+            margin-right: 20px; 
+            text-decoration: none; 
+            color: #5a4a3a; 
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+        .nav a:hover { 
+            color: #8b4513; 
+            text-decoration: underline;
+        }
+        .user-section { float: right; color: #5a4a3a; }
         
         /* Message Styles (Success/Error alerts) */
         .messages { list-style: none; padding: 0; }
-        .messages li { padding: 10px; margin-bottom: 10px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px; }
+        .messages li { 
+            padding: 12px 15px; 
+            margin-bottom: 10px; 
+            background: #d4c5b0; 
+            color: #4a3a2a; 
+            border: 2px solid #8b6f47; 
+            border-radius: 6px; 
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
         
         /* Card Styles (Reusable) */
-        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .star-rating { color: #FFD700; letter-spacing: 2px; }
+        .card { 
+            border: 2px solid #c9b99b; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            border-radius: 8px; 
+            background: #f5efe6;
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+        }
+        .star-rating { color: #d4a574; letter-spacing: 2px; }
     </style>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -40,7 +85,7 @@
                 Logged in as <strong>{{ user.username }}</strong> | 
                 <form action="{% url 'logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline;">Logout</button>
+                    <button type="submit" style="background:none; border:none; color:#8b6f47; cursor:pointer; text-decoration:underline; font-weight: 600;">Logout</button>
                 </form>
             {% else %}
                 {% if request.resolver_match.url_name != 'home' %}

@@ -79,6 +79,7 @@ def save_favorite_view(request):
         titles = request.POST.getlist('title')
         authors = request.POST.getlist('author')
         isbns = request.POST.getlist('isbn')
+        explanations = request.POST.getlist('explanation')
         source = request.POST.get('source', '')
 
         # If we got single values (from my_books page), convert to lists
@@ -86,15 +87,21 @@ def save_favorite_view(request):
             raw_title = request.POST.get('title')
             raw_author = request.POST.get('author')
             isbn = request.POST.get('isbn', '')
+            explanation = request.POST.get('explanation', '')
             
             if raw_title and raw_author:
                 titles = [raw_title]
                 authors = [raw_author]
                 isbns = [isbn] if isbn else ['']
+                explanations = [explanation] if explanation else ['']
 
         saved_count = 0
 
-        for raw_title, raw_author, isbn in zip(titles, authors, isbns):
+        # Ensure explanations list matches the length of other lists
+        while len(explanations) < len(titles):
+            explanations.append('')
+
+        for raw_title, raw_author, isbn, explanation in zip(titles, authors, isbns, explanations):
             raw_title = (raw_title or "").strip()
             raw_author = (raw_author or "").strip()
             isbn = (isbn or "").strip() or None
@@ -134,10 +141,16 @@ def save_favorite_view(request):
                     book = Book.objects.get(title=clean_title, author=author)
 
             # --- STEP 4: SAVE FAVORITE ---
+            explanation_text = (explanation or "").strip()
             favorite, created = UserFavoriteBook.objects.get_or_create(
                 user=request.user,
-                book=book
+                book=book,
+                defaults={'explanation': explanation_text}
             )
+            # Update explanation if favorite already existed
+            if not created and explanation_text:
+                favorite.explanation = explanation_text
+                favorite.save()
             if created:
                 saved_count += 1
 
@@ -180,6 +193,33 @@ def recommendation_view(request):
     # Ask the brain for the list
     recommended_data = get_book_recommendations(request.user)
     
+    # Group recommendations by similar_user
+    grouped_recommendations = {}
+    for rec in recommended_data:
+        user_id = rec['similar_user'].id
+        if user_id not in grouped_recommendations:
+            grouped_recommendations[user_id] = {
+                'similar_user': rec['similar_user'],
+                'overlap_count': rec['overlap_count'],
+                'overlapping_titles': rec['overlapping_titles'],
+                'recommended_books': []
+            }
+        # Get the explanation from the similar user's favorite record
+        favorite = UserFavoriteBook.objects.filter(
+            user=rec['similar_user'],
+            book=rec['book']
+        ).first()
+        explanation = favorite.explanation if favorite else ''
+        
+        grouped_recommendations[user_id]['recommended_books'].append({
+            'book': rec['book'],
+            'explanation': explanation
+        })
+    
+    # Convert to list and sort by overlap_count (descending)
+    grouped_list = list(grouped_recommendations.values())
+    grouped_list.sort(key=lambda x: x['overlap_count'], reverse=True)
+    
     # Diagnostic info to help debug empty recommendations
     user_favorites = UserFavoriteBook.objects.filter(user=request.user)
     
@@ -204,7 +244,7 @@ def recommendation_view(request):
         }
     
     context = {
-        'recommendations': recommended_data,
+        'grouped_recommendations': grouped_list,
         'diagnostic': diagnostic_info,
     }
     return render(request, 'recommendations.html', context)

@@ -4,59 +4,59 @@
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
     <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="font-size: 2.5em; color: #333; margin-bottom: 10px;">Welcome to Book Recommender</h1>
-        <p style="font-size: 1.2em; color: #666;">Discover your next great read with personalized recommendations</p>
+        <h1 style="font-size: 2.8em; color: #6b4423; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">Welcome to Book Recommender</h1>
+        <p style="font-size: 1.2em; color: #5a4a3a; font-style: italic;">Discover your next great read with personalized recommendations</p>
     </div>
 
     {% if user.is_authenticated %}
-        <div style="background: #e7f3ff; border: 2px solid #007bff; border-radius: 10px; padding: 30px; text-align: center;">
-            <h2 style="color: #007bff; margin-top: 0;">Welcome back, {{ user.username }}!</h2>
-            <p style="font-size: 1.1em; margin-bottom: 30px;">Ready to discover your next favorite book?</p>
+        <div style="background: #e8ddd4; border: 3px solid #8b6f47; border-radius: 12px; padding: 30px; text-align: center; box-shadow: 4px 4px 8px rgba(0,0,0,0.15);">
+            <h2 style="color: #6b4423; margin-top: 0;">Welcome back, {{ user.username }}!</h2>
+            <p style="font-size: 1.1em; margin-bottom: 30px; color: #5a4a3a;">Ready to discover your next favorite book?</p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="{% url 'my_books' %}" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View My Books</a>
-                <a href="{% url 'recommendations' %}" style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Get Recommendations</a>
-                <a href="{% url 'add_favorite' %}" style="background-color: #ffc107; color: #333; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Add a Book You Love</a>
+                <a href="{% url 'my_books' %}" style="background-color: #8b6f47; color: #faf8f5; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">View My Books</a>
+                <a href="{% url 'recommendations' %}" style="background-color: #9d7a5a; color: #faf8f5; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Get Recommendations</a>
+                <a href="{% url 'add_favorite' %}" style="background-color: #b8956a; color: #3d2f1f; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Add a Book You Love</a>
             </div>
         </div>
     {% else %}
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
-            <div style="background: #f8f9fa; border-radius: 10px; padding: 30px;">
-                <h2 style="margin-top: 0; color: #333;">Get Started</h2>
-                <p style="color: #666; line-height: 1.6;">
+            <div style="background: #f5efe6; border: 2px solid #c9b99b; border-radius: 12px; padding: 30px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
+                <h2 style="margin-top: 0; color: #6b4423;">Get Started</h2>
+                <p style="color: #5a4a3a; line-height: 1.6;">
                     Join our community of book lovers! Add books you love and get personalized recommendations 
                     based on your reading preferences.
                 </p>
-                <ul style="color: #666; line-height: 1.8;">
-                    <li>Add books you love</li>
-                    <li>Build your personal library</li>
-                    <li>Get personalized recommendations</li>
-                    <li>Discover new authors and genres</li>
+                <ul style="color: #5a4a3a; line-height: 1.8; list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 8px;">📚 Add books you love</li>
+                    <li style="margin-bottom: 8px;">📖 Build your personal library</li>
+                    <li style="margin-bottom: 8px;">✨ Get personalized recommendations</li>
+                    <li style="margin-bottom: 8px;">🔍 Discover new authors and genres</li>
                 </ul>
             </div>
 
-            <div style="background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 30px;">
-                <h2 style="margin-top: 0; color: #333;">Login</h2>
+            <div style="background: #faf8f5; border: 2px solid #c9b99b; border-radius: 12px; padding: 30px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
+                <h2 style="margin-top: 0; color: #6b4423;">Login</h2>
                 <form method="post" action="{% url 'home' %}">
                     {% csrf_token %}
                     <div style="margin-bottom: 15px;">
-                        <label for="id_username" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Username:</label>
+                        <label for="id_username" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">Username:</label>
                         {{ form.username }}
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <label for="id_password" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Password:</label>
+                        <label for="id_password" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">Password:</label>
                         {{ form.password }}
                     </div>
                     {% if form.errors %}
-                        <div style="color: #dc3545; margin-bottom: 15px; padding: 10px; background: #f8d7da; border-radius: 5px;">
+                        <div style="color: #8b4513; margin-bottom: 15px; padding: 10px; background: #e8ddd4; border: 2px solid #8b6f47; border-radius: 6px;">
                             Please enter a correct username and password.
                         </div>
                     {% endif %}
-                    <button type="submit" style="width: 100%; background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer;">
+                    <button type="submit" style="width: 100%; background-color: #8b6f47; color: #faf8f5; padding: 12px; border: none; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
                         Login
                     </button>
                 </form>
-                <p style="margin-top: 20px; font-size: 0.9em; color: #666; text-align: center;">
-                    Don't have an account? <a href="{% url 'register' %}" style="color: #007bff;">Create Account</a>
+                <p style="margin-top: 20px; font-size: 0.9em; color: #5a4a3a; text-align: center;">
+                    Don't have an account? <a href="{% url 'register' %}" style="color: #8b6f47; font-weight: 600;">Create Account</a>
                 </p>
             </div>
         </div>
@@ -67,16 +67,18 @@
     #id_username, #id_password {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+        border: 2px solid #c9b99b;
+        border-radius: 6px;
         font-size: 1em;
         box-sizing: border-box;
+        background: #faf8f5;
+        color: #3d2f1f;
     }
     
     #id_username:focus, #id_password:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        border-color: #8b6f47;
+        box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
     }
 </style>
 {% endblock %}

@@ -6,21 +6,22 @@
 <style>
     /* Make the autocomplete dropdown look nice */
     .ui-autocomplete { 
-        background-color: white; 
-        border: 1px solid #ccc; 
+        background-color: #faf8f5; 
+        border: 2px solid #c9b99b; 
         z-index: 1000; 
         max-height: 200px; 
         overflow-y: auto; 
         cursor: pointer; 
         list-style: none;
         padding-left: 0;
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.15);
     }
     .ui-menu-item {
         padding: 10px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #d4c5b0;
     }
     .ui-menu-item:hover {
-        background-color: #f0f0f0;
+        background-color: #e8ddd4;
     }
     
     .selected-books {
@@ -28,39 +29,72 @@
     }
     
     .book-item {
-        background: #f9f9f9;
-        border: 1px solid #ddd;
+        background: #f5efe6;
+        border: 2px solid #c9b99b;
         padding: 15px;
         margin-bottom: 10px;
-        border-radius: 5px;
+        border-radius: 8px;
+        box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .book-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 10px;
     }
     
     .book-info h4 {
         margin: 0 0 5px 0;
-        color: #333;
+        color: #6b4423;
+        font-family: 'Crimson Text', serif;
     }
     
     .book-info p {
         margin: 0;
-        color: #666;
+        color: #5a4a3a;
         font-size: 0.9em;
+    }
+    
+    .explanation-input {
+        width: 100%;
+        padding: 8px;
+        border: 2px solid #c9b99b;
+        border-radius: 6px;
+        font-size: 0.9em;
+        font-family: inherit;
+        margin-top: 10px;
+        background: #faf8f5;
+        color: #3d2f1f;
+    }
+    
+    .explanation-input:focus {
+        outline: none;
+        border-color: #8b6f47;
+        box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+    }
+    
+    .explanation-label {
+        font-size: 0.85em;
+        color: #5a4a3a;
+        margin-top: 5px;
+        font-weight: 600;
     }
     
     .remove-btn {
-        background: #dc3545;
-        color: white;
+        background: #9d7a5a;
+        color: #faf8f5;
         border: none;
-        padding: 5px 10px;
-        border-radius: 3px;
+        padding: 6px 12px;
+        border-radius: 4px;
         cursor: pointer;
         font-size: 0.9em;
+        font-weight: 600;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
     }
     
     .remove-btn:hover {
-        background: #c82333;
+        background: #8b6f47;
     }
 </style>
 {% endblock %}
@@ -70,17 +104,17 @@
     <p>Search for books to add them to your favorites.</p>
     
     <div style="margin-bottom: 20px; position: relative;">
-        <label><strong>Search by Title:</strong></label><br>
-        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 400px; padding: 10px; font-size: 16px;">
-        <span id="loading-msg" style="display:none; color: gray; margin-left: 10px;"> Searching Google...</span>
+        <label style="font-weight: 600; color: #6b4423;"><strong>Search by Title:</strong></label><br>
+        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 400px; padding: 10px; font-size: 16px; border: 2px solid #c9b99b; border-radius: 6px; background: #faf8f5; color: #3d2f1f;">
+        <span id="loading-msg" style="display:none; color: #8b6f47; margin-left: 10px;"> Searching Google...</span>
     </div>
 
     <form method="POST" action="{% url 'save_favorite' %}" id="favorites-form">
         {% csrf_token %}
         <div id="selected-books-container" class="selected-books" style="display: none;">
-            <h3>Selected Books:</h3>
+            <h3 style="color: #6b4423;">Selected Books:</h3>
             <div id="selected-books-list"></div>
-            <button type="submit" style="background-color: #28a745; color: white; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-top: 15px;">
+            <button type="submit" style="background-color: #8b6f47; color: #faf8f5; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 6px; margin-top: 15px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
                 Add to My Favorites
             </button>
         </div>
@@ -118,7 +152,8 @@ $(function() {
             selectedBooks.push({
                 title: book.value,
                 author: book.author,
-                isbn: book.isbn
+                isbn: book.isbn,
+                explanation: ''
             });
             
             // Clear search box
@@ -136,27 +171,21 @@ $(function() {
         selectedBooks.forEach(function(book, index) {
             var item = $('<div class="book-item"></div>');
             item.html(
-                '<div class="book-info">' +
-                    '<h4>' + book.title + '</h4>' +
-                    '<p>by ' + book.author + '</p>' +
+                '<div class="book-header">' +
+                    '<div class="book-info">' +
+                        '<h4>' + book.title + '</h4>' +
+                        '<p>by ' + book.author + '</p>' +
+                    '</div>' +
+                    '<button type="button" class="remove-btn" data-index="' + index + '">Remove</button>' +
                 '</div>' +
-                '<button type="button" class="remove-btn" data-index="' + index + '">Remove</button>'
+                '<label class="explanation-label">Why do you love this book? (optional)</label>' +
+                '<textarea class="explanation-input" placeholder="Enter a short explanation..." data-index="' + index + '" rows="2">' + (book.explanation || '') + '</textarea>'
             );
             container.append(item);
         });
         
-        // Add hidden inputs for form submission
-        $('input[name^="title"]').remove();
-        $('input[name^="author"]').remove();
-        $('input[name^="isbn"]').remove();
-        
-        selectedBooks.forEach(function(book) {
-            $('#favorites-form').append(
-                '<input type="hidden" name="title" value="' + book.title + '">' +
-                '<input type="hidden" name="author" value="' + book.author + '">' +
-                '<input type="hidden" name="isbn" value="' + book.isbn + '">'
-            );
-        });
+        // Update hidden inputs for form submission
+        updateHiddenInputs();
         
         if (selectedBooks.length > 0) {
             $("#selected-books-container").show();
@@ -170,6 +199,38 @@ $(function() {
         selectedBooks.splice(index, 1);
         updateSelectedBooksList();
     });
+    
+    // Update explanation when user types in the textarea
+    $(document).on('input', '.explanation-input', function() {
+        var index = $(this).data('index');
+        selectedBooks[index].explanation = $(this).val();
+        // Update only the corresponding hidden input, don't recreate everything
+        var hiddenInput = $('input[name="explanation"]').eq(index);
+        if (hiddenInput.length) {
+            hiddenInput.val(selectedBooks[index].explanation);
+        } else {
+            // If hidden input doesn't exist yet, update all hidden inputs
+            updateHiddenInputs();
+        }
+    });
+    
+    function updateHiddenInputs() {
+        // Remove old hidden inputs
+        $('input[name^="title"]').remove();
+        $('input[name^="author"]').remove();
+        $('input[name^="isbn"]').remove();
+        $('input[name^="explanation"]').remove();
+        
+        // Add new hidden inputs
+        selectedBooks.forEach(function(book) {
+            $('#favorites-form').append(
+                '<input type="hidden" name="title" value="' + $('<div>').text(book.title).html() + '">' +
+                '<input type="hidden" name="author" value="' + $('<div>').text(book.author).html() + '">' +
+                '<input type="hidden" name="isbn" value="' + $('<div>').text(book.isbn || '').html() + '">' +
+                '<input type="hidden" name="explanation" value="' + $('<div>').text(book.explanation || '').html() + '">'
+            );
+        });
+    }
 });
 </script>
 {% endblock %}
