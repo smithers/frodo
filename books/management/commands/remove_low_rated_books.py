@@ -37,3 +37,5 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'Successfully deleted {deleted_count} book(s) that had no 4 or 5 star ratings.'))
 
 
+
+

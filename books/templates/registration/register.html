@@ -2,78 +2,78 @@
 {% block title %}Create Account - Book Recommender{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 40px auto; padding: 20px;">
-    <div style="background: #faf8f5; border: 2px solid #c9b99b; border-radius: 12px; padding: 30px; box-shadow: 3px 3px 8px rgba(0,0,0,0.15);">
-        <h1 style="margin-top: 0; color: #6b4423; text-align: center;">Create Account</h1>
-        <p style="text-align: center; color: #5a4a3a; margin-bottom: 30px; font-style: italic;">Join our community of book lovers!</p>
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="card" style="background: #ffffff;">
+        <h1 style="margin-top: 0; color: #3d2817; text-align: center; border-bottom: 4px solid #d4a574; padding-bottom: 20px; margin-bottom: 30px;">Create Account</h1>
+        <p style="text-align: center; color: #5c3f2a; margin-bottom: 40px; font-style: italic; font-size: 1.1em;">Join our community of book lovers!</p>
         
         <form method="post">
             {% csrf_token %}
             
-            <div style="margin-bottom: 15px;">
-                <label for="id_username" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">
+            <div style="margin-bottom: 25px;">
+                <label for="id_username" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">
                     Username:
                 </label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <div style="color: #8b4513; font-size: 0.9em; margin-top: 5px;">
+                    <div style="color: #8b4513; font-size: 0.95em; margin-top: 8px; font-style: italic;">
                         {{ form.username.errors }}
                     </div>
                 {% endif %}
                 {% if form.username.help_text %}
-                    <div style="color: #8b6f47; font-size: 0.85em; margin-top: 5px;">
+                    <div style="color: #8b6f47; font-size: 0.9em; margin-top: 8px;">
                         {{ form.username.help_text }}
                     </div>
                 {% endif %}
             </div>
             
-            <div style="margin-bottom: 15px;">
-                <label for="id_password1" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">
+            <div style="margin-bottom: 25px;">
+                <label for="id_password1" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">
                     Password:
                 </label>
                 {{ form.password1 }}
                 {% if form.password1.errors %}
-                    <div style="color: #8b4513; font-size: 0.9em; margin-top: 5px;">
+                    <div style="color: #8b4513; font-size: 0.95em; margin-top: 8px; font-style: italic;">
                         {{ form.password1.errors }}
                     </div>
                 {% endif %}
                 {% if form.password1.help_text %}
-                    <div style="color: #8b6f47; font-size: 0.85em; margin-top: 5px;">
+                    <div style="color: #8b6f47; font-size: 0.9em; margin-top: 8px;">
                         {{ form.password1.help_text }}
                     </div>
                 {% endif %}
             </div>
             
-            <div style="margin-bottom: 20px;">
-                <label for="id_password2" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">
+            <div style="margin-bottom: 30px;">
+                <label for="id_password2" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">
                     Password confirmation:
                 </label>
                 {{ form.password2 }}
                 {% if form.password2.errors %}
-                    <div style="color: #8b4513; font-size: 0.9em; margin-top: 5px;">
+                    <div style="color: #8b4513; font-size: 0.95em; margin-top: 8px; font-style: italic;">
                         {{ form.password2.errors }}
                     </div>
                 {% endif %}
                 {% if form.password2.help_text %}
-                    <div style="color: #8b6f47; font-size: 0.85em; margin-top: 5px;">
+                    <div style="color: #8b6f47; font-size: 0.9em; margin-top: 8px;">
                         {{ form.password2.help_text }}
                     </div>
                 {% endif %}
             </div>
             
             {% if form.non_field_errors %}
-                <div style="color: #8b4513; margin-bottom: 15px; padding: 10px; background: #e8ddd4; border: 2px solid #8b6f47; border-radius: 6px;">
+                <div style="color: #8b4513; margin-bottom: 25px; padding: 15px; background: #f5f1e8; border-left: 4px solid #8b6f47; font-size: 0.95em;">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
             
-            <button type="submit" style="width: 100%; background-color: #8b6f47; color: #faf8f5; padding: 12px; border: none; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer; margin-bottom: 15px; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+            <button type="submit" style="width: 100%; background-color: #3d2817; color: #f5f1e8; padding: 15px; border: 2px solid #3d2817; font-size: 1em; font-weight: 400; cursor: pointer; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
                 Create Account
             </button>
         </form>
         
-        <p style="text-align: center; font-size: 0.9em; color: #5a4a3a; margin-top: 20px;">
-            Already have an account? <a href="{% url 'home' %}" style="color: #8b6f47; font-weight: 600;">Login here</a>
+        <p style="text-align: center; font-size: 1em; color: #5c3f2a; margin-top: 25px;">
+            Already have an account? <a href="{% url 'home' %}" style="color: #8b6f47; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b6f47;">Login here</a>
         </p>
     </div>
 </div>
@@ -81,29 +81,39 @@
 <style>
     #id_username, #id_password1, #id_password2 {
         width: 100%;
-        padding: 10px;
-        border: 2px solid #c9b99b;
-        border-radius: 6px;
+        padding: 12px 15px;
+        border: 1px solid #d4c5b0;
+        border-radius: 0;
         font-size: 1em;
         box-sizing: border-box;
-        background: #faf8f5;
-        color: #3d2f1f;
+        background: #ffffff;
+        color: #2c2416;
+        font-family: 'Lora', serif;
+        transition: border-color 0.3s ease;
     }
     
     #id_username:focus, #id_password1:focus, #id_password2:focus {
         outline: none;
         border-color: #8b6f47;
-        box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+        border-width: 2px;
     }
     
     ul {
-        margin: 5px 0;
-        padding-left: 20px;
-        color: #5a4a3a;
+        margin: 8px 0;
+        padding-left: 25px;
+        color: #5c3f2a;
+        line-height: 1.8;
     }
     
     ul li {
-        margin: 3px 0;
+        margin: 5px 0;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #5c3f2a !important;
+        border-color: #5c3f2a !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 </style>
 {% endblock %}

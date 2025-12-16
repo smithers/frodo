@@ -28,3 +28,5 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Seed data deletion complete!'))
 
 
+
+

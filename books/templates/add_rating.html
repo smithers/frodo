@@ -79,7 +79,7 @@ $(function() {
     $("#book-search").autocomplete({
         source: "{% url 'book_autocomplete' %}", 
         minLength: 3, 
-        delay: 500,   
+        delay: 300,   
         
         search: function() {
             $("#loading-msg").show();

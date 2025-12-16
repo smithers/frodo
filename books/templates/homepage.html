@@ -1,62 +1,306 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Home - Book Recommender{% endblock %}
 
-{% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="font-size: 2.8em; color: #6b4423; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">Welcome to Book Recommender</h1>
-        <p style="font-size: 1.2em; color: #5a4a3a; font-style: italic;">Discover your next great read with personalized recommendations</p>
-    </div>
+{% block extra_head %}
+<style>
+    .hero-section {
+        position: relative;
+        height: 100vh;
+        min-height: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: linear-gradient(rgba(61, 40, 23, 0.3), rgba(61, 40, 23, 0.3)),
+                    url('{% static "books/images/hero-book.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: #f5f1e8;
+        margin: -40px -40px 0 -40px;
+        padding: 0 40px;
+        width: calc(100vw - 180px);
+        margin-left: calc(-40px - 180px);
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(61, 40, 23, 0.2);
+        z-index: 1;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .hero-large-text {
+        font-family: 'Playfair Display', serif;
+        font-size: 5.5em;
+        font-weight: 700;
+        color: #f5f1e8;
+        margin-bottom: 20px;
+        text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+        letter-spacing: 2px;
+        line-height: 1.1;
+    }
+    
+    .hero-subtitle {
+        font-family: 'Lora', serif;
+        font-size: 1.8em;
+        font-style: italic;
+        color: #e8ddd4;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+        font-weight: 400;
+    }
+    
+    .hero-description {
+        font-family: 'Lora', serif;
+        font-size: 1.1em;
+        color: #e8ddd4;
+        line-height: 1.8;
+        margin-bottom: 50px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .hero-button {
+        display: inline-block;
+        background-color: #3d2817;
+        color: #f5f1e8;
+        padding: 18px 40px;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 400;
+        font-size: 1em;
+        border: 2px solid #d4a574;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+    
+    .hero-button:hover {
+        background-color: #d4a574;
+        color: #3d2817;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    .content-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 40px;
+    }
+    
+    .section-divider {
+        text-align: center;
+        margin: 60px 0;
+        position: relative;
+    }
+    
+    .section-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #d4c5b0;
+    }
+    
+    .section-divider span {
+        background: #f5f1e8;
+        padding: 0 30px;
+        position: relative;
+        color: #8b6f47;
+        font-size: 1.5em;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+    }
+    
+    .feature-card {
+        background: #ffffff;
+        padding: 40px;
+        border: 1px solid #d4c5b0;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .feature-card:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        transform: translateY(-5px);
+        border-color: #d4a574;
+    }
+    
+    .feature-card h3 {
+        color: #3d2817;
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #d4a574;
+        padding-bottom: 15px;
+        display: inline-block;
+    }
+    
+    .feature-card p {
+        color: #5c3f2a;
+        line-height: 1.9;
+        font-size: 1.05em;
+    }
+    
+    .login-section {
+        background: #ffffff;
+        padding: 50px;
+        border: 1px solid #d4c5b0;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-large-text {
+            font-size: 3.5em;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4em;
+        }
+        
+        .hero-section {
+            background-attachment: scroll;
+        }
+    }
+</style>
+{% endblock %}
 
+{% block content %}
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-large-text">
+            Great Minds Read Alike
+        </div>
+        <div class="hero-description">
+            Enter a few books that you absolutely love, and we'll show you book recommendations from people that love the same books as you!
+        </div>
+        <div style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
+            <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form">
+                {% csrf_token %}
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                    <input type="text" id="hero-book-search" placeholder="Search for a book to add..." style="flex: 1; padding: 15px 20px; border: 2px solid #d4a574; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #2c2416; min-width: 300px;">
+                    <span id="hero-loading-msg" style="display:none; color: #e8ddd4; font-style: italic;"> Searching...</span>
+                </div>
+                <div id="hero-selected-books-list" style="margin-top: 20px; display: none;"></div>
+                <div id="hero-selected-books-container" style="display: none;"></div>
+                <div id="hero-submit-container" style="text-align: center; margin-top: 20px; display: none;">
+                    <button type="submit" class="hero-button" style="margin-top: 0;">Add These Books</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
     {% if user.is_authenticated %}
-        <div style="background: #e8ddd4; border: 3px solid #8b6f47; border-radius: 12px; padding: 30px; text-align: center; box-shadow: 4px 4px 8px rgba(0,0,0,0.15);">
-            <h2 style="color: #6b4423; margin-top: 0;">Welcome back, {{ user.username }}!</h2>
-            <p style="font-size: 1.1em; margin-bottom: 30px; color: #5a4a3a;">Ready to discover your next favorite book?</p>
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="{% url 'my_books' %}" style="background-color: #8b6f47; color: #faf8f5; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">View My Books</a>
-                <a href="{% url 'recommendations' %}" style="background-color: #9d7a5a; color: #faf8f5; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Get Recommendations</a>
-                <a href="{% url 'add_favorite' %}" style="background-color: #b8956a; color: #3d2f1f; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Add a Book You Love</a>
-            </div>
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="color: #3d2817; font-size: 2.5em; margin-bottom: 20px;">Welcome back, {{ user.username }}!</h2>
+            <p style="font-size: 1.2em; color: #5c3f2a; font-style: italic; margin-bottom: 40px;">Ready to discover your next favorite book?</p>
         </div>
     {% else %}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
-            <div style="background: #f5efe6; border: 2px solid #c9b99b; border-radius: 12px; padding: 30px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
-                <h2 style="margin-top: 0; color: #6b4423;">Get Started</h2>
-                <p style="color: #5a4a3a; line-height: 1.6;">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="color: #3d2817; font-size: 2.5em; margin-bottom: 20px;">Discover Your Next Favorite Book</h2>
+            <p style="font-size: 1.2em; color: #5c3f2a; font-style: italic; margin-bottom: 40px;">No account needed - start exploring recommendations right away!</p>
+        </div>
+    {% endif %}
+    
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>My Books</h3>
+            <p>View and manage your collection of favorite books. Keep track of all the books you love in one place.</p>
+            <a href="{% url 'my_books' %}" style="display: inline-block; margin-top: 20px; color: #8b6f47; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #d4a574; padding-bottom: 5px;">View My Books →</a>
+        </div>
+        
+        <div class="feature-card">
+            <h3>Recommendations</h3>
+            <p>Get personalized book recommendations based on books you and other readers love. Discover new authors and genres.</p>
+            <a href="{% url 'recommendations' %}" style="display: inline-block; margin-top: 20px; color: #8b6f47; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #d4a574; padding-bottom: 5px;">Get Recommendations →</a>
+        </div>
+        
+        <div class="feature-card">
+            <h3>Add Favorites</h3>
+            <p>Add books you love to your collection. The more books you add, the better your recommendations will be.</p>
+            <a href="{% url 'add_favorite' %}" style="display: inline-block; margin-top: 20px; color: #8b6f47; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #d4a574; padding-bottom: 5px;">Add a Book →</a>
+        </div>
+    </div>
+    
+    {% if not user.is_authenticated %}
+        <div class="section-divider">
+            <span>GET STARTED</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start; margin-top: 60px;">
+            <div class="feature-card" style="text-align: left;">
+                <h3 style="text-align: left; display: block;">Join Our Community</h3>
+                <p style="text-align: left;">
                     Join our community of book lovers! Add books you love and get personalized recommendations 
                     based on your reading preferences.
                 </p>
-                <ul style="color: #5a4a3a; line-height: 1.8; list-style: none; padding-left: 0;">
-                    <li style="margin-bottom: 8px;">📚 Add books you love</li>
-                    <li style="margin-bottom: 8px;">📖 Build your personal library</li>
-                    <li style="margin-bottom: 8px;">✨ Get personalized recommendations</li>
-                    <li style="margin-bottom: 8px;">🔍 Discover new authors and genres</li>
+                <ul style="color: #5c3f2a; line-height: 2.2; list-style: none; padding-left: 0; font-size: 1.05em; text-align: left; margin-top: 25px;">
+                    <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        Add books you love
+                    </li>
+                    <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        Build your personal library
+                    </li>
+                    <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        Get personalized recommendations
+                    </li>
+                    <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        Discover new authors and genres
+                    </li>
                 </ul>
             </div>
 
-            <div style="background: #faf8f5; border: 2px solid #c9b99b; border-radius: 12px; padding: 30px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
-                <h2 style="margin-top: 0; color: #6b4423;">Login</h2>
+            <div class="login-section">
+                <h3 style="margin-top: 0; color: #3d2817; border-bottom: 3px solid #d4a574; padding-bottom: 15px; margin-bottom: 25px; text-align: center;">Login</h3>
                 <form method="post" action="{% url 'home' %}">
                     {% csrf_token %}
-                    <div style="margin-bottom: 15px;">
-                        <label for="id_username" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">Username:</label>
+                    <div style="margin-bottom: 20px;">
+                        <label for="id_username" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Username:</label>
                         {{ form.username }}
                     </div>
-                    <div style="margin-bottom: 20px;">
-                        <label for="id_password" style="display: block; margin-bottom: 5px; font-weight: 600; color: #5a4a3a;">Password:</label>
+                    <div style="margin-bottom: 25px;">
+                        <label for="id_password" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Password:</label>
                         {{ form.password }}
                     </div>
                     {% if form.errors %}
-                        <div style="color: #8b4513; margin-bottom: 15px; padding: 10px; background: #e8ddd4; border: 2px solid #8b6f47; border-radius: 6px;">
+                        <div style="color: #8b4513; margin-bottom: 20px; padding: 15px; background: #f5f1e8; border-left: 4px solid #8b6f47; font-size: 0.95em;">
                             Please enter a correct username and password.
                         </div>
                     {% endif %}
-                    <button type="submit" style="width: 100%; background-color: #8b6f47; color: #faf8f5; padding: 12px; border: none; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                    <button type="submit" style="width: 100%; background-color: #3d2817; color: #f5f1e8; padding: 15px; border: 2px solid #3d2817; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
                         Login
                     </button>
                 </form>
-                <p style="margin-top: 20px; font-size: 0.9em; color: #5a4a3a; text-align: center;">
-                    Don't have an account? <a href="{% url 'register' %}" style="color: #8b6f47; font-weight: 600;">Create Account</a>
+                <p style="margin-top: 25px; font-size: 0.95em; color: #5c3f2a; text-align: center;">
+                    Don't have an account? <a href="{% url 'register' %}" style="color: #8b6f47; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b6f47;">Create Account</a>
                 </p>
             </div>
         </div>
@@ -66,20 +310,161 @@
 <style>
     #id_username, #id_password {
         width: 100%;
-        padding: 10px;
-        border: 2px solid #c9b99b;
-        border-radius: 6px;
+        padding: 12px 15px;
+        border: 1px solid #d4c5b0;
+        border-radius: 0;
         font-size: 1em;
         box-sizing: border-box;
-        background: #faf8f5;
-        color: #3d2f1f;
+        background: #ffffff;
+        color: #2c2416;
+        font-family: 'Lora', serif;
+        transition: border-color 0.3s ease;
     }
     
     #id_username:focus, #id_password:focus {
         outline: none;
         border-color: #8b6f47;
-        box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+        border-width: 2px;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #5c3f2a !important;
+        border-color: #5c3f2a !important;
+    }
+    
+    #hero-book-search:focus {
+        outline: none;
+        border-color: #f5f1e8;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.3);
+    }
+    
+    #hero-book-search::placeholder {
+        color: #8b6f47;
+        opacity: 0.7;
     }
 </style>
 {% endblock %}
 
+{% block scripts %}
+<script>
+$(function() {
+    var heroSelectedBooks = [];
+    var maxBooks = 3;
+    
+    $("#hero-book-search").autocomplete({
+        source: "{% url 'book_autocomplete' %}", 
+        minLength: 3, 
+        delay: 300,
+        
+        search: function() {
+            $("#hero-loading-msg").show();
+        },
+        
+        response: function() {
+            $("#hero-loading-msg").hide();
+        },
+
+        select: function(event, ui) {
+            event.preventDefault();
+            
+            // Check if we've reached the limit
+            if (heroSelectedBooks.length >= maxBooks) {
+                alert("You can add up to " + maxBooks + " books at a time.");
+                $("#hero-book-search").val('');
+                return;
+            }
+            
+            var book = ui.item;
+            
+            // Check if book is already selected
+            if (heroSelectedBooks.find(b => b.isbn === book.isbn)) {
+                $("#hero-book-search").val('');
+                return;
+            }
+            
+            // Add to selected books
+            heroSelectedBooks.push({
+                title: book.value,
+                author: book.author,
+                isbn: book.isbn || '',
+                explanation: ''
+            });
+            
+            // Clear search box
+            $("#hero-book-search").val('');
+            
+            // Update display
+            updateHeroSelectedBooksList();
+        }
+    });
+    
+    function updateHeroSelectedBooksList() {
+        var container = $("#hero-selected-books-list");
+        container.empty();
+        
+        if (heroSelectedBooks.length === 0) {
+            container.hide();
+            $("#hero-selected-books-container").hide();
+            $("#hero-submit-container").hide();
+            return;
+        }
+        
+        container.show();
+        $("#hero-selected-books-container").show();
+        $("#hero-submit-container").show();
+        
+        heroSelectedBooks.forEach(function(book, index) {
+            var item = $('<div style="background: rgba(255, 255, 255, 0.95); padding: 15px 20px; margin-bottom: 10px; border: 1px solid #d4a574; color: #2c2416; display: flex; justify-content: space-between; align-items: center;"></div>');
+            item.html(
+                '<div style="flex: 1;">' +
+                    '<strong style="font-family: \'Playfair Display\', serif; font-size: 1.1em; color: #3d2817; display: block; margin-bottom: 5px;">' + $('<div>').text(book.title).html() + '</strong>' +
+                    '<span style="font-style: italic; color: #5c3f2a; font-size: 0.95em;">by ' + $('<div>').text(book.author).html() + '</span>' +
+                '</div>' +
+                '<button type="button" class="remove-hero-book" data-index="' + index + '" style="background: transparent; color: #8b6f47; border: 1px solid #8b6f47; padding: 6px 12px; cursor: pointer; font-size: 0.85em; margin-left: 15px;">Remove</button>'
+            );
+            container.append(item);
+        });
+        
+        // Update hidden inputs
+        updateHeroHiddenInputs();
+        
+        // Disable search if we've reached the limit
+        if (heroSelectedBooks.length >= maxBooks) {
+            $("#hero-book-search").prop('disabled', true).attr('placeholder', 'Maximum ' + maxBooks + ' books reached');
+        } else {
+            $("#hero-book-search").prop('disabled', false).attr('placeholder', 'Search for a book to add... (' + (maxBooks - heroSelectedBooks.length) + ' remaining)');
+        }
+    }
+    
+    function updateHeroHiddenInputs() {
+        // Remove old hidden inputs
+        $("#hero-selected-books-container").empty();
+        
+        // Add new hidden inputs
+        heroSelectedBooks.forEach(function(book) {
+            $("#hero-selected-books-container").append(
+                '<input type="hidden" name="title" value="' + $('<div>').text(book.title).html() + '">' +
+                '<input type="hidden" name="author" value="' + $('<div>').text(book.author).html() + '">' +
+                '<input type="hidden" name="isbn" value="' + $('<div>').text(book.isbn || '').html() + '">' +
+                '<input type="hidden" name="explanation" value="">'
+            );
+        });
+    }
+    
+    $(document).on('click', '.remove-hero-book', function() {
+        var index = $(this).data('index');
+        heroSelectedBooks.splice(index, 1);
+        updateHeroSelectedBooksList();
+    });
+    
+    // Handle form submission
+    $("#hero-favorites-form").on('submit', function(e) {
+        if (heroSelectedBooks.length === 0) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

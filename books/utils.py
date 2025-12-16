@@ -9,11 +9,17 @@ def smart_title_case(text: str) -> str:
     """
     Title-case helper that avoids capital 'S' after apostrophes.
     Example: "ender's game" -> "Ender's Game" (not "Ender'S Game")
+    Handles both regular apostrophes (') and curly apostrophes (')
     """
     if not text:
         return text
     titled = text.strip().title()
-    # Replace capital S after apostrophe with lowercase s
+    # Replace capital S after any type of apostrophe with lowercase s
+    # Handles regular apostrophe (') and curly apostrophes (' and ')
+    # First handle curly apostrophes (U+2019, U+2018)
+    titled = titled.replace(chr(8217) + "S", "'s")  # Right single quotation mark
+    titled = titled.replace(chr(8216) + "S", "'s")  # Left single quotation mark
+    # Then handle regular apostrophe
     return re.sub(r"'S\b", "'s", titled)
 
 

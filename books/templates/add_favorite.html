@@ -4,117 +4,182 @@
 
 {% block extra_head %}
 <style>
+    h1 {
+        border-bottom: 4px solid #d4a574;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        display: inline-block;
+    }
+    
     /* Make the autocomplete dropdown look nice */
     .ui-autocomplete { 
-        background-color: #faf8f5; 
-        border: 2px solid #c9b99b; 
+        background-color: #ffffff; 
+        border: 1px solid #d4c5b0; 
         z-index: 1000; 
-        max-height: 200px; 
+        max-height: 250px; 
         overflow-y: auto; 
         cursor: pointer; 
         list-style: none;
         padding-left: 0;
-        box-shadow: 3px 3px 6px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 0;
     }
     .ui-menu-item {
-        padding: 10px;
-        border-bottom: 1px solid #d4c5b0;
+        padding: 12px 15px;
+        border-bottom: 1px solid #e8ddd4;
+        transition: background-color 0.2s ease;
     }
     .ui-menu-item:hover {
-        background-color: #e8ddd4;
+        background-color: #f5f1e8;
     }
     
     .selected-books {
-        margin-top: 20px;
+        margin-top: 30px;
     }
     
     .book-item {
-        background: #f5efe6;
-        border: 2px solid #c9b99b;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 8px;
-        box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        background: #ffffff;
+        border: 1px solid #d4c5b0;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .book-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     
     .book-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e8ddd4;
     }
     
     .book-info h4 {
-        margin: 0 0 5px 0;
-        color: #6b4423;
-        font-family: 'Crimson Text', serif;
+        margin: 0 0 8px 0;
+        color: #3d2817;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3em;
     }
     
     .book-info p {
         margin: 0;
-        color: #5a4a3a;
-        font-size: 0.9em;
+        color: #5c3f2a;
+        font-size: 1em;
+        font-style: italic;
     }
     
     .explanation-input {
         width: 100%;
-        padding: 8px;
-        border: 2px solid #c9b99b;
-        border-radius: 6px;
-        font-size: 0.9em;
-        font-family: inherit;
-        margin-top: 10px;
-        background: #faf8f5;
-        color: #3d2f1f;
+        padding: 12px 15px;
+        border: 1px solid #d4c5b0;
+        border-radius: 0;
+        font-size: 1em;
+        font-family: 'Lora', serif;
+        margin-top: 15px;
+        background: #ffffff;
+        color: #2c2416;
+        line-height: 1.8;
+        transition: border-color 0.3s ease;
     }
     
     .explanation-input:focus {
         outline: none;
         border-color: #8b6f47;
-        box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.2);
+        border-width: 2px;
     }
     
     .explanation-label {
-        font-size: 0.85em;
-        color: #5a4a3a;
-        margin-top: 5px;
-        font-weight: 600;
+        font-size: 0.9em;
+        color: #5c3f2a;
+        margin-top: 8px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     .remove-btn {
-        background: #9d7a5a;
-        color: #faf8f5;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
+        background: transparent;
+        color: #8b6f47;
+        border: 1px solid #8b6f47;
+        padding: 8px 18px;
+        border-radius: 0;
         cursor: pointer;
         font-size: 0.9em;
-        font-weight: 600;
-        box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        font-family: 'Lora', serif;
     }
     
     .remove-btn:hover {
         background: #8b6f47;
+        color: #f5f1e8;
+    }
+    
+    #book-search {
+        border: 1px solid #d4c5b0;
+        border-radius: 0;
+        padding: 12px 15px;
+        font-family: 'Lora', serif;
+        font-size: 1em;
+        background: #ffffff;
+        color: #2c2416;
+        transition: border-color 0.3s ease;
+    }
+    
+    #book-search:focus {
+        outline: none;
+        border-color: #8b6f47;
+        border-width: 2px;
+    }
+    
+    button[type="submit"] {
+        background-color: #3d2817;
+        color: #f5f1e8;
+        border: 2px solid #3d2817;
+        padding: 15px 30px;
+        font-size: 1em;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        font-family: 'Lora', serif;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #5c3f2a;
+        border-color: #5c3f2a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 </style>
 {% endblock %}
 
 {% block content %}
     <h1>Add Books You Love</h1>
-    <p>Search for books to add them to your favorites.</p>
+    <p style="font-size: 1.1em; color: #5c3f2a; font-style: italic; margin-bottom: 30px;">Search for books to add them to your favorites.</p>
     
-    <div style="margin-bottom: 20px; position: relative;">
-        <label style="font-weight: 600; color: #6b4423;"><strong>Search by Title:</strong></label><br>
-        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 400px; padding: 10px; font-size: 16px; border: 2px solid #c9b99b; border-radius: 6px; background: #faf8f5; color: #3d2f1f;">
-        <span id="loading-msg" style="display:none; color: #8b6f47; margin-left: 10px;"> Searching Google...</span>
+    <div style="margin-bottom: 30px; position: relative;">
+        <label style="font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; display: block; margin-bottom: 10px;"><strong>Search by Title:</strong></label>
+        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 500px;">
+        <span id="loading-msg" style="display:none; color: #8b6f47; margin-left: 15px; font-style: italic;"> Searching Google...</span>
     </div>
 
     <form method="POST" action="{% url 'save_favorite' %}" id="favorites-form">
         {% csrf_token %}
         <div id="selected-books-container" class="selected-books" style="display: none;">
-            <h3 style="color: #6b4423;">Selected Books:</h3>
+            <h3 style="color: #3d2817; border-bottom: 3px solid #d4a574; padding-bottom: 15px; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
             <div id="selected-books-list"></div>
-            <button type="submit" style="background-color: #8b6f47; color: #faf8f5; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 6px; margin-top: 15px; font-weight: 600; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+            <button type="submit" style="margin-top: 25px;">
                 Add to My Favorites
             </button>
         </div>
@@ -129,7 +194,7 @@ $(function() {
     $("#book-search").autocomplete({
         source: "{% url 'book_autocomplete' %}", 
         minLength: 3, 
-        delay: 500,   
+        delay: 300,   
         
         search: function() {
             $("#loading-msg").show();

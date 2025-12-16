@@ -1,12 +1,33 @@
 import requests
+from django.core.cache import cache
+
+# Create a session for connection pooling (reuses TCP connections)
+_session = requests.Session()
 
 def search_google_books(query):
     """
-    Searches Google Books API and returns a simplified list of results.
+    Searches Google Books API with caching to reduce latency.
+    Uses connection pooling and caching for better performance.
     """
+    # Normalize query for cache key
+    query_normalized = query.lower().strip()
+    cache_key = f"google_books_search:{query_normalized}"
+    
+    # Check cache first (cache hits are <50ms vs 500-1000ms for API calls)
+    cached_results = cache.get(cache_key)
+    if cached_results is not None:
+        return cached_results
+    
     url = "https://www.googleapis.com/books/v1/volumes"
     params = {'q': query, 'maxResults': 5}
-    response = requests.get(url, params=params)
+    
+    # Add timeout to prevent hanging on slow API responses
+    try:
+        response = _session.get(url, params=params, timeout=5)
+    except requests.exceptions.Timeout:
+        return []
+    except requests.exceptions.RequestException:
+        return []
     
     results = []
     
@@ -29,5 +50,9 @@ def search_google_books(query):
                 'isbn': isbn,
                 'google_id': item.get('id')
             })
-            
+    
+    # Cache results for 24 hours (86400 seconds)
+    # Popular searches will be instant on subsequent requests
+    cache.set(cache_key, results, 86400)
+    
     return results

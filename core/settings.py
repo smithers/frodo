@@ -117,6 +117,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'books' / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -126,10 +129,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # config/settings.py
 
 # Where to go if you are not logged in (overrides the default)
-LOGIN_URL = 'login'
+LOGIN_URL = 'home'
 
 # Where to go after successfully logging in
 LOGIN_REDIRECT_URL = 'my_books'
 
 # Where to go after logging out
 LOGOUT_REDIRECT_URL = 'home'
+
+# Cache configuration for Google Books API responses
+# Using local memory cache (fast, but not shared across processes)
+# For production, consider Redis: pip install django-redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# For production with Redis (uncomment and install django-redis):
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://127.0.0.1:6379/1',
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }

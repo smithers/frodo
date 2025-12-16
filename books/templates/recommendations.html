@@ -4,21 +4,30 @@
 
 {% block extra_head %}
 <style>
+    h1 {
+        border-bottom: 4px solid #d4a574;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+    
     .accordion-header {
         cursor: pointer;
-        padding: 8px 0;
+        padding: 0;
         color: #8b6f47;
-        font-size: 0.85em;
+        font-size: 0.9em;
         user-select: none;
         display: flex;
         align-items: center;
-        gap: 5px;
-        font-weight: 600;
+        gap: 8px;
+        font-weight: normal;
+        letter-spacing: normal;
+        transition: color 0.3s ease;
+        margin-top: 0;
     }
     
     .accordion-header:hover {
-        text-decoration: underline;
-        color: #6b4423;
+        color: #3d2817;
     }
     
     .accordion-icon {
@@ -41,44 +50,45 @@
     
     .accordion-content.active {
         max-height: 500px;
-        padding: 10px 0;
+        padding: 15px 0;
     }
     
     .explanation-text {
         font-style: italic;
-        color: #5a4a3a;
+        color: #5c3f2a;
         font-size: 0.9em;
-        line-height: 1.6;
-        padding-left: 15px;
-        border-left: 3px solid #8b6f47;
+        font-weight: normal;
+        line-height: 1.9;
+        padding-left: 20px;
+        border-left: 3px solid #d4a574;
     }
 </style>
 {% endblock %}
 
 {% block content %}
     <h1>Recommended For You</h1>
-    <p>Based on books you love, users similar to you also loved:</p>
+    <p style="font-size: 1.1em; color: #5c3f2a; font-style: italic; margin-bottom: 30px;">Based on books you love, users similar to you also loved:</p>
     <hr>
 
     {% if grouped_recommendations %}
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; margin-top: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;">
             {% for group in grouped_recommendations %}
-                <div class="card" style="border: 2px solid #c9b99b; border-radius: 10px; padding: 20px; background: #f5efe6; box-shadow: 3px 3px 8px rgba(0,0,0,0.15);">
-                    <div style="border-bottom: 3px solid #8b6f47; padding-bottom: 15px; margin-bottom: 15px;">
-                        <h3 style="margin: 0 0 10px 0; color: #6b4423;">{{ group.similar_user.username }}</h3>
-                        <p style="margin: 5px 0; font-size: 0.9em; color: #5a4a3a;">
-                            <strong>Same Favorites:</strong> {{ group.overlapping_titles|join:", " }}
+                <div class="card" style="background: #ffffff;">
+                    <div style="border-bottom: 3px solid #d4a574; padding-bottom: 20px; margin-bottom: 25px;">
+                        <p style="margin: 0; font-size: 1em; color: #5c3f2a; line-height: 1.8;">
+                            <strong style="color: #3d2817;">{{ group.similar_user.username }}</strong> loves the following same books you do: {% for title in group.overlapping_titles %}<em>{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}
                         </p>
                     </div>
                     
-                    <div style="margin-top: 15px;">
-                        <h4 style="margin: 0 0 10px 0; font-size: 1em; color: #6b4423;">Recommended Books:</h4>
+                    <div style="margin-top: 20px;">
+                        <p style="margin: 0 0 15px 0; font-size: 1em; color: #5c3f2a; line-height: 1.8;">
+                            Here are books that <strong style="color: #3d2817;">{{ group.similar_user.username }}</strong> loves that you didn't enter:
+                        </p>
                         <ul style="list-style: none; padding: 0; margin: 0;">
                             {% for book_data in group.recommended_books %}
-                                <li style="padding: 10px 0; border-bottom: 1px solid #d4c5b0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #e8ddd4;">
                                     <div>
-                                        <strong style="color: #3d2f1f;">{{ book_data.book.title }}</strong><br>
-                                        <span style="font-size: 0.85em; color: #5a4a3a;">by {{ book_data.book.author.name }}</span>
+                                        <strong style="color: #2c2416; font-size: 1em; font-family: 'Playfair Display', serif;">{{ book_data.book.title }}</strong> <span style="font-size: 0.9em; color: #5c3f2a; font-style: italic;">by {{ book_data.book.author.name }}</span>
                                         {% if book_data.explanation %}
                                             <div class="accordion-header" onclick="toggleAccordion(this)">
                                                 <span class="accordion-icon">▶</span>
@@ -99,19 +109,19 @@
             {% endfor %}
         </div>
     {% else %}
-        <div style="background: #e8ddd4; border: 2px solid #8b6f47; padding: 20px; border-radius: 10px; box-shadow: 3px 3px 6px rgba(0,0,0,0.1);">
-            <h3 style="color: #6b4423;">No matches yet!</h3>
-            <p style="color: #5a4a3a;">Our algorithm matches you with users who share your favorite books.</p>
+        <div class="card" style="background: linear-gradient(135deg, #ffffff 0%, #f5f1e8 100%);">
+            <h3 style="color: #3d2817; margin-bottom: 15px;">No matches yet!</h3>
+            <p style="color: #5c3f2a; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our algorithm matches you with users who share your favorite books.</p>
             
             {% if diagnostic %}
-                <div style="margin-top: 15px; padding: 15px; background: #f5efe6; border: 2px solid #c9b99b; border-radius: 8px; font-size: 0.9em;">
-                    <strong style="color: #6b4423;">Your stats:</strong><br>
+                <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-left: 4px solid #d4a574; font-size: 1em; line-height: 1.9;">
+                    <strong style="color: #3d2817;">Your stats:</strong><br>
                     • Total books you love: {{ diagnostic.total_favorites }}<br>
                     • Similar users found: {{ diagnostic.similar_users_count }}<br>
                     {% if diagnostic.message %}
-                        <p style="color: #8b6f47; margin-top: 10px;"><strong>{{ diagnostic.message }}</strong></p>
+                        <p style="color: #8b6f47; margin-top: 15px; font-style: italic;"><strong>{{ diagnostic.message }}</strong></p>
                     {% elif diagnostic.total_favorites > 0 and diagnostic.similar_users_count == 0 %}
-                        <p style="color: #8b6f47; margin-top: 10px;">
+                        <p style="color: #8b6f47; margin-top: 15px; font-style: italic;">
                             <strong>You have favorite books, but no other users have favorited the same books yet.</strong><br>
                             This could mean the books you love aren't in our seed data, or other users haven't discovered them yet.
                         </p>
@@ -119,7 +129,7 @@
                 </div>
             {% endif %}
             
-            <p style="margin-top: 15px; color: #5a4a3a;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}" style="color: #8b6f47; font-weight: 600;">Add more books</a> that you love!</p>
+            <p style="margin-top: 30px; color: #5c3f2a; font-size: 1.05em;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}" style="color: #8b6f47; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b6f47;">Add more books</a> that you love!</p>
         </div>
     {% endif %}
 {% endblock %}

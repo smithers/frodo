@@ -40,7 +40,6 @@ def register_view(request):
     
     return render(request, 'registration/register.html', {'form': form})
 
-@login_required
 def add_favorite_view(request):
     results = []
     query = request.GET.get('q')
@@ -50,7 +49,6 @@ def add_favorite_view(request):
         
     return render(request, 'add_favorite.html', {'results': results, 'query': query})
 
-@login_required
 def book_autocomplete(request):
     query = request.GET.get('term', '') # jQuery UI uses 'term' to send what the user types
     
@@ -72,7 +70,6 @@ def book_autocomplete(request):
         
     return JsonResponse(suggestions, safe=False)
 
-@login_required
 def save_favorite_view(request):
     if request.method == "POST":
         # Handle multiple books from add_favorite page
@@ -142,17 +139,38 @@ def save_favorite_view(request):
 
             # --- STEP 4: SAVE FAVORITE ---
             explanation_text = (explanation or "").strip()
-            favorite, created = UserFavoriteBook.objects.get_or_create(
-                user=request.user,
-                book=book,
-                defaults={'explanation': explanation_text}
-            )
-            # Update explanation if favorite already existed
-            if not created and explanation_text:
-                favorite.explanation = explanation_text
-                favorite.save()
-            if created:
-                saved_count += 1
+            
+            if request.user.is_authenticated:
+                # Authenticated users: save to database
+                favorite, created = UserFavoriteBook.objects.get_or_create(
+                    user=request.user,
+                    book=book,
+                    defaults={'explanation': explanation_text}
+                )
+                # Update explanation if favorite already existed
+                if not created and explanation_text:
+                    favorite.explanation = explanation_text
+                    favorite.save()
+                if created:
+                    saved_count += 1
+            else:
+                # Unauthenticated users: save to session
+                session_favorites = request.session.get('favorite_books', [])
+                # Check if book already exists in session
+                book_exists = any(
+                    fav.get('book_id') == book.id 
+                    for fav in session_favorites
+                )
+                if not book_exists:
+                    session_favorites.append({
+                        'book_id': book.id,
+                        'title': book.title,
+                        'author': book.author.name,
+                        'isbn': book.isbn or '',
+                        'explanation': explanation_text
+                    })
+                    request.session['favorite_books'] = session_favorites
+                    saved_count += 1
 
         if saved_count:
             if saved_count == 1:
@@ -168,7 +186,6 @@ def save_favorite_view(request):
 
         return redirect('recommendations')
 
-@login_required
 def remove_favorite_view(request):
     """Remove a book from favorites"""
     if request.method == "POST":
@@ -183,15 +200,98 @@ def remove_favorite_view(request):
             if author:
                 book = Book.objects.filter(title__iexact=clean_title, author=author).first()
                 if book:
-                    UserFavoriteBook.objects.filter(user=request.user, book=book).delete()
-                    messages.success(request, f"Removed {book.title} from your favorites.")
+                    if request.user.is_authenticated:
+                        UserFavoriteBook.objects.filter(user=request.user, book=book).delete()
+                        messages.success(request, f"Removed {book.title} from your favorites.")
+                    else:
+                        # Remove from session
+                        session_favorites = request.session.get('favorite_books', [])
+                        session_favorites = [
+                            fav for fav in session_favorites 
+                            if fav.get('book_id') != book.id
+                        ]
+                        request.session['favorite_books'] = session_favorites
+                        messages.success(request, f"Removed {book.title} from your favorites.")
     
     return redirect('my_books')
 
-@login_required
 def recommendation_view(request):
-    # Ask the brain for the list
-    recommended_data = get_book_recommendations(request.user)
+    # Get favorite book IDs (from database or session)
+    if request.user.is_authenticated:
+        my_favorite_book_ids = set(
+            UserFavoriteBook.objects.filter(user=request.user).values_list("book_id", flat=True)
+        )
+    else:
+        # Get from session
+        session_favorites = request.session.get('favorite_books', [])
+        my_favorite_book_ids = set(fav.get('book_id') for fav in session_favorites if fav.get('book_id'))
+    
+    if not my_favorite_book_ids:
+        context = {
+            'grouped_recommendations': [],
+            'diagnostic': {
+                'total_favorites': 0,
+                'similar_users_count': 0,
+                'recommendations_count': 0,
+                'message': 'You need to add at least one book you love to get recommendations!',
+            },
+        }
+        return render(request, 'recommendations.html', context)
+    
+    # Find other users who also love at least one of those same books
+    from django.contrib.auth.models import User
+    similar_users = (
+        User.objects.filter(
+            favorite_books__book_id__in=my_favorite_book_ids,
+        )
+    )
+    if request.user.is_authenticated:
+        similar_users = similar_users.exclude(id=request.user.id)
+    similar_users = similar_users.distinct()
+    
+    # For each recommended book, track which similar user(s) recommended it
+    # and count the overlap in favorite books
+    book_recommendations = {}  # book_id -> {book, similar_user, overlap_count}
+    
+    for user in similar_users:
+        # Get all books this user loves
+        their_favorite_book_ids = set(
+            UserFavoriteBook.objects.filter(user=user).values_list("book_id", flat=True)
+        )
+        
+        # Find overlapping books: books BOTH users love
+        overlapping_book_ids = my_favorite_book_ids & their_favorite_book_ids
+        overlap_count = len(overlapping_book_ids)
+        
+        # Get the actual Book objects for overlapping favorites
+        overlapping_books = Book.objects.filter(id__in=overlapping_book_ids)
+        overlapping_titles = [book.title for book in overlapping_books]
+        
+        # For each book they love that I haven't favorited, add it as a recommendation
+        for book_id in their_favorite_book_ids:
+            if book_id not in my_favorite_book_ids:
+                # If we haven't seen this book yet, or if this user has more overlap, use this user
+                if book_id not in book_recommendations or overlap_count > book_recommendations[book_id]['overlap_count']:
+                    book_recommendations[book_id] = {
+                        'book_id': book_id,
+                        'similar_user': user,
+                        'overlap_count': overlap_count,
+                        'overlapping_titles': overlapping_titles,
+                    }
+    
+    # Convert to list of dictionaries with book objects
+    recommended_data = []
+    for rec_data in book_recommendations.values():
+        book = Book.objects.get(id=rec_data['book_id'])
+        recommended_data.append({
+            'book': book,
+            'similar_user': rec_data['similar_user'],
+            'overlap_count': rec_data['overlap_count'],
+            'overlapping_titles': rec_data['overlapping_titles'],
+        })
+    
+    # Sort by overlap_count (descending) - users with more overlapping favorites first
+    recommended_data.sort(key=lambda x: x['overlap_count'], reverse=True)
     
     # Group recommendations by similar_user
     grouped_recommendations = {}
@@ -220,28 +320,13 @@ def recommendation_view(request):
     grouped_list = list(grouped_recommendations.values())
     grouped_list.sort(key=lambda x: x['overlap_count'], reverse=True)
     
-    # Diagnostic info to help debug empty recommendations
-    user_favorites = UserFavoriteBook.objects.filter(user=request.user)
-    
-    if user_favorites.exists():
-        my_favorite_book_ids = set(user_favorites.values_list('book_id', flat=True))
-        from django.contrib.auth.models import User
-        similar_users = User.objects.filter(
-            favorite_books__book_id__in=my_favorite_book_ids
-        ).exclude(id=request.user.id).distinct()
-        
-        diagnostic_info = {
-            'total_favorites': user_favorites.count(),
-            'similar_users_count': similar_users.count(),
-            'recommendations_count': len(recommended_data),
-        }
-    else:
-        diagnostic_info = {
-            'total_favorites': 0,
-            'similar_users_count': 0,
-            'recommendations_count': 0,
-            'message': 'You need to add at least one book you love to get recommendations!',
-        }
+    # Diagnostic info
+    total_favorites = len(my_favorite_book_ids)
+    diagnostic_info = {
+        'total_favorites': total_favorites,
+        'similar_users_count': similar_users.count(),
+        'recommendations_count': len(recommended_data),
+    }
     
     context = {
         'grouped_recommendations': grouped_list,
@@ -249,8 +334,28 @@ def recommendation_view(request):
     }
     return render(request, 'recommendations.html', context)
 
-@login_required
 def my_books_view(request):
-    # Fetch user's favorite books ordered by newest first
-    user_favorites = UserFavoriteBook.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'my_books.html', {'favorites': user_favorites})
+    if request.user.is_authenticated:
+        # Fetch user's favorite books ordered by newest first
+        user_favorites = UserFavoriteBook.objects.filter(user=request.user).order_by('-created_at')
+        return render(request, 'my_books.html', {'favorites': user_favorites})
+    else:
+        # For unauthenticated users, get books from session
+        session_favorites = request.session.get('favorite_books', [])
+        # Convert session data to a format similar to UserFavoriteBook queryset
+        favorites_list = []
+        for fav in session_favorites:
+            book_id = fav.get('book_id')
+            if book_id:
+                try:
+                    book = Book.objects.get(id=book_id)
+                    # Create a simple object that mimics UserFavoriteBook
+                    class SessionFavorite:
+                        def __init__(self, book, explanation):
+                            self.book = book
+                            self.explanation = explanation
+                            self.created_at = None  # Session doesn't track creation time
+                    favorites_list.append(SessionFavorite(book, fav.get('explanation', '')))
+                except Book.DoesNotExist:
+                    continue
+        return render(request, 'my_books.html', {'favorites': favorites_list})
