@@ -62,6 +62,24 @@
         padding-left: 20px;
         border-left: 3px solid #d4a574;
     }
+    
+    @media (max-width: 768px) {
+        /* Make grid single column on mobile */
+        .recommendations-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+            margin-top: 20px !important;
+        }
+        
+        /* Card adjustments */
+        .card {
+            padding: 20px !important;
+        }
+        
+        h1 {
+            font-size: 1.8em;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -71,12 +89,12 @@
     <hr>
 
     {% if grouped_recommendations %}
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
                 <div class="card" style="background: #ffffff;">
                     <div style="border-bottom: 3px solid #d4a574; padding-bottom: 20px; margin-bottom: 25px;">
                         <p style="margin: 0; font-size: 1em; color: #5c3f2a; line-height: 1.8;">
-                            <strong style="color: #3d2817;">{{ group.similar_user.username }}</strong> loves the following same books you do: {% for title in group.overlapping_titles %}<em>{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}
+                            <strong style="color: #3d2817;">{{ group.similar_user.username }}</strong> loves the following same books you do: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}
                         </p>
                     </div>
                     

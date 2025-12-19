@@ -8,7 +8,7 @@ from .models import Book, Author, UserFavoriteBook
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case
 
-from .services import search_google_books
+from .services import search_google_books, get_book_details
 
 def homepage_view(request):
     """Homepage view - accessible to all users, shows login form if not authenticated"""
@@ -359,3 +359,18 @@ def my_books_view(request):
                 except Book.DoesNotExist:
                     continue
         return render(request, 'my_books.html', {'favorites': favorites_list})
+
+def book_info_view(request):
+    """API endpoint to get book information from Google Books"""
+    title = request.GET.get('title', '').strip()
+    author = request.GET.get('author', '').strip()
+    
+    if not title or not author:
+        return JsonResponse({'error': 'Title and author are required'}, status=400)
+    
+    book_details = get_book_details(title, author)
+    
+    if book_details:
+        return JsonResponse(book_details)
+    else:
+        return JsonResponse({'error': 'Book information not found'}, status=404)

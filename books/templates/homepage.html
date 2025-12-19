@@ -43,7 +43,7 @@
     
     .hero-large-text {
         font-family: 'Playfair Display', serif;
-        font-size: 5.5em;
+        font-size: 4em;
         font-weight: 700;
         color: #f5f1e8;
         margin-bottom: 20px;
@@ -171,16 +171,64 @@
     }
     
     @media (max-width: 768px) {
+        .hero-section {
+            height: auto;
+            min-height: 500px;
+            padding: 40px 20px;
+            margin: -20px -20px 0 -20px;
+            width: 100vw;
+            margin-left: -20px;
+            background-attachment: scroll;
+        }
+        
         .hero-large-text {
-            font-size: 3.5em;
+            font-size: 2.5em;
+            margin-bottom: 15px;
         }
         
         .hero-subtitle {
-            font-size: 1.4em;
+            font-size: 1.2em;
+            margin-bottom: 25px;
         }
         
-        .hero-section {
-            background-attachment: scroll;
+        .hero-description {
+            font-size: 1em;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        
+        .content-section {
+            padding: 40px 20px;
+        }
+        
+        .feature-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            padding: 25px;
+        }
+        
+        /* Stack login section on mobile */
+        .homepage-login-grid {
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
+        }
+        
+        /* Hero search input */
+        #hero-book-search {
+            min-width: 100% !important;
+            width: 100% !important;
+        }
+        
+        .hero-content > div {
+            width: 100%;
+        }
+        
+        h2 {
+            font-size: 1.8em;
         }
     }
 </style>
@@ -194,13 +242,13 @@
             Great Minds Read Alike
         </div>
         <div class="hero-description">
-            Enter a few books that you absolutely love, and we'll show you book recommendations from people that love the same books as you!
+            Enter books that you absolutely love into the box below. We'll show you recommendations from users who love the same books you do. The more books you enter, the more likely you find others who love what you love.
         </div>
         <div style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
             <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
-                    <input type="text" id="hero-book-search" placeholder="Search for a book to add..." style="flex: 1; padding: 15px 20px; border: 2px solid #d4a574; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #2c2416; min-width: 300px;">
+                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type slowly)" style="flex: 1; padding: 15px 20px; border: 2px solid #d4a574; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #2c2416; min-width: 300px;">
                     <span id="hero-loading-msg" style="display:none; color: #e8ddd4; font-style: italic;"> Searching...</span>
                 </div>
                 <div id="hero-selected-books-list" style="margin-top: 20px; display: none;"></div>
@@ -251,7 +299,7 @@
             <span>GET STARTED</span>
         </div>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start; margin-top: 60px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start; margin-top: 60px;" class="homepage-login-grid">
             <div class="feature-card" style="text-align: left;">
                 <h3 style="text-align: left; display: block;">Join Our Community</h3>
                 <p style="text-align: left;">
@@ -415,10 +463,10 @@ $(function() {
         $("#hero-submit-container").show();
         
         heroSelectedBooks.forEach(function(book, index) {
-            var item = $('<div style="background: rgba(255, 255, 255, 0.95); padding: 15px 20px; margin-bottom: 10px; border: 1px solid #d4a574; color: #2c2416; display: flex; justify-content: space-between; align-items: center;"></div>');
+            var item = $('<div style="background: rgba(255, 255, 255, 0.95); padding: 3px 20px; margin-bottom: 10px; border: 1px solid #d4a574; color: #2c2416; display: flex; justify-content: space-between; align-items: center;"></div>');
             item.html(
                 '<div style="flex: 1;">' +
-                    '<strong style="font-family: \'Playfair Display\', serif; font-size: 1.1em; color: #3d2817; display: block; margin-bottom: 5px;">' + $('<div>').text(book.title).html() + '</strong>' +
+                    '<strong style="font-family: \'Playfair Display\', serif; font-size: 1.1em; color: #3d2817; display: inline;">' + $('<div>').text(book.title).html() + '</strong> ' +
                     '<span style="font-style: italic; color: #5c3f2a; font-size: 0.95em;">by ' + $('<div>').text(book.author).html() + '</span>' +
                 '</div>' +
                 '<button type="button" class="remove-hero-book" data-index="' + index + '" style="background: transparent; color: #8b6f47; border: 1px solid #8b6f47; padding: 6px 12px; cursor: pointer; font-size: 0.85em; margin-left: 15px;">Remove</button>'
@@ -433,7 +481,7 @@ $(function() {
         if (heroSelectedBooks.length >= maxBooks) {
             $("#hero-book-search").prop('disabled', true).attr('placeholder', 'Maximum ' + maxBooks + ' books reached');
         } else {
-            $("#hero-book-search").prop('disabled', false).attr('placeholder', 'Search for a book to add... (' + (maxBooks - heroSelectedBooks.length) + ' remaining)');
+            $("#hero-book-search").prop('disabled', false).attr('placeholder', 'Enter a book you love (type slowly)');
         }
     }
     

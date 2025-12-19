@@ -40,7 +40,7 @@
     .book-item {
         background: #ffffff;
         border: 1px solid #d4c5b0;
-        padding: 25px;
+        padding: 3px 25px;
         margin-bottom: 20px;
         border-radius: 0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -56,7 +56,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 15px;
-        padding-bottom: 15px;
+        padding: 0 0 15px 0;
         border-bottom: 2px solid #e8ddd4;
     }
     
@@ -161,6 +161,35 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
+    
+    @media (max-width: 768px) {
+        #book-search {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .book-item {
+            padding: 20px;
+        }
+        
+        .book-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .remove-btn {
+            width: 100%;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 1.8em;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -170,7 +199,7 @@
     
     <div style="margin-bottom: 30px; position: relative;">
         <label style="font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; display: block; margin-bottom: 10px;"><strong>Search by Title:</strong></label>
-        <input type="text" id="book-search" placeholder="Type 'The Hobbit'..." style="width: 100%; max-width: 500px;">
+        <input type="text" id="book-search" placeholder="Enter a book you love (type slowly)" style="width: 100%; max-width: 500px;">
         <span id="loading-msg" style="display:none; color: #8b6f47; margin-left: 15px; font-style: italic;"> Searching Google...</span>
     </div>
 
@@ -238,8 +267,8 @@ $(function() {
             item.html(
                 '<div class="book-header">' +
                     '<div class="book-info">' +
-                        '<h4>' + book.title + '</h4>' +
-                        '<p>by ' + book.author + '</p>' +
+                        '<h4 style="display: inline; margin: 0; margin-right: 8px;">' + book.title + '</h4>' +
+                        '<p style="display: inline; margin: 0;">by ' + book.author + '</p>' +
                     '</div>' +
                     '<button type="button" class="remove-btn" data-index="' + index + '">Remove</button>' +
                 '</div>' +

@@ -8,3 +8,5 @@ You can use any image format (jpg, png, etc.) - just update the filename in home
 
 The image will be used as a full-screen background in the hero section of the homepage.
 
+
+

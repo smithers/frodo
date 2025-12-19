@@ -2,7 +2,7 @@
 {% block title %}My Favorite Books{% endblock %}
 
 {% block content %}
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;" class="my-books-header">
         <h1 style="border-bottom: 4px solid #d4a574; padding-bottom: 15px; display: inline-block;">My Favorite Books</h1>
         <a href="{% url 'add_favorite' %}" style="background-color: #3d2817; color: #f5f1e8; padding: 12px 25px; text-decoration: none; border-radius: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; border: 2px solid #3d2817; transition: all 0.3s ease;">+ Add New Book</a>
     </div>
@@ -11,7 +11,7 @@
 
     {% if favorites %}
         <div class="card" style="padding: 0; overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 1em;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 1em;" class="desktop-table">
                 <thead>
                     <tr style="border-bottom: 3px solid #d4a574; background-color: #f5f1e8;">
                         <th style="text-align: left; padding: 20px 25px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Title</th>
@@ -49,6 +49,33 @@
                     {% endfor %}
                 </tbody>
             </table>
+            
+            <!-- Mobile Card Layout -->
+            <div class="mobile-book-cards">
+                {% for favorite in favorites %}
+                    <div class="mobile-book-card">
+                        <div class="book-title">{{ favorite.book.title }}</div>
+                        <div class="book-author">by {{ favorite.book.author.name }}</div>
+                        <div class="book-date">
+                            {% if favorite.created_at %}
+                                Added {{ favorite.created_at|date:"F j, Y" }}
+                            {% else %}
+                                Recently added
+                            {% endif %}
+                        </div>
+                        <div class="book-actions">
+                            <form method="post" action="{% url 'remove_favorite' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="title" value="{{ favorite.book.title }}">
+                                <input type="hidden" name="author" value="{{ favorite.book.author.name }}">
+                                <button type="submit" style="background: transparent; color: #8b6f47; border: 1px solid #8b6f47; padding: 8px 18px; cursor: pointer; font-size: 0.9em; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; font-family: 'Lora', serif; width: 100%;">
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     {% else %}
         <div class="card" style="text-align: center; background: linear-gradient(135deg, #ffffff 0%, #f5f1e8 100%);">
@@ -73,6 +100,79 @@
             border-color: #5c3f2a !important;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Mobile styles */
+        .mobile-book-cards {
+            display: none;
+        }
+        
+        .mobile-book-card {
+            background: #ffffff;
+            border: 1px solid #d4c5b0;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .mobile-book-card .book-title {
+            font-weight: 600;
+            color: #2c2416;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .mobile-book-card .book-author {
+            color: #5c3f2a;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+        
+        .mobile-book-card .book-date {
+            color: #8b6f47;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .mobile-book-card .book-actions {
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            /* Hide table on mobile */
+            .desktop-table {
+                display: none;
+            }
+            
+            /* Show card layout on mobile */
+            .mobile-book-cards {
+                display: block;
+            }
+            
+            /* Header adjustments */
+            .my-books-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 15px !important;
+            }
+            
+            .my-books-header a {
+                width: 100%;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 0;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-book-cards {
+                display: none;
+            }
         }
     </style>
 {% endblock %}

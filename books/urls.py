@@ -14,4 +14,5 @@ path('remove-favorite/', views.remove_favorite_view, name='remove_favorite'),
 path('my-books/', views.my_books_view, name='my_books'),
 path('recommend/', views.recommendation_view, name='recommendations'),
 path('api/search/', views.book_autocomplete, name='book_autocomplete'),
+path('api/book-info/', views.book_info_view, name='book_info'),
 ]
