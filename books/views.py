@@ -3,12 +3,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.db import IntegrityError
 from .models import Book, Author, UserFavoriteBook
 from django.http import JsonResponse
-from .utils import get_book_recommendations, smart_title_case
+from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 
-from .services import search_google_books, get_book_details
+from .services import search_books, get_book_details
 
 def homepage_view(request):
     """Homepage view - accessible to all users, shows login form if not authenticated"""
@@ -45,7 +46,7 @@ def add_favorite_view(request):
     query = request.GET.get('q')
     
     if query:
-        results = search_google_books(query)
+        results = search_books(query)
         
     return render(request, 'add_favorite.html', {'results': results, 'query': query})
 
@@ -55,8 +56,8 @@ def book_autocomplete(request):
     if len(query) < 3:
         return JsonResponse([], safe=False)
 
-    # Use your existing service function!
-    results = search_google_books(query)
+    # Use the unified search function (database first, then Google API)
+    results = search_books(query)
     
     # Reformat data specifically for jQuery UI Autocomplete
     suggestions = []
@@ -154,22 +155,37 @@ def save_favorite_view(request):
                 if created:
                     saved_count += 1
             else:
-                # Unauthenticated users: save to session
-                session_favorites = request.session.get('favorite_books', [])
-                # Check if book already exists in session
-                book_exists = any(
-                    fav.get('book_id') == book.id 
-                    for fav in session_favorites
+                # Non-authenticated users: create or get guest user
+                guest_user_id = request.session.get('guest_user_id')
+                if guest_user_id:
+                    try:
+                        guest_user = User.objects.get(id=guest_user_id)
+                    except User.DoesNotExist:
+                        guest_user = None
+                else:
+                    guest_user = None
+                
+                if not guest_user:
+                    # Create a new guest user with unique username
+                    username = generate_guest_username()
+                    guest_user = User.objects.create_user(
+                        username=username,
+                        password=User.objects.make_random_password(),
+                        is_active=True
+                    )
+                    request.session['guest_user_id'] = guest_user.id
+                
+                # Save favorite to database using guest user
+                favorite, created = UserFavoriteBook.objects.get_or_create(
+                    user=guest_user,
+                    book=book,
+                    defaults={'explanation': explanation_text}
                 )
-                if not book_exists:
-                    session_favorites.append({
-                        'book_id': book.id,
-                        'title': book.title,
-                        'author': book.author.name,
-                        'isbn': book.isbn or '',
-                        'explanation': explanation_text
-                    })
-                    request.session['favorite_books'] = session_favorites
+                # Update explanation if favorite already existed
+                if not created and explanation_text:
+                    favorite.explanation = explanation_text
+                    favorite.save()
+                if created:
                     saved_count += 1
 
         if saved_count:
@@ -204,27 +220,39 @@ def remove_favorite_view(request):
                         UserFavoriteBook.objects.filter(user=request.user, book=book).delete()
                         messages.success(request, f"Removed {book.title} from your favorites.")
                     else:
-                        # Remove from session
-                        session_favorites = request.session.get('favorite_books', [])
-                        session_favorites = [
-                            fav for fav in session_favorites 
-                            if fav.get('book_id') != book.id
-                        ]
-                        request.session['favorite_books'] = session_favorites
-                        messages.success(request, f"Removed {book.title} from your favorites.")
+                        # Get guest user from session
+                        guest_user_id = request.session.get('guest_user_id')
+                        if guest_user_id:
+                            try:
+                                guest_user = User.objects.get(id=guest_user_id)
+                                UserFavoriteBook.objects.filter(user=guest_user, book=book).delete()
+                                messages.success(request, f"Removed {book.title} from your favorites.")
+                            except User.DoesNotExist:
+                                messages.warning(request, "Could not find your guest account.")
+                        else:
+                            messages.warning(request, "No favorites found to remove.")
     
     return redirect('my_books')
 
 def recommendation_view(request):
-    # Get favorite book IDs (from database or session)
+    # Get favorite book IDs (from database or guest user)
     if request.user.is_authenticated:
         my_favorite_book_ids = set(
             UserFavoriteBook.objects.filter(user=request.user).values_list("book_id", flat=True)
         )
     else:
-        # Get from session
-        session_favorites = request.session.get('favorite_books', [])
-        my_favorite_book_ids = set(fav.get('book_id') for fav in session_favorites if fav.get('book_id'))
+        # Get from guest user in session
+        guest_user_id = request.session.get('guest_user_id')
+        if guest_user_id:
+            try:
+                guest_user = User.objects.get(id=guest_user_id)
+                my_favorite_book_ids = set(
+                    UserFavoriteBook.objects.filter(user=guest_user).values_list("book_id", flat=True)
+                )
+            except User.DoesNotExist:
+                my_favorite_book_ids = set()
+        else:
+            my_favorite_book_ids = set()
     
     if not my_favorite_book_ids:
         context = {
@@ -239,7 +267,6 @@ def recommendation_view(request):
         return render(request, 'recommendations.html', context)
     
     # Find other users who also love at least one of those same books
-    from django.contrib.auth.models import User
     similar_users = (
         User.objects.filter(
             favorite_books__book_id__in=my_favorite_book_ids,
@@ -340,25 +367,19 @@ def my_books_view(request):
         user_favorites = UserFavoriteBook.objects.filter(user=request.user).order_by('-created_at')
         return render(request, 'my_books.html', {'favorites': user_favorites})
     else:
-        # For unauthenticated users, get books from session
-        session_favorites = request.session.get('favorite_books', [])
-        # Convert session data to a format similar to UserFavoriteBook queryset
-        favorites_list = []
-        for fav in session_favorites:
-            book_id = fav.get('book_id')
-            if book_id:
-                try:
-                    book = Book.objects.get(id=book_id)
-                    # Create a simple object that mimics UserFavoriteBook
-                    class SessionFavorite:
-                        def __init__(self, book, explanation):
-                            self.book = book
-                            self.explanation = explanation
-                            self.created_at = None  # Session doesn't track creation time
-                    favorites_list.append(SessionFavorite(book, fav.get('explanation', '')))
-                except Book.DoesNotExist:
-                    continue
-        return render(request, 'my_books.html', {'favorites': favorites_list})
+        # For non-authenticated users, get books from guest user
+        guest_user_id = request.session.get('guest_user_id')
+        if guest_user_id:
+            try:
+                guest_user = User.objects.get(id=guest_user_id)
+                user_favorites = UserFavoriteBook.objects.filter(user=guest_user).order_by('-created_at')
+                return render(request, 'my_books.html', {'favorites': user_favorites})
+            except User.DoesNotExist:
+                # Guest user doesn't exist, return empty list
+                return render(request, 'my_books.html', {'favorites': []})
+        else:
+            # No guest user yet, return empty list
+            return render(request, 'my_books.html', {'favorites': []})
 
 def book_info_view(request):
     """API endpoint to get book information from Google Books"""

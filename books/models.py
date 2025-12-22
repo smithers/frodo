@@ -33,11 +33,17 @@ class Book(models.Model):
     # We make ISBN nullable/blank because if we find a duplicate Title+Author,
     # we might choose to ignore the new ISBN, or we might insert a book manually without one.
     isbn = models.CharField(max_length=13, unique=True, null=True, blank=True)
+    
+    # Mark popular books for faster local database searches
+    is_popular = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         # This tells the DB: "You can have many books named 'It',
         # and many books by 'King', but only ONE 'It' by 'King'."
         unique_together = ("title", "author")
+        indexes = [
+            models.Index(fields=["is_popular", "title"]),  # For faster popular book searches
+        ]
 
     def __str__(self):
         return self.title
