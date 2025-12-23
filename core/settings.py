@@ -93,12 +93,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Use PostgreSQL on Railway (via DATABASE_URL), fallback to SQLite for local development
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL and dj_database_url:
+# Use PostgreSQL on Railway (via DATABASE_URL or DATABASE_PUBLIC_URL), fallback to SQLite for local development
+# DATABASE_PUBLIC_URL is used when connecting from outside Railway's network (e.g., local development)
+# If DATABASE_URL contains "railway.internal", prefer DATABASE_PUBLIC_URL for external connections
+database_url = os.environ.get('DATABASE_URL', '')
+if 'railway.internal' in database_url and os.environ.get('DATABASE_PUBLIC_URL'):
+    # Use public URL when DATABASE_URL points to internal hostname (not accessible from local machine)
+    database_url = os.environ.get('DATABASE_PUBLIC_URL')
+elif not database_url:
+    database_url = os.environ.get('DATABASE_PUBLIC_URL')
+
+if database_url and dj_database_url:
     DATABASES = {
         'default': dj_database_url.config(
-            default=DATABASE_URL,
+            default=database_url,
             conn_max_age=600,
             conn_health_checks=True,
         )
