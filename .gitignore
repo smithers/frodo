@@ -5,3 +5,9 @@ __pycache__/
 db.sqlite3
 .DS_Store
 .env
+
+# Static files (collected by collectstatic)
+staticfiles/
+
+# Media files (if you add user uploads later)
+media/
