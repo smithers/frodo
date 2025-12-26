@@ -23,7 +23,7 @@ class Command(BaseCommand):
             '--password',
             type=str,
             help='Password for the superuser',
-            default=os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'bjack44'),
+            default=os.environ.get('DJANGO_SUPERUSER_PASSWORD', ''),
         
         parser.add_argument(
             '--noinput',
