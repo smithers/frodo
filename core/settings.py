@@ -129,6 +129,14 @@ if database_url and dj_database_url:
         print("=" * 60)
     # Temporarily override DATABASE_URL env var so dj_database_url.config() uses our selected URL
     # (dj_database_url.config() reads from DATABASE_URL env var, ignoring the default parameter)
+    # Add SSL parameters for Railway's public PostgreSQL
+    if 'railway.app' in database_url and 'sslmode' not in database_url:
+        # Railway's public PostgreSQL requires SSL
+        if '?' in database_url:
+            database_url += '&sslmode=require'
+        else:
+            database_url += '?sslmode=require'
+    
     original_database_url_env = os.environ.get('DATABASE_URL')
     os.environ['DATABASE_URL'] = database_url
     try:
@@ -138,6 +146,10 @@ if database_url and dj_database_url:
                 conn_health_checks=True,
             )
         }
+        # Add connection timeout to prevent hanging
+        if 'OPTIONS' not in DATABASES['default']:
+            DATABASES['default']['OPTIONS'] = {}
+        DATABASES['default']['OPTIONS']['connect_timeout'] = 10
     finally:
         # Restore original DATABASE_URL if it was set
         if original_database_url_env is not None:
