@@ -93,9 +93,15 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Database configuration for Heroku (or local development)
-# Heroku automatically sets DATABASE_URL, fallback to SQLite for local development
+# Use PostgreSQL on Railway (via DATABASE_URL or DATABASE_PUBLIC_URL), fallback to SQLite for local development
+# DATABASE_PUBLIC_URL is used when connecting from outside Railway's network (e.g., local development)
+# If DATABASE_URL contains "railway.internal", prefer DATABASE_PUBLIC_URL for external connections
 database_url = os.environ.get('DATABASE_URL', '')
+if 'railway.internal' in database_url and os.environ.get('DATABASE_PUBLIC_URL'):
+    # Use public URL when DATABASE_URL points to internal hostname (not accessible from local machine)
+    database_url = os.environ.get('DATABASE_PUBLIC_URL')
+elif not database_url:
+    database_url = os.environ.get('DATABASE_PUBLIC_URL')
 
 if database_url and dj_database_url:
     DATABASES = {
@@ -106,7 +112,6 @@ if database_url and dj_database_url:
         )
     }
 else:
-    # Fallback to SQLite for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

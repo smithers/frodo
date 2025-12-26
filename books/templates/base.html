@@ -312,7 +312,7 @@
                 </form>
             {% else %}
                 {% if request.resolver_match.url_name != 'home' %}
-                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'home' %}">Login</a>
                 {% endif %}
             {% endif %}
         </div>
