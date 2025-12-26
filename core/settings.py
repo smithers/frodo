@@ -127,13 +127,23 @@ if database_url and dj_database_url:
     if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
         print(f"Using PostgreSQL with URL: {database_url[:80]}..." if len(database_url) > 80 else f"Using PostgreSQL with URL: {database_url}")
         print("=" * 60)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=database_url,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    # Temporarily override DATABASE_URL env var so dj_database_url.config() uses our selected URL
+    # (dj_database_url.config() reads from DATABASE_URL env var, ignoring the default parameter)
+    original_database_url_env = os.environ.get('DATABASE_URL')
+    os.environ['DATABASE_URL'] = database_url
+    try:
+        DATABASES = {
+            'default': dj_database_url.config(
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    finally:
+        # Restore original DATABASE_URL if it was set
+        if original_database_url_env is not None:
+            os.environ['DATABASE_URL'] = original_database_url_env
+        elif 'DATABASE_URL' in os.environ:
+            del os.environ['DATABASE_URL']
 else:
     # Debug: Show fallback to SQLite
     if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
