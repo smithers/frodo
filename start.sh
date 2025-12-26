@@ -1,23 +1,42 @@
-#!/bin/sh
-set -e
+#!/bin/bash
+set -x  # Enable debug mode to see all commands
 
 # Force output to be unbuffered
 export PYTHONUNBUFFERED=1
 
-echo "=== Starting application ===" >&2
-echo "PORT: ${PORT:-8000}" >&2
+echo "=== STARTING APPLICATION ==="
+echo "PORT variable: ${PORT}"
+echo "Working directory: $(pwd)"
+echo "Python path: $(which python)"
 
-# Run migrations
-echo "=== Running migrations ===" >&2
-python manage.py migrate --noinput
-echo "=== Migrations complete ===" >&2
+# Check if migrations are needed (Railway might run them separately)
+echo "=== Checking database connection ==="
+python manage.py check --database default || echo "Database check failed, continuing..."
 
-# Skip collectstatic for now (WhiteNoise will serve from STATICFILES_DIRS if needed)
-# Uncomment the line below if you want to collect static files
-# python manage.py collectstatic --noinput || true
-echo "=== Skipping static files collection (using WhiteNoise) ===" >&2
+# Run migrations (idempotent, safe to run multiple times)
+echo "=== Running migrations ==="
+python manage.py migrate --noinput || {
+    echo "=== Migration failed, but continuing ==="
+}
 
-# Start Gunicorn
-echo "=== Starting Gunicorn on port ${PORT:-8000} ===" >&2
-exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile - --log-level info
+echo "=== Migrations step complete ==="
+
+# Collect static files
+echo "=== Collecting static files ==="
+python manage.py collectstatic --noinput || {
+    echo "=== Static files collection failed, continuing ==="
+}
+
+echo "=== Starting Gunicorn ==="
+echo "Command: gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+
+# Start Gunicorn - use exec to replace shell process
+exec gunicorn core.wsgi:application \
+    --bind 0.0.0.0:${PORT:-8000} \
+    --workers 2 \
+    --timeout 120 \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level debug \
+    --capture-output
 
