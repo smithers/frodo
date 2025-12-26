@@ -95,22 +95,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Use PostgreSQL on Railway (via DATABASE_URL or DATABASE_PUBLIC_URL), fallback to SQLite for local development
 # DATABASE_PUBLIC_URL is used when connecting from outside Railway's network (e.g., railway run from local)
-# If DATABASE_URL contains "railway.internal" and DATABASE_PUBLIC_URL is set, use the public URL
+# Priority: DATABASE_PUBLIC_URL (if set) > DATABASE_URL (if not internal) > SQLite
 database_url = os.environ.get('DATABASE_URL', '')
 database_public_url = os.environ.get('DATABASE_PUBLIC_URL', '')
 
-if 'railway.internal' in database_url and database_public_url:
-    # DATABASE_URL points to internal hostname, but we have a public URL available
-    # Use public URL (works for railway run from local machine)
+# Always prefer DATABASE_PUBLIC_URL if it's set (works for railway run from local)
+if database_public_url:
     database_url = database_public_url
-elif 'railway.internal' in database_url and not database_public_url:
+elif 'railway.internal' in database_url:
     # Internal URL but no public URL - this will only work when actually deployed on Railway
     # If running locally with railway run, this will fail, so fall back to SQLite
     # (In production deployment, this will work fine)
     pass  # Keep using DATABASE_URL with railway.internal (will work when deployed)
 elif not database_url:
-    # No DATABASE_URL, try DATABASE_PUBLIC_URL
-    database_url = database_public_url
+    # No DATABASE_URL at all
+    database_url = ''
 
 if database_url and dj_database_url:
     DATABASES = {

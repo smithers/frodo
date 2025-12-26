@@ -21,11 +21,11 @@ python manage.py migrate --noinput || {
 
 echo "=== Migrations step complete ==="
 
-# Create superuser if it doesn't exist (only if env vars are set)
+# Create or reset superuser (only if env vars are set)
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
-    echo "=== Creating superuser if needed ==="
-    python manage.py create_superuser_noninteractive || {
-        echo "=== Superuser creation failed or already exists, continuing ==="
+    echo "=== Creating/updating superuser ==="
+    python manage.py reset_superuser_password || {
+        echo "=== Superuser creation/update failed, continuing ==="
     }
 fi
 
