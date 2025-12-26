@@ -21,6 +21,6 @@ RUN chmod +x /app/start.sh
 # Expose port (Railway sets PORT env var)
 EXPOSE 8000
 
-# Run the startup script
-CMD ["/app/start.sh"]
+# Run the startup script (using shell form to ensure proper execution)
+CMD /app/start.sh
 
