@@ -21,6 +21,14 @@ python manage.py migrate --noinput || {
 
 echo "=== Migrations step complete ==="
 
+# Create superuser if it doesn't exist (only if env vars are set)
+if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
+    echo "=== Creating superuser if needed ==="
+    python manage.py create_superuser_noninteractive || {
+        echo "=== Superuser creation failed or already exists, continuing ==="
+    }
+fi
+
 # Collect static files
 echo "=== Collecting static files ==="
 python manage.py collectstatic --noinput || {

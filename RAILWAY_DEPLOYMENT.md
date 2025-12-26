@@ -52,9 +52,26 @@ Railway will automatically:
 After deployment, you may want to:
 
 1. Create a superuser:
+   
+   **Option A: Using Railway CLI with environment variables (Recommended)**
    ```bash
-   railway run python manage.py createsuperuser
+   # Set environment variables in Railway dashboard, then run:
+   railway run python manage.py createsuperuser --noinput --username admin --email admin@example.com
    ```
+   Note: You'll need to set `DJANGO_SUPERUSER_PASSWORD` environment variable in Railway first.
+   
+   **Option B: Using custom non-interactive command**
+   ```bash
+   # Set environment variables in Railway dashboard:
+   # - DJANGO_SUPERUSER_USERNAME (default: admin)
+   # - DJANGO_SUPERUSER_EMAIL (default: admin@example.com)
+   # - DJANGO_SUPERUSER_PASSWORD (required)
+   railway run python manage.py create_superuser_noninteractive
+   ```
+   
+   **Option C: Using Railway web interface**
+   - Go to your service → Deployments → Click on a deployment → Look for "Shell" or "Console" option
+   - Or use Railway's "Connect" feature if available
 
 2. Populate popular books:
    ```bash
