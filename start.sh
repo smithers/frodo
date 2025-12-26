@@ -1,25 +1,16 @@
 #!/bin/bash
-set -x  # Enable debug mode to see all commands
+# This script is kept for compatibility but Heroku uses Procfile release phase
+# For Heroku, migrations and collectstatic run in the release phase
+# This script can be used for local development or other platforms
 
-# Force output to be unbuffered
+set -x
 export PYTHONUNBUFFERED=1
 
-echo "=== STARTING APPLICATION ==="
-echo "PORT variable: ${PORT}"
-echo "Working directory: $(pwd)"
-echo "Python path: $(which python)"
-
-# Check if migrations are needed (Railway might run them separately)
-echo "=== Checking database connection ==="
-python manage.py check --database default || echo "Database check failed, continuing..."
-
-# Run migrations (idempotent, safe to run multiple times)
 echo "=== Running migrations ==="
-python manage.py migrate --noinput || {
-    echo "=== Migration failed, but continuing ==="
-}
+python manage.py migrate --noinput
 
-echo "=== Migrations step complete ==="
+echo "=== Collecting static files ==="
+python manage.py collectstatic --noinput
 
 # Create or reset superuser (only if env vars are set)
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
@@ -29,22 +20,11 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; t
     }
 fi
 
-# Collect static files
-echo "=== Collecting static files ==="
-python manage.py collectstatic --noinput || {
-    echo "=== Static files collection failed, continuing ==="
-}
-
 echo "=== Starting Gunicorn ==="
-echo "Command: gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
-
-# Start Gunicorn - use exec to replace shell process
 exec gunicorn core.wsgi:application \
     --bind 0.0.0.0:${PORT:-8000} \
     --workers 2 \
     --timeout 120 \
     --access-logfile - \
-    --error-logfile - \
-    --log-level debug \
-    --capture-output
+    --error-logfile -
 

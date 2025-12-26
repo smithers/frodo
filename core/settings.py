@@ -93,74 +93,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Use PostgreSQL on Railway (via DATABASE_URL or DATABASE_PUBLIC_URL), fallback to SQLite for local development
-# DATABASE_PUBLIC_URL is used when connecting from outside Railway's network (e.g., railway run from local)
-# Priority: DATABASE_PUBLIC_URL (if set) > DATABASE_URL (if not internal) > SQLite
+# Database configuration for Heroku (or local development)
+# Heroku automatically sets DATABASE_URL, fallback to SQLite for local development
 database_url = os.environ.get('DATABASE_URL', '')
-database_public_url = os.environ.get('DATABASE_PUBLIC_URL', '')
-
-# Debug: Print which database URL is being used (remove after debugging)
-import sys
-if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
-    print("=" * 60)
-    print("DEBUG: Database Configuration")
-    print("=" * 60)
-    print(f"DATABASE_URL from env: {database_url[:80]}..." if len(database_url) > 80 else f"DATABASE_URL from env: {database_url}")
-    print(f"DATABASE_PUBLIC_URL from env: {database_public_url[:80]}..." if database_public_url and len(database_public_url) > 80 else f"DATABASE_PUBLIC_URL from env: {database_public_url}")
-    print(f"DATABASE_PUBLIC_URL is set: {bool(database_public_url)}")
-    print("=" * 60)
-
-# Always prefer DATABASE_PUBLIC_URL if it's set (works for railway run from local)
-if database_public_url:
-    database_url = database_public_url
-elif 'railway.internal' in database_url:
-    # Internal URL but no public URL - this will only work when actually deployed on Railway
-    # If running locally with railway run, this will fail, so fall back to SQLite
-    # (In production deployment, this will work fine)
-    pass  # Keep using DATABASE_URL with railway.internal (will work when deployed)
-elif not database_url:
-    # No DATABASE_URL at all
-    database_url = ''
 
 if database_url and dj_database_url:
-    # Debug: Show final database URL being used
-    if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
-        print(f"Using PostgreSQL with URL: {database_url[:80]}..." if len(database_url) > 80 else f"Using PostgreSQL with URL: {database_url}")
-        print("=" * 60)
-    # Temporarily override DATABASE_URL env var so dj_database_url.config() uses our selected URL
-    # (dj_database_url.config() reads from DATABASE_URL env var, ignoring the default parameter)
-    # Add SSL parameters for Railway's public PostgreSQL
-    if 'railway.app' in database_url and 'sslmode' not in database_url:
-        # Railway's public PostgreSQL requires SSL
-        if '?' in database_url:
-            database_url += '&sslmode=require'
-        else:
-            database_url += '?sslmode=require'
-    
-    original_database_url_env = os.environ.get('DATABASE_URL')
-    os.environ['DATABASE_URL'] = database_url
-    try:
-        DATABASES = {
-            'default': dj_database_url.config(
-                conn_max_age=600,
-                conn_health_checks=True,
-            )
-        }
-        # Add connection timeout to prevent hanging
-        if 'OPTIONS' not in DATABASES['default']:
-            DATABASES['default']['OPTIONS'] = {}
-        DATABASES['default']['OPTIONS']['connect_timeout'] = 10
-    finally:
-        # Restore original DATABASE_URL if it was set
-        if original_database_url_env is not None:
-            os.environ['DATABASE_URL'] = original_database_url_env
-        elif 'DATABASE_URL' in os.environ:
-            del os.environ['DATABASE_URL']
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 else:
-    # Debug: Show fallback to SQLite
-    if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
-        print("Falling back to SQLite database")
-        print("=" * 60)
+    # Fallback to SQLite for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
