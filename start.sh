@@ -1,13 +1,20 @@
 #!/bin/sh
 set -e
 
+echo "Starting application..."
+echo "PORT: ${PORT:-8000}"
+
 # Run migrations
+echo "Running migrations..."
 python manage.py migrate --noinput
+echo "Migrations complete."
 
 # Collect static files (allow failure)
-python manage.py collectstatic --noinput || true
+echo "Collecting static files..."
+python manage.py collectstatic --noinput || echo "Static files collection failed, continuing..."
+echo "Static files collection complete."
 
 # Start Gunicorn
-# Railway sets PORT automatically, default to 8000 if not set
-exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120
+echo "Starting Gunicorn on port ${PORT:-8000}..."
+exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -
 
