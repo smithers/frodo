@@ -99,6 +99,17 @@ WSGI_APPLICATION = 'core.wsgi.application'
 database_url = os.environ.get('DATABASE_URL', '')
 database_public_url = os.environ.get('DATABASE_PUBLIC_URL', '')
 
+# Debug: Print which database URL is being used (remove after debugging)
+import sys
+if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
+    print("=" * 60)
+    print("DEBUG: Database Configuration")
+    print("=" * 60)
+    print(f"DATABASE_URL from env: {database_url[:80]}..." if len(database_url) > 80 else f"DATABASE_URL from env: {database_url}")
+    print(f"DATABASE_PUBLIC_URL from env: {database_public_url[:80]}..." if database_public_url and len(database_public_url) > 80 else f"DATABASE_PUBLIC_URL from env: {database_public_url}")
+    print(f"DATABASE_PUBLIC_URL is set: {bool(database_public_url)}")
+    print("=" * 60)
+
 # Always prefer DATABASE_PUBLIC_URL if it's set (works for railway run from local)
 if database_public_url:
     database_url = database_public_url
@@ -112,6 +123,10 @@ elif not database_url:
     database_url = ''
 
 if database_url and dj_database_url:
+    # Debug: Show final database URL being used
+    if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
+        print(f"Using PostgreSQL with URL: {database_url[:80]}..." if len(database_url) > 80 else f"Using PostgreSQL with URL: {database_url}")
+        print("=" * 60)
     DATABASES = {
         'default': dj_database_url.config(
             default=database_url,
@@ -120,6 +135,10 @@ if database_url and dj_database_url:
         )
     }
 else:
+    # Debug: Show fallback to SQLite
+    if 'manage.py' in sys.argv and 'runserver' not in sys.argv:
+        print("Falling back to SQLite database")
+        print("=" * 60)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
