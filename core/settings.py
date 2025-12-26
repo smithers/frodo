@@ -202,13 +202,19 @@ CACHES = {
 # }
 
 # Security settings for production
+# Note: Railway handles SSL at the proxy level, so we don't force SSL redirects
+# This prevents redirect loops when Railway's proxy terminates SSL
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    # Disable SSL redirect - Railway proxy handles SSL termination
+    SECURE_SSL_REDIRECT = False
+    # Trust Railway's proxy for SSL (Railway sets X-Forwarded-Proto header)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    # HSTS is handled by Railway's proxy, so we don't set it here
+    # SECURE_HSTS_SECONDS = 31536000
+    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # SECURE_HSTS_PRELOAD = True
