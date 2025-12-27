@@ -313,49 +313,49 @@
                     Join our community of book lovers! Add books you love and get personalized recommendations 
                     based on your reading preferences.
                 </p>
-                <ul style="color: #5c3f2a; line-height: 2.2; list-style: none; padding-left: 0; font-size: 1.05em; text-align: left; margin-top: 25px;">
+                <ul style="color: #1a1a1a; line-height: 2.2; list-style: none; padding-left: 0; font-size: 1.05em; text-align: left; margin-top: 25px;">
                     <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
-                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        <span style="position: absolute; left: 0; color: #8b0000; font-size: 1.2em;">▸</span>
                         Add books you love
                     </li>
                     <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
-                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        <span style="position: absolute; left: 0; color: #8b0000; font-size: 1.2em;">▸</span>
                         Build your personal library
                     </li>
                     <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
-                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        <span style="position: absolute; left: 0; color: #8b0000; font-size: 1.2em;">▸</span>
                         Get personalized recommendations
                     </li>
                     <li style="margin-bottom: 15px; padding-left: 30px; position: relative;">
-                        <span style="position: absolute; left: 0; color: #8b6f47; font-size: 1.2em;">▸</span>
+                        <span style="position: absolute; left: 0; color: #8b0000; font-size: 1.2em;">▸</span>
                         Discover new authors and genres
                     </li>
                 </ul>
             </div>
 
             <div class="login-section">
-                <h3 style="margin-top: 0; color: #3d2817; border-bottom: 3px solid #d4a574; padding-bottom: 15px; margin-bottom: 25px; text-align: center;">Login</h3>
+                <h3 style="margin-top: 0; color: #1a1a1a; border-bottom: 3px solid #8b0000; padding-bottom: 15px; margin-bottom: 25px; text-align: center;">Login</h3>
                 <form method="post" action="{% url 'home' %}">
                     {% csrf_token %}
                     <div style="margin-bottom: 20px;">
-                        <label for="id_username" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Username:</label>
+                        <label for="id_username" style="display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Username:</label>
                         {{ form.username }}
                     </div>
                     <div style="margin-bottom: 25px;">
-                        <label for="id_password" style="display: block; margin-bottom: 8px; font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Password:</label>
+                        <label for="id_password" style="display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Password:</label>
                         {{ form.password }}
                     </div>
                     {% if form.errors %}
-                        <div style="color: #8b4513; margin-bottom: 20px; padding: 15px; background: #f5f1e8; border-left: 4px solid #8b6f47; font-size: 0.95em;">
+                        <div style="color: #8b0000; margin-bottom: 20px; padding: 15px; background: #ffffff; border-left: 4px solid #8b0000; font-size: 0.95em;">
                             Please enter a correct username and password.
                         </div>
                     {% endif %}
-                    <button type="submit" style="width: 100%; background-color: #3d2817; color: #f5f1e8; padding: 15px; border: 2px solid #3d2817; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
+                    <button type="submit" style="width: 100%; background-color: #1a1a1a; color: #ffffff; padding: 15px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
                         Login
                     </button>
                 </form>
-                <p style="margin-top: 25px; font-size: 0.95em; color: #5c3f2a; text-align: center;">
-                    Don't have an account? <a href="{% url 'register' %}" style="color: #8b6f47; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b6f47;">Create Account</a>
+                <p style="margin-top: 25px; font-size: 0.95em; color: #1a1a1a; text-align: center;">
+                    Don't have an account? <a href="{% url 'register' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Create Account</a>
                 </p>
             </div>
         </div>
@@ -366,36 +366,36 @@
     #id_username, #id_password {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #d4c5b0;
+        border: 2px solid #1a1a1a;
         border-radius: 0;
         font-size: 1em;
         box-sizing: border-box;
         background: #ffffff;
-        color: #2c2416;
+        color: #1a1a1a;
         font-family: 'Lora', serif;
         transition: border-color 0.3s ease;
     }
     
     #id_username:focus, #id_password:focus {
         outline: none;
-        border-color: #8b6f47;
+        border-color: #8b0000;
         border-width: 2px;
     }
     
     button[type="submit"]:hover {
-        background-color: #5c3f2a !important;
-        border-color: #5c3f2a !important;
+        background-color: #8b0000 !important;
+        border-color: #8b0000 !important;
     }
     
     #hero-book-search:focus {
         outline: none;
-        border-color: #f5f1e8;
+        border-color: #8b0000;
         background: #ffffff;
-        box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.3);
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.3);
     }
     
     #hero-book-search::placeholder {
-        color: #8b6f47;
+        color: #1a1a1a;
         opacity: 0.7;
     }
 </style>
@@ -470,13 +470,13 @@ $(function() {
         $("#hero-submit-container").show();
         
         heroSelectedBooks.forEach(function(book, index) {
-            var item = $('<div style="background: rgba(255, 255, 255, 0.95); padding: 3px 20px; margin-bottom: 10px; border: 1px solid #d4a574; color: #2c2416; display: flex; justify-content: space-between; align-items: center;"></div>');
+            var item = $('<div style="background: rgba(255, 255, 255, 0.95); padding: 3px 20px; margin-bottom: 10px; border: 2px solid #1a1a1a; color: #1a1a1a; display: flex; justify-content: space-between; align-items: center;"></div>');
             item.html(
                 '<div style="flex: 1;">' +
-                    '<strong style="font-family: \'Playfair Display\', serif; font-size: 1.1em; color: #3d2817; display: inline;">' + $('<div>').text(book.title).html() + '</strong> ' +
-                    '<span style="font-style: italic; color: #5c3f2a; font-size: 0.95em;">by ' + $('<div>').text(book.author).html() + '</span>' +
+                    '<strong style="font-family: \'Playfair Display\', serif; font-size: 1.1em; color: #1a1a1a; display: inline;">' + $('<div>').text(book.title).html() + '</strong> ' +
+                    '<span style="font-style: italic; color: #1a1a1a; font-size: 0.95em;">by ' + $('<div>').text(book.author).html() + '</span>' +
                 '</div>' +
-                '<button type="button" class="remove-hero-book" data-index="' + index + '" style="background: transparent; color: #8b6f47; border: 1px solid #8b6f47; padding: 6px 12px; cursor: pointer; font-size: 0.85em; margin-left: 15px;">Remove</button>'
+                '<button type="button" class="remove-hero-book" data-index="' + index + '" style="background: transparent; color: #8b0000; border: 2px solid #8b0000; padding: 6px 12px; cursor: pointer; font-size: 0.85em; margin-left: 15px;">Remove</button>'
             );
             container.append(item);
         });

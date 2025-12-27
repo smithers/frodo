@@ -423,7 +423,7 @@
                 <strong>Logged in as {{ user.username }}</strong>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" style="background:none; border:none; color:#d4a574; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em; margin-top: 10px;">Logout</button>
+                    <button type="submit" style="background:none; border:none; color:#8b0000; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em; margin-top: 10px;">Logout</button>
                 </form>
             {% else %}
                 {% if request.resolver_match.url_name != 'home' %}

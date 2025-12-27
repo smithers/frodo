@@ -5,7 +5,7 @@
 {% block extra_head %}
 <style>
     h1 {
-        border-bottom: 4px solid #d4a574;
+        border-bottom: 4px solid #8b0000;
         padding-bottom: 15px;
         margin-bottom: 30px;
         display: inline-block;
@@ -14,7 +14,7 @@
     /* Make the autocomplete dropdown look nice */
     .ui-autocomplete { 
         background-color: #ffffff; 
-        border: 1px solid #d4c5b0; 
+        border: 2px solid #1a1a1a; 
         z-index: 1000; 
         max-height: 250px; 
         overflow-y: auto; 
@@ -26,11 +26,12 @@
     }
     .ui-menu-item {
         padding: 12px 15px;
-        border-bottom: 1px solid #e8ddd4;
+        border-bottom: 1px solid #1a1a1a;
         transition: background-color 0.2s ease;
     }
     .ui-menu-item:hover {
-        background-color: #f5f1e8;
+        background-color: #ffffff;
+        border-left: 3px solid #8b0000;
     }
     
     .selected-books {
@@ -39,7 +40,7 @@
     
     .book-item {
         background: #ffffff;
-        border: 1px solid #d4c5b0;
+        border: 2px solid #1a1a1a;
         padding: 3px 25px;
         margin-bottom: 20px;
         border-radius: 0;
@@ -49,6 +50,7 @@
     
     .book-item:hover {
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        border-color: #8b0000;
     }
     
     .book-header {
@@ -57,19 +59,19 @@
         align-items: center;
         margin-bottom: 15px;
         padding: 0 0 15px 0;
-        border-bottom: 2px solid #e8ddd4;
+        border-bottom: 2px solid #1a1a1a;
     }
     
     .book-info h4 {
         margin: 0 0 8px 0;
-        color: #3d2817;
+        color: #1a1a1a;
         font-family: 'Playfair Display', serif;
         font-size: 1.3em;
     }
     
     .book-info p {
         margin: 0;
-        color: #5c3f2a;
+        color: #1a1a1a;
         font-size: 1em;
         font-style: italic;
     }
@@ -77,26 +79,26 @@
     .explanation-input {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #d4c5b0;
+        border: 2px solid #1a1a1a;
         border-radius: 0;
         font-size: 1em;
         font-family: 'Lora', serif;
         margin-top: 15px;
         background: #ffffff;
-        color: #2c2416;
+        color: #1a1a1a;
         line-height: 1.8;
         transition: border-color 0.3s ease;
     }
     
     .explanation-input:focus {
         outline: none;
-        border-color: #8b6f47;
+        border-color: #8b0000;
         border-width: 2px;
     }
     
     .explanation-label {
         font-size: 0.9em;
-        color: #5c3f2a;
+        color: #1a1a1a;
         margin-top: 8px;
         font-weight: 400;
         text-transform: uppercase;
@@ -105,8 +107,8 @@
     
     .remove-btn {
         background: transparent;
-        color: #8b6f47;
-        border: 1px solid #8b6f47;
+        color: #8b0000;
+        border: 2px solid #8b0000;
         padding: 8px 18px;
         border-radius: 0;
         cursor: pointer;
@@ -119,31 +121,31 @@
     }
     
     .remove-btn:hover {
-        background: #8b6f47;
-        color: #f5f1e8;
+        background: #8b0000;
+        color: #ffffff;
     }
     
     #book-search {
-        border: 1px solid #d4c5b0;
+        border: 2px solid #1a1a1a;
         border-radius: 0;
         padding: 12px 15px;
         font-family: 'Lora', serif;
         font-size: 1em;
         background: #ffffff;
-        color: #2c2416;
+        color: #1a1a1a;
         transition: border-color 0.3s ease;
     }
     
     #book-search:focus {
         outline: none;
-        border-color: #8b6f47;
+        border-color: #8b0000;
         border-width: 2px;
     }
     
     button[type="submit"] {
-        background-color: #3d2817;
-        color: #f5f1e8;
-        border: 2px solid #3d2817;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: 2px solid #1a1a1a;
         padding: 15px 30px;
         font-size: 1em;
         font-weight: 400;
@@ -156,8 +158,8 @@
     }
     
     button[type="submit"]:hover {
-        background-color: #5c3f2a;
-        border-color: #5c3f2a;
+        background-color: #8b0000;
+        border-color: #8b0000;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
@@ -195,18 +197,18 @@
 
 {% block content %}
     <h1>Add Books You Love</h1>
-    <p style="font-size: 1.1em; color: #5c3f2a; font-style: italic; margin-bottom: 30px;">Search for books to add them to your favorites.</p>
+    <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Search for books to add them to your favorites.</p>
     
     <div style="margin-bottom: 30px; position: relative;">
-        <label style="font-weight: 400; color: #3d2817; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; display: block; margin-bottom: 10px;"><strong>Search by Title:</strong></label>
+        <label style="font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; display: block; margin-bottom: 10px;"><strong>Search by Title:</strong></label>
         <input type="text" id="book-search" placeholder="Enter a book you love (type slowly)" style="width: 100%; max-width: 500px;">
-        <span id="loading-msg" style="display:none; color: #8b6f47; margin-left: 15px; font-style: italic;"> Searching Google...</span>
+        <span id="loading-msg" style="display:none; color: #8b0000; margin-left: 15px; font-style: italic;"> Searching Google...</span>
     </div>
 
     <form method="POST" action="{% url 'save_favorite' %}" id="favorites-form">
         {% csrf_token %}
         <div id="selected-books-container" class="selected-books" style="display: none;">
-            <h3 style="color: #3d2817; border-bottom: 3px solid #d4a574; padding-bottom: 15px; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
+            <h3 style="color: #1a1a1a; border-bottom: 3px solid #8b0000; padding-bottom: 15px; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
             <div id="selected-books-list"></div>
             <button type="submit" style="margin-top: 25px;">
                 Add to My Favorites
