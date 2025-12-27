@@ -6,22 +6,22 @@
 <style>
     .hero-section {
         position: relative;
-        height: 100vh;
-        min-height: 600px;
+        height: calc(100vh - 70px);
+        min-height: 500px;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        background: linear-gradient(rgba(61, 40, 23, 0.3), rgba(61, 40, 23, 0.3)),
-                    url('{% static "books/images/hero-book.jpg" %}');
+        background-image: url('{% static "books/images/hero-book.jpg" %}?v=2');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        color: #f5f1e8;
+        background-repeat: no-repeat;
+        color: #ffffff;
         margin: -40px -40px 0 -40px;
         padding: 0 40px;
-        width: calc(100vw - 180px);
-        margin-left: calc(-40px - 180px);
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
     }
     
     .hero-overlay {
@@ -30,7 +30,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(61, 40, 23, 0.2);
+        background: rgba(26, 26, 26, 0.4);
         z-index: 1;
     }
     
@@ -45,9 +45,9 @@
         font-family: 'Playfair Display', serif;
         font-size: 4em;
         font-weight: 700;
-        color: #f5f1e8;
+        color: #ffffff;
         margin-bottom: 20px;
-        text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+        text-shadow: 3px 3px 15px rgba(0,0,0,0.5);
         letter-spacing: 2px;
         line-height: 1.1;
     }
@@ -56,43 +56,46 @@
         font-family: 'Lora', serif;
         font-size: 1.8em;
         font-style: italic;
-        color: #e8ddd4;
+        color: #ffffff;
         margin-bottom: 40px;
-        text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
         font-weight: 400;
     }
     
     .hero-description {
         font-family: 'Lora', serif;
         font-size: 1.1em;
-        color: #e8ddd4;
+        color: #ffffff;
         line-height: 1.8;
         margin-bottom: 50px;
         max-width: 700px;
         margin-left: auto;
         margin-right: auto;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
     }
     
     .hero-button {
         display: inline-block;
-        background-color: #3d2817;
-        color: #f5f1e8;
+        background: #8b0000;
+        color: #ffffff;
         padding: 18px 40px;
         text-decoration: none;
         text-transform: uppercase;
         letter-spacing: 2px;
-        font-weight: 400;
+        font-weight: 600;
         font-size: 1em;
-        border: 2px solid #d4a574;
+        border: 3px solid #ffffff;
+        border-radius: 0;
         transition: all 0.3s ease;
         margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
     
     .hero-button:hover {
-        background-color: #d4a574;
-        color: #3d2817;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        background: #ffffff;
+        color: #8b0000;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
     
     .content-section {
@@ -114,14 +117,14 @@
         left: 0;
         right: 0;
         height: 2px;
-        background: #d4c5b0;
+        background: #1a1a1a;
     }
     
     .section-divider span {
-        background: #f5f1e8;
+        background: #ffffff;
         padding: 0 30px;
         position: relative;
-        color: #8b6f47;
+        color: #1a1a1a;
         font-size: 1.5em;
         font-family: 'Playfair Display', serif;
     }
@@ -136,28 +139,30 @@
     .feature-card {
         background: #ffffff;
         padding: 40px;
-        border: 1px solid #d4c5b0;
+        border: 2px solid #1a1a1a;
+        border-radius: 0;
         transition: all 0.3s ease;
         text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
     .feature-card:hover {
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        transform: translateY(-5px);
-        border-color: #d4a574;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        transform: translateY(-8px);
+        border-color: #8b0000;
     }
     
     .feature-card h3 {
-        color: #3d2817;
+        color: #1a1a1a;
         font-size: 1.8em;
         margin-bottom: 20px;
-        border-bottom: 3px solid #d4a574;
+        border-bottom: 3px solid #8b0000;
         padding-bottom: 15px;
         display: inline-block;
     }
     
     .feature-card p {
-        color: #5c3f2a;
+        color: #1a1a1a;
         line-height: 1.9;
         font-size: 1.05em;
     }
@@ -165,9 +170,11 @@
     .login-section {
         background: #ffffff;
         padding: 50px;
-        border: 1px solid #d4c5b0;
+        border: 2px solid #1a1a1a;
+        border-radius: 0;
         max-width: 500px;
         margin: 0 auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
     
     @media (max-width: 768px) {
@@ -177,7 +184,7 @@
             padding: 40px 20px;
             margin: -20px -20px 0 -20px;
             width: 100vw;
-            margin-left: -20px;
+            margin-left: calc(-50vw + 50%);
             background-attachment: scroll;
         }
         
@@ -248,8 +255,8 @@
             <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
-                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type slowly)" style="flex: 1; padding: 15px 20px; border: 2px solid #d4a574; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #2c2416; min-width: 300px;">
-                    <span id="hero-loading-msg" style="display:none; color: #e8ddd4; font-style: italic;"> Searching...</span>
+                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type slowly)" style="flex: 1; padding: 15px 20px; border: 2px solid #ffffff; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #1a1a1a; min-width: 300px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+                    <span id="hero-loading-msg" style="display:none; color: #ffffff; font-style: italic; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);"> Searching...</span>
                 </div>
                 <div id="hero-selected-books-list" style="margin-top: 20px; display: none;"></div>
                 <div id="hero-selected-books-container" style="display: none;"></div>
@@ -264,13 +271,13 @@
 <div class="content-section">
     {% if user.is_authenticated %}
         <div style="text-align: center; margin-bottom: 60px;">
-            <h2 style="color: #3d2817; font-size: 2.5em; margin-bottom: 20px;">Welcome back, {{ user.username }}!</h2>
-            <p style="font-size: 1.2em; color: #5c3f2a; font-style: italic; margin-bottom: 40px;">Ready to discover your next favorite book?</p>
+            <h2 style="font-size: 2.5em; margin-bottom: 20px;">Welcome back, {{ user.username }}!</h2>
+            <p style="font-size: 1.2em; color: #1a1a1a; font-style: italic; margin-bottom: 40px;">Ready to discover your next favorite book?</p>
         </div>
     {% else %}
         <div style="text-align: center; margin-bottom: 60px;">
-            <h2 style="color: #3d2817; font-size: 2.5em; margin-bottom: 20px;">Discover Your Next Favorite Book</h2>
-            <p style="font-size: 1.2em; color: #5c3f2a; font-style: italic; margin-bottom: 40px;">No account needed - start exploring recommendations right away!</p>
+            <h2 style="font-size: 2.5em; margin-bottom: 20px;">Discover Your Next Favorite Book</h2>
+            <p style="font-size: 1.2em; color: #1a1a1a; font-style: italic; margin-bottom: 40px;">No account needed - start exploring recommendations right away!</p>
         </div>
     {% endif %}
     
@@ -278,19 +285,19 @@
         <div class="feature-card">
             <h3>My Books</h3>
             <p>View and manage your collection of favorite books. Keep track of all the books you love in one place.</p>
-            <a href="{% url 'my_books' %}" style="display: inline-block; margin-top: 20px; color: #8b6f47; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #d4a574; padding-bottom: 5px;">View My Books →</a>
+            <a href="{% url 'my_books' %}" style="display: inline-block; margin-top: 20px; color: #1a1a1a; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #8b0000; padding-bottom: 5px; transition: all 0.3s ease;">View My Books →</a>
         </div>
         
         <div class="feature-card">
             <h3>Recommendations</h3>
             <p>Get personalized book recommendations based on books you and other readers love. Discover new authors and genres.</p>
-            <a href="{% url 'recommendations' %}" style="display: inline-block; margin-top: 20px; color: #8b6f47; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #d4a574; padding-bottom: 5px;">Get Recommendations →</a>
+            <a href="{% url 'recommendations' %}" style="display: inline-block; margin-top: 20px; color: #1a1a1a; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #8b0000; padding-bottom: 5px; transition: all 0.3s ease;">Get Recommendations →</a>
         </div>
         
         <div class="feature-card">
             <h3>Add Favorites</h3>
             <p>Add books you love to your collection. The more books you add, the better your recommendations will be.</p>
-            <a href="{% url 'add_favorite' %}" style="display: inline-block; margin-top: 20px; color: #8b6f47; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #d4a574; padding-bottom: 5px;">Add a Book →</a>
+            <a href="{% url 'add_favorite' %}" style="display: inline-block; margin-top: 20px; color: #1a1a1a; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #8b0000; padding-bottom: 5px; transition: all 0.3s ease;">Add a Book →</a>
         </div>
     </div>
     

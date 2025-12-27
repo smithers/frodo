@@ -16,17 +16,16 @@
             font-family: 'Lora', serif; 
             margin: 0; 
             padding: 0; 
-            background: #f5f1e8;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 111, 71, 0.03) 2px, rgba(139, 111, 71, 0.03) 4px);
-            color: #2c2416;
+            background: #ffffff;
+            color: #1a1a1a;
             line-height: 1.8;
             font-size: 16px;
+            padding-top: 70px; /* Space for fixed navbar */
         }
         
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Playfair Display', serif;
-            color: #3d2817;
+            color: #1a1a1a;
             font-weight: 600;
             letter-spacing: 0.5px;
             line-height: 1.3;
@@ -47,95 +46,200 @@
             margin-bottom: 12px;
         }
         
-        /* Sidebar Navigation Styles */
-        .nav { 
+        /* Top Navigation Bar Styles */
+        .navbar { 
             position: fixed;
-            left: 0;
             top: 0;
-            width: 180px;
-            height: 100vh;
-            background: #3d2817;
-            padding: 30px 0;
-            border-right: 4px solid #5c3f2a;
-            box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #1a1a1a;
+            border-bottom: 4px solid #8b0000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
             z-index: 1000;
         }
         
-        .nav-links {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
         }
         
-        .nav a { 
-            padding: 12px 20px 12px 20px;
+        .navbar-brand:hover {
+            color: #8b0000;
+        }
+        
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .navbar-links a { 
+            padding: 10px 20px;
             text-decoration: none; 
-            color: #e8ddd4; 
-            font-weight: 400;
-            font-size: 0.85em;
+            color: #ffffff; 
+            font-weight: 500;
+            font-size: 0.95em;
             letter-spacing: 0.3px;
             transition: all 0.3s ease;
             position: relative;
-            display: block;
-            border-left: 3px solid transparent;
+            border-radius: 8px;
         }
         
-        .nav a::before {
+        .navbar-links a::after {
             content: '';
             position: absolute;
-            left: 0;
-            top: 0;
             bottom: 0;
+            left: 50%;
             width: 0;
-            background: #d4a574;
-            transition: width 0.3s ease;
-            z-index: -1;
+            height: 3px;
+            background: #8b0000;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
         }
         
-        .nav a:hover { 
-            color: #d4a574;
-            background: rgba(212, 165, 116, 0.1);
-            border-left-color: #d4a574;
+        .navbar-links a:hover { 
+            color: #8b0000;
+            background: rgba(255, 255, 255, 0.1);
         }
         
-        .nav a:hover::before {
-            width: 3px;
+        .navbar-links a:hover::after {
+            width: 80%;
         }
         
-        .user-section { 
-            padding: 20px;
-            color: #e8ddd4; 
-            font-size: 0.8em;
-            border-top: 1px solid #5c3f2a;
-            margin-top: auto;
-        }
-        
-        .user-section strong {
-            color: #d4a574;
-            display: block;
-            margin-bottom: 8px;
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ffffff;
             font-size: 0.9em;
         }
         
-        .user-section form {
-            margin-top: 8px;
+        .navbar-user strong {
+            color: #ffffff;
         }
         
-        .user-section button {
-            color: #d4a574 !important;
-            font-size: 0.85em;
+        .navbar-user form {
+            display: inline;
         }
         
-        .user-section a {
-            color: #d4a574;
+        .navbar-user button {
+            background: #8b0000;
+            border: 2px solid #8b0000;
+            color: #ffffff;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9em;
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-user button:hover {
+            background: #ffffff;
+            color: #8b0000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .navbar-user a {
+            color: #ffffff;
             text-decoration: none;
-            font-size: 0.85em;
+            font-size: 0.95em;
+            font-weight: 500;
+            padding: 6px 12px;
+            border: 2px solid #8b0000;
+            border-radius: 6px;
+            background: #8b0000;
+            transition: all 0.3s ease;
         }
         
-        .user-section a:hover {
-            text-decoration: underline;
+        .navbar-user a:hover {
+            background: #ffffff;
+            color: #8b0000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: #8b0000;
+            border: 2px solid #8b0000;
+            color: #ffffff;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.5em;
+            font-family: 'Lora', serif;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-toggle:hover {
+            background: #ffffff;
+            color: #8b0000;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border-bottom: 4px solid #8b0000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            z-index: 999;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        .mobile-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu a:hover {
+            color: #8b0000;
+            background: #ffffff;
+            padding-left: 30px;
+            transform: translateX(5px);
+        }
+        
+        .mobile-menu .mobile-user-section {
+            padding: 20px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            margin-top: 10px;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+        
+        .mobile-menu .mobile-user-section strong {
+            color: #ffffff;
+            display: block;
+            margin-bottom: 10px;
         }
         
         /* Message Styles (Success/Error alerts) */
@@ -150,32 +254,48 @@
         .messages li { 
             padding: 18px 25px; 
             margin-bottom: 15px; 
-            background: #e8ddd4; 
-            color: #3d2817; 
-            border-left: 5px solid #8b6f47; 
-            border-radius: 0;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            background: #ffffff; 
+            color: #1a1a1a; 
+            border-left: 5px solid #8b0000; 
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             font-size: 1.05em;
+        }
+        
+        .messages li.success {
+            border-left-color: #8b0000;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+        }
+        
+        .messages li.error {
+            border-left-color: #8b0000;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+        }
+        
+        .messages li.warning {
+            border-left-color: #8b0000;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
         }
         
         /* Card Styles (Reusable) */
         .card { 
-            border: 1px solid #d4c5b0; 
+            border: 2px solid #1a1a1a;
             padding: 30px; 
             margin-bottom: 25px; 
             border-radius: 0;
             background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
         
         .card:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+            border-color: #8b0000;
         }
         
         .star-rating { 
-            color: #d4a574; 
+            color: #8b0000;
             letter-spacing: 3px; 
             font-size: 1.2em;
         }
@@ -183,79 +303,48 @@
         /* Container */
         .container {
             max-width: 1200px;
-            margin-left: 180px;
+            margin: 0 auto;
             padding: 40px;
-        }
-        
-        /* Messages positioning */
-        .messages {
-            margin-left: 180px;
         }
         
         hr {
             border: none;
-            border-top: 2px solid #d4c5b0;
+            border-top: 2px solid #1a1a1a;
             margin: 30px 0;
         }
         
         /* Mobile Responsive Styles */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 1001;
-            background: #3d2817;
-            color: #d4a574;
-            border: 2px solid #d4a574;
-            padding: 10px 18px;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-family: 'Lora', serif;
-        }
-        
-        .mobile-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-        
-        .mobile-overlay.active {
-            display: block;
-        }
-        
         @media (max-width: 768px) {
-            /* Hide sidebar on mobile, show hamburger menu */
-            .nav {
-                width: 0;
-                overflow: hidden;
-                transition: width 0.3s ease;
+            body {
+                padding-top: 70px;
             }
             
-            .nav.mobile-open {
-                width: 250px;
+            .navbar {
+                padding: 0 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2em;
+            }
+            
+            .navbar-links {
+                display: none;
+            }
+            
+            .navbar-user {
+                display: none;
             }
             
             .mobile-menu-toggle {
                 display: block;
             }
             
-            /* Container adjustments */
             .container {
-                margin-left: 0;
-                padding: 60px 20px 40px 20px;
+                padding: 20px;
             }
             
-            /* Messages positioning */
             .messages {
-                margin-left: 0;
                 padding: 0 20px;
-                margin-top: 60px;
             }
             
             /* Typography adjustments */
@@ -281,8 +370,8 @@
         }
         
         @media (min-width: 769px) {
-            .mobile-menu-toggle {
-                display: none;
+            .mobile-menu {
+                display: none !important;
             }
         }
     </style>
@@ -295,24 +384,50 @@
 </head>
 <body>
 
-    <div class="nav">
-        <div class="nav-links">
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="navbar-brand">Book Recommender</a>
+        
+        <div class="navbar-links">
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'my_books' %}">My Books</a>
             <a href="{% url 'recommendations' %}">Recommendations</a>
             <a href="{% url 'add_favorite' %}">Add Favorite</a>
         </div>
-
-        <div class="user-section">
+        
+        <div class="navbar-user">
             {% if user.is_authenticated %}
-                <strong>Logged in as {{ user.username }}</strong>
-                <form action="{% url 'logout' %}" method="post">
+                <strong>{{ user.username }}</strong>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" style="background:none; border:none; color:#d4a574; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em;">Logout</button>
+                    <button type="submit">Logout</button>
                 </form>
             {% else %}
                 {% if request.resolver_match.url_name != 'home' %}
                 <a href="{% url 'home' %}">Login</a>
+                {% endif %}
+            {% endif %}
+        </div>
+        
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'my_books' %}">My Books</a>
+        <a href="{% url 'recommendations' %}">Recommendations</a>
+        <a href="{% url 'add_favorite' %}">Add Favorite</a>
+        
+        <div class="mobile-user-section">
+            {% if user.is_authenticated %}
+                <strong>Logged in as {{ user.username }}</strong>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; color:#d4a574; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em; margin-top: 10px;">Logout</button>
+                </form>
+            {% else %}
+                {% if request.resolver_match.url_name != 'home' %}
+                <a href="{% url 'home' %}" style="display: inline-block; margin-top: 10px;">Login</a>
                 {% endif %}
             {% endif %}
         </div>
@@ -326,10 +441,6 @@
         </ul>
     {% endif %}
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-    <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
-
     <div class="container">
         {% block content %}
         {% endblock %}
@@ -339,10 +450,8 @@
     
     <script>
     function toggleMobileMenu() {
-        const nav = document.querySelector('.nav');
-        const overlay = document.querySelector('.mobile-overlay');
-        nav.classList.toggle('mobile-open');
-        overlay.classList.toggle('active');
+        const menu = document.getElementById('mobileMenu');
+        menu.classList.toggle('active');
     }
     </script>
 
