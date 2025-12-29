@@ -370,6 +370,14 @@ def recommendation_view(request):
     }
     return render(request, 'recommendations.html', context)
 
+def terms_of_use_view(request):
+    """Terms of Use page"""
+    return render(request, 'terms_of_use.html')
+
+def privacy_policy_view(request):
+    """Privacy Policy page"""
+    return render(request, 'privacy_policy.html')
+
 def my_books_view(request):
     if request.user.is_authenticated:
         # Fetch user's favorite books ordered by newest first

@@ -488,6 +488,37 @@
 
     {% block scripts %}{% endblock %}
     
+    <footer style="background: #1a1a1a; color: #ffffff; padding: 30px 0; margin-top: 60px; border-top: 4px solid #8b0000;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 40px;">
+            <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                <a href="{% url 'terms_of_use' %}" style="color: #ffffff; text-decoration: none; font-size: 0.95em; transition: color 0.3s ease;">Terms of Use</a>
+                <a href="{% url 'privacy_policy' %}" style="color: #ffffff; text-decoration: none; font-size: 0.95em; transition: color 0.3s ease;">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+    
+    <style>
+        footer a:hover {
+            color: #8b0000;
+        }
+        
+        @media (max-width: 1024px) {
+            footer {
+                padding: 20px 0;
+            }
+            
+            footer .container {
+                padding: 0 20px;
+            }
+            
+            footer div {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+
     <script>
     function toggleMobileMenu() {
         const menu = document.getElementById('mobileMenu');

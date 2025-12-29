@@ -13,6 +13,8 @@ path('add-favorite/save/', views.save_favorite_view, name='save_favorite'),
 path('remove-favorite/', views.remove_favorite_view, name='remove_favorite'),
 path('my-books/', views.my_books_view, name='my_books'),
 path('recommend/', views.recommendation_view, name='recommendations'),
+path('terms-of-use/', views.terms_of_use_view, name='terms_of_use'),
+path('privacy-policy/', views.privacy_policy_view, name='privacy_policy'),
 path('api/search/', views.book_autocomplete, name='book_autocomplete'),
 path('api/book-info/', views.book_info_view, name='book_info'),
 ]
