@@ -14,9 +14,12 @@ from .services import search_books, get_book_details
 def homepage_view(request):
     """Homepage view - accessible to all users, shows login form if not authenticated"""
     form = AuthenticationForm()
+    # Remove Django's default autofocus to avoid auto-scrolling to login on mobile
+    form.fields['username'].widget.attrs.pop('autofocus', None)
     
     if request.method == 'POST' and not request.user.is_authenticated:
         form = AuthenticationForm(request, data=request.POST)
+        form.fields['username'].widget.attrs.pop('autofocus', None)
         if form.is_valid():
             login(request, form.get_user())
             messages.success(request, f"Welcome back, {request.user.username}!")
