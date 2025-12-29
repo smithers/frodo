@@ -12,6 +12,10 @@
             box-sizing: border-box;
         }
         
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body { 
             font-family: 'Lora', serif; 
             margin: 0; 
@@ -160,11 +164,12 @@
             text-decoration: none;
             font-size: 0.95em;
             font-weight: 500;
-            padding: 6px 12px;
+            padding: 8px 20px;
             border: 2px solid #8b0000;
-            border-radius: 6px;
+            border-radius: 0;
             background: #8b0000;
             transition: all 0.3s ease;
+            display: inline-block;
         }
         
         .navbar-user a:hover {
@@ -172,6 +177,12 @@
             color: #8b0000;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .navbar-login-btn {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         /* Mobile Menu Toggle */
@@ -407,9 +418,7 @@
                     <button type="submit">Logout</button>
                 </form>
             {% else %}
-                {% if request.resolver_match.url_name != 'home' %}
-                <a href="{% url 'home' %}">Login</a>
-                {% endif %}
+                <a href="{% url 'home' %}#login" class="navbar-login-btn">Login</a>
             {% endif %}
         </div>
         
@@ -431,9 +440,7 @@
                     <button type="submit" style="background:none; border:none; color:#8b0000; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em; margin-top: 10px;">Logout</button>
                 </form>
             {% else %}
-                {% if request.resolver_match.url_name != 'home' %}
-                <a href="{% url 'home' %}" style="display: inline-block; margin-top: 10px;">Login</a>
-                {% endif %}
+                <a href="{% url 'home' %}#login" style="display: inline-block; margin-top: 10px; color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Login</a>
             {% endif %}
         </div>
     </div>
