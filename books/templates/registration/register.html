@@ -137,3 +137,23 @@
 </style>
 {% endblock %}
 
+{% block scripts %}
+<script>
+    // Add inputmode to form fields to prevent emoji keyboard on iOS
+    document.addEventListener('DOMContentLoaded', function() {
+        var usernameInput = document.getElementById('id_username');
+        var password1Input = document.getElementById('id_password1');
+        var password2Input = document.getElementById('id_password2');
+        if (usernameInput) {
+            usernameInput.setAttribute('inputmode', 'text');
+        }
+        if (password1Input) {
+            password1Input.setAttribute('inputmode', 'text');
+        }
+        if (password2Input) {
+            password2Input.setAttribute('inputmode', 'text');
+        }
+    });
+</script>
+{% endblock %}
+
