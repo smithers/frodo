@@ -84,6 +84,12 @@
             color: #8b0000;
         }
         
+        .navbar-brand .logo-i {
+            font-size: 0.85em;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+        
         .navbar-links {
             display: flex;
             align-items: center;
@@ -418,27 +424,27 @@
             
             .mobile-menu-toggle {
                 display: flex;
-                font-size: 2.7em;
-                min-width: 150px;
-                min-height: 75px;
-                padding: 15px 20px;
+                font-size: 2.1em;
+                min-width: 110px;
+                min-height: 60px;
+                padding: 12px 16px;
             }
             
             .mobile-menu-toggle::before {
-                top: 22px;
-                width: 40px;
-                height: 4px;
+                top: 20px;
+                width: 32px;
+                height: 3px;
             }
             
             .mobile-menu-toggle span {
-                width: 40px;
-                height: 4px;
+                width: 32px;
+                height: 3px;
             }
             
             .mobile-menu-toggle::after {
-                bottom: 22px;
-                width: 40px;
-                height: 4px;
+                bottom: 20px;
+                width: 32px;
+                height: 3px;
             }
             
             .mobile-menu {
@@ -502,7 +508,7 @@
 <body>
 
     <nav class="navbar">
-        <a href="{% url 'home' %}" class="navbar-brand">Book Recommender</a>
+        <a href="{% url 'home' %}" class="navbar-brand">Great Minds Read Alike</a>
         
         <div class="navbar-links">
             <a href="{% url 'home' %}">Home</a>
