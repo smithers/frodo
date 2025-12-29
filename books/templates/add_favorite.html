@@ -39,8 +39,8 @@
     }
     
     .book-item {
-        background: #ffffff;
-        border: 2px solid #1a1a1a;
+        background: #f5f5f5;
+        border: 1px solid #1a1a1a;
         padding: 3px 25px;
         margin-bottom: 20px;
         border-radius: 0;
@@ -55,11 +55,16 @@
     
     .book-header {
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
-        padding: 0 0 15px 0;
-        border-bottom: 2px solid #1a1a1a;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 0;
+    }
+    
+    .book-info {
+        flex: 1;
     }
     
     .book-info h4 {
@@ -76,43 +81,14 @@
         font-style: italic;
     }
     
-    .explanation-input {
-        width: 100%;
-        padding: 12px 15px;
-        border: 2px solid #1a1a1a;
-        border-radius: 0;
-        font-size: 1em;
-        font-family: 'Lora', serif;
-        margin-top: 15px;
-        background: #ffffff;
-        color: #1a1a1a;
-        line-height: 1.8;
-        transition: border-color 0.3s ease;
-    }
-    
-    .explanation-input:focus {
-        outline: none;
-        border-color: #8b0000;
-        border-width: 2px;
-    }
-    
-    .explanation-label {
-        font-size: 0.9em;
-        color: #1a1a1a;
-        margin-top: 8px;
-        font-weight: 400;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
     .remove-btn {
         background: transparent;
         color: #8b0000;
-        border: 2px solid #8b0000;
-        padding: 8px 18px;
+        border: 1px solid #8b0000;
+        padding: 6px 14px;
         border-radius: 0;
         cursor: pointer;
-        font-size: 0.9em;
+        font-size: 0.72em;
         font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -175,13 +151,12 @@
         }
         
         .book-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
+            flex-direction: row;
+            align-items: center;
         }
         
-        .remove-btn {
-            width: 100%;
+        .book-info {
+            flex: 1;
         }
         
         button[type="submit"] {
@@ -208,7 +183,7 @@
     <form method="POST" action="{% url 'save_favorite' %}" id="favorites-form">
         {% csrf_token %}
         <div id="selected-books-container" class="selected-books" style="display: none;">
-            <h3 style="color: #1a1a1a; border-bottom: 3px solid #8b0000; padding-bottom: 15px; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
+            <h3 style="color: #1a1a1a; border-bottom: 3px solid #8b0000; padding-bottom: 0; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
             <div id="selected-books-list"></div>
             <button type="submit" style="margin-top: 25px;">
                 Add to My Favorites
@@ -273,9 +248,7 @@ $(function() {
                         '<p style="display: inline; margin: 0;">by ' + book.author + '</p>' +
                     '</div>' +
                     '<button type="button" class="remove-btn" data-index="' + index + '">Remove</button>' +
-                '</div>' +
-                '<label class="explanation-label">Why do you love this book? (optional)</label>' +
-                '<textarea class="explanation-input" placeholder="Enter a short explanation..." data-index="' + index + '" rows="2">' + (book.explanation || '') + '</textarea>'
+                '</div>'
             );
             container.append(item);
         });
@@ -294,20 +267,6 @@ $(function() {
         var index = $(this).data('index');
         selectedBooks.splice(index, 1);
         updateSelectedBooksList();
-    });
-    
-    // Update explanation when user types in the textarea
-    $(document).on('input', '.explanation-input', function() {
-        var index = $(this).data('index');
-        selectedBooks[index].explanation = $(this).val();
-        // Update only the corresponding hidden input, don't recreate everything
-        var hiddenInput = $('input[name="explanation"]').eq(index);
-        if (hiddenInput.length) {
-            hiddenInput.val(selectedBooks[index].explanation);
-        } else {
-            // If hidden input doesn't exist yet, update all hidden inputs
-            updateHiddenInputs();
-        }
     });
     
     function updateHiddenInputs() {

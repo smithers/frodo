@@ -111,7 +111,7 @@
 
 {% block content %}
     {% if show_account_prompt %}
-    <div class="card account-prompt-banner" style="background: #ffffff; border: 2px solid #8b0000; margin-bottom: 30px; padding: 25px;">
+    <div class="card account-prompt-banner" style="background: #e8e8e8; border: 2px solid #8b0000; margin-bottom: 30px; padding: 25px;">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
             <div style="flex: 1; min-width: 250px;">
                 <h3 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 1.3em;">Save Your Recommendations</h3>
@@ -129,10 +129,10 @@
     {% endif %}
     
     <h1>Recommended For You</h1>
-    <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
-    <hr>
 
     {% if grouped_recommendations %}
+        <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
+        <hr>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
                 <div class="card" style="background: #ffffff;">
@@ -176,7 +176,7 @@
             {% if show_no_new_books_message %}
             <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 15px;">We found a reader with some favorite books as you, but they don't have any favorites that you haven't read yet!</p>
             {% endif %}
-            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our algorithm matches you with readers who share your favorite books.</p>
+            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our system searches through our hundreds of readers to find ones who have the same favorites as you.</p>
             
             {% if diagnostic %}
                 <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-left: 4px solid #8b0000; font-size: 1em; line-height: 1.9;">
