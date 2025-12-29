@@ -180,12 +180,17 @@
             background: #8b0000;
             border: 2px solid #8b0000;
             color: #ffffff;
-            padding: 8px 12px;
+            padding: 10px 15px;
             cursor: pointer;
-            font-size: 1.5em;
+            font-size: 1.8em;
             font-family: 'Lora', serif;
-            border-radius: 6px;
+            border-radius: 0;
             transition: all 0.3s ease;
+            z-index: 1001;
+            min-width: 50px;
+            min-height: 50px;
+            align-items: center;
+            justify-content: center;
         }
         
         .mobile-menu-toggle:hover {
@@ -314,7 +319,7 @@
         }
         
         /* Mobile Responsive Styles */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             body {
                 padding-top: 70px;
             }
@@ -336,7 +341,7 @@
             }
             
             .mobile-menu-toggle {
-                display: block;
+                display: flex;
             }
             
             .container {
@@ -369,7 +374,7 @@
             }
         }
         
-        @media (min-width: 769px) {
+        @media (min-width: 1025px) {
             .mobile-menu {
                 display: none !important;
             }
