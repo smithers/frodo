@@ -40,10 +40,10 @@ elif DEBUG:
     # Development: allow localhost
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
-    # Production: Railway requires explicit ALLOWED_HOSTS
-    # IMPORTANT: Set ALLOWED_HOSTS env var in Railway with your domain
-    # Example: "your-app.railway.app" or "your-app.up.railway.app"
-    # You can find your domain in Railway dashboard under your service
+    # Production: Heroku requires explicit ALLOWED_HOSTS
+    # IMPORTANT: Set ALLOWED_HOSTS env var in Heroku with your domain
+    # Example: "your-app.herokuapp.com" or your custom domain
+    # You can find your domain in Heroku dashboard under Settings > Domains
     ALLOWED_HOSTS = []  # Must be set via environment variable in production
 
 
@@ -181,6 +181,35 @@ LOGIN_REDIRECT_URL = 'my_books'
 # Where to go after logging out
 LOGOUT_REDIRECT_URL = 'home'
 
+# Email configuration
+# For production (Heroku), set these environment variables in Heroku dashboard:
+# - EMAIL_HOST (e.g., 'smtp.gmail.com' for Gmail, 'smtp.sendgrid.net' for SendGrid)
+# - EMAIL_PORT (e.g., '587' for TLS, '465' for SSL)
+# - EMAIL_USE_TLS (set to 'True' for TLS, 'False' for SSL)
+# - EMAIL_HOST_USER (your email address or SendGrid username)
+# - EMAIL_HOST_PASSWORD (your email password, app-specific password, or SendGrid API key)
+# - DEFAULT_FROM_EMAIL (sender email address, e.g., 'noreply@yourdomain.com')
+#
+# Heroku Add-on Options:
+# - SendGrid (recommended): heroku addons:create sendgrid:starter
+#   Then use: EMAIL_HOST='smtp.sendgrid.net', EMAIL_HOST_USER='apikey', EMAIL_HOST_PASSWORD=<your-api-key>
+# - Mailgun: heroku addons:create mailgun
+#   Then use the SMTP credentials provided by Mailgun
+
+# In development, emails are printed to console
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # Production: use SMTP backend
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@bookrecommender.com')
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
 # Cache configuration for Google Books API responses
 # Using local memory cache (fast, but not shared across processes)
 # For production, consider Redis: pip install django-redis
@@ -203,19 +232,19 @@ CACHES = {
 # }
 
 # Security settings for production
-# Note: Railway handles SSL at the proxy level, so we don't force SSL redirects
-# This prevents redirect loops when Railway's proxy terminates SSL
+# Note: Heroku handles SSL at the proxy level, so we don't force SSL redirects
+# This prevents redirect loops when Heroku's proxy terminates SSL
 if not DEBUG:
-    # Disable SSL redirect - Railway proxy handles SSL termination
+    # Disable SSL redirect - Heroku proxy handles SSL termination
     SECURE_SSL_REDIRECT = False
-    # Trust Railway's proxy for SSL (Railway sets X-Forwarded-Proto header)
+    # Trust Heroku's proxy for SSL (Heroku sets X-Forwarded-Proto header)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    # HSTS is handled by Railway's proxy, so we don't set it here
+    # HSTS is handled by Heroku's proxy, so we don't set it here
     # SECURE_HSTS_SECONDS = 31536000
     # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     # SECURE_HSTS_PRELOAD = True

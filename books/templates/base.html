@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Book Recommender{% endblock %}</title>
+    <title>{% block title %}Great Minds Read Alike{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <style>
@@ -166,11 +166,13 @@
             border: 2px solid #8b0000;
             color: #ffffff;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 20px;
+            border-radius: 0;
             font-weight: 500;
             font-size: 0.9em;
             font-family: 'Lora', serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
         }
         
@@ -526,9 +528,8 @@
         
         <div class="navbar-links">
             <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'my_books' %}">My Books</a>
+            <a href="{% url 'my_books' %}">My Favorite Books</a>
             <a href="{% url 'recommendations' %}">Recommendations</a>
-            <a href="{% url 'add_favorite' %}">Add Favorite</a>
         </div>
         
         <div class="navbar-user">
@@ -539,7 +540,7 @@
                     <button type="submit">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'home' %}" class="navbar-login-btn">Login</a>
+                <a href="{% url 'login' %}" class="navbar-login-btn">Login</a>
             {% endif %}
         </div>
         
@@ -549,9 +550,8 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'my_books' %}">My Books</a>
+        <a href="{% url 'my_books' %}">My Favorite Books</a>
         <a href="{% url 'recommendations' %}">Recommendations</a>
-        <a href="{% url 'add_favorite' %}">Add Favorite</a>
         
         <div class="mobile-user-section">
             {% if user.is_authenticated %}
@@ -561,7 +561,7 @@
                     <button type="submit" style="background:none; border:none; color:#8b0000; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em; margin-top: 10px;">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'home' %}" class="mobile-login-btn">Login</a>
+                <a href="{% url 'login' %}" class="mobile-login-btn">Login</a>
             {% endif %}
         </div>
     </div>

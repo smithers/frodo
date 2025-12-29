@@ -32,3 +32,5 @@ class Command(BaseCommand):
                 fav_count = UserFavoriteBook.objects.filter(user=user).count()
                 self.stdout.write(f'  - {user.username} ({fav_count} favorites)')
 
+
+

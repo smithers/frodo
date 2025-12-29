@@ -4,10 +4,8 @@
 {% block content %}
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;" class="my-books-header">
         <h1 style="border-bottom: 4px solid #8b0000; padding-bottom: 15px; display: inline-block;">My Favorite Books</h1>
-        <a href="{% url 'add_favorite' %}" style="background-color: #1a1a1a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; border: 2px solid #1a1a1a; transition: all 0.3s ease;">+ Add New Book</a>
+        <a href="{% url 'add_favorite' %}" style="background-color: #8b0000; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; border: 2px solid #8b0000; transition: all 0.3s ease;">+ Add New Book</a>
     </div>
-    
-    <hr>
 
     {% if favorites %}
         <div class="card" style="padding: 0; overflow: hidden;">
@@ -23,7 +21,13 @@
                 <tbody>
                     {% for favorite in favorites %}
                         <tr style="border-bottom: 1px solid #1a1a1a; transition: background-color 0.2s ease;">
-                            <td style="padding: 18px 25px; font-weight: 600; color: #1a1a1a; font-size: 1.05em;">{{ favorite.book.title }}</td>
+                            <td style="padding: 18px 25px; font-weight: 600; color: #1a1a1a; font-size: 1.05em;">
+                                {% if favorite.book.isbn %}
+                                    <a href="https://www.amazon.com/dp/{{ favorite.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
+                                {% else %}
+                                    <a href="https://www.amazon.com/s?k={{ favorite.book.title|urlencode }}+{{ favorite.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
+                                {% endif %}
+                            </td>
                             <td style="padding: 18px 25px; color: #1a1a1a; font-style: italic;">{{ favorite.book.author.name }}</td>
                             <td style="padding: 18px 25px; color: #1a1a1a; font-size: 0.95em;">
                                 {% if favorite.created_at %}
@@ -54,7 +58,13 @@
             <div class="mobile-book-cards">
                 {% for favorite in favorites %}
                     <div class="mobile-book-card">
-                        <div class="book-title">{{ favorite.book.title }}</div>
+                        <div class="book-title">
+                            {% if favorite.book.isbn %}
+                                <a href="https://www.amazon.com/dp/{{ favorite.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
+                            {% else %}
+                                <a href="https://www.amazon.com/s?k={{ favorite.book.title|urlencode }}+{{ favorite.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
+                            {% endif %}
+                        </div>
                         <div class="book-author">by {{ favorite.book.author.name }}</div>
                         <div class="book-date">
                             {% if favorite.created_at %}
@@ -81,7 +91,7 @@
         <div class="card" style="text-align: center; background: #ffffff;">
             <h3 style="color: #1a1a1a; margin-bottom: 15px;">Your favorites list is empty!</h3>
             <p style="color: #1a1a1a; font-size: 1.1em; margin-bottom: 30px;">Start adding books you love to build your profile and get recommendations.</p>
-            <a href="{% url 'add_favorite' %}" style="background-color: #1a1a1a; color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; border: 2px solid #1a1a1a; display: inline-block; transition: all 0.3s ease;">Add a Book You Love &rarr;</a>
+            <a href="{% url 'add_favorite' %}" style="background-color: #8b0000; color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; border: 2px solid #8b0000; display: inline-block; transition: all 0.3s ease;">Add a Book You Love &rarr;</a>
         </div>
     {% endif %}
     
@@ -96,10 +106,16 @@
         }
         
         a[href*="add_favorite"]:hover {
-            background-color: #8b0000 !important;
-            border-color: #8b0000 !important;
+            background-color: #1a1a1a !important;
+            border-color: #1a1a1a !important;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Amazon link hover styles */
+        a[href*="amazon.com"]:hover {
+            color: #8b0000 !important;
+            border-bottom-color: #1a1a1a !important;
         }
         
         /* Mobile styles */

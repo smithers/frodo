@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Home - Book Recommender{% endblock %}
+{% block title %}Home - Great Minds Read Alike{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -369,6 +369,14 @@
                         Login
                     </button>
                 </form>
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9em;">
+                    <p style="margin-bottom: 10px;">
+                        <a href="{% url 'password_reset' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Forgot Password?</a>
+                    </p>
+                    <p style="margin-bottom: 10px;">
+                        <a href="{% url 'forgot_username' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Forgot Username?</a>
+                    </p>
+                </div>
                 <p style="margin-top: 25px; font-size: 0.95em; color: #1a1a1a; text-align: center;">
                     Don't have an account? <a href="{% url 'register' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Create Account</a>
                 </p>

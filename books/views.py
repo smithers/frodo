@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from .models import Book, Author, UserFavoriteBook
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
@@ -415,3 +419,50 @@ def book_info_view(request):
         return JsonResponse(book_details)
     else:
         return JsonResponse({'error': 'Book information not found'}, status=404)
+
+def forgot_username_view(request):
+    """View to recover username by email"""
+    if request.user.is_authenticated:
+        return redirect('my_books')
+    
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        if not email:
+            messages.error(request, 'Please enter your email address.')
+            return render(request, 'registration/forgot_username.html')
+        
+        # Find users with this email
+        users = User.objects.filter(email=email, is_active=True)
+        
+        if users.exists():
+            # Send email with username(s)
+            usernames = [user.username for user in users]
+            subject = 'Your Username Recovery'
+            
+            # Create email content
+            html_message = render_to_string('registration/email_username_recovery.html', {
+                'usernames': usernames,
+                'site_name': 'Great Minds Read Alike',
+            })
+            plain_message = f"Your username(s): {', '.join(usernames)}"
+            
+            try:
+                send_mail(
+                    subject,
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
+                messages.success(request, 'An email with your username(s) has been sent to your email address.')
+                return render(request, 'registration/forgot_username_done.html')
+            except Exception as e:
+                messages.error(request, f'Error sending email: {str(e)}. Please try again later.')
+        else:
+            # Don't reveal if email exists or not (security best practice)
+            messages.success(request, 'If an account exists with that email, you will receive an email with your username(s).')
+            return render(request, 'registration/forgot_username_done.html')
+    
+    return render(request, 'registration/forgot_username.html')

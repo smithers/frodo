@@ -9,5 +9,5 @@ psycopg2-binary==2.9.9
 requests==2.32.5
 sqlparse==0.5.4
 typing-extensions==4.15.0
-urllib3==2.6.0
+urllib3==1.26.20
 whitenoise==6.6.0

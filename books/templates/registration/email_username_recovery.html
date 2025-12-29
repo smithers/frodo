@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Lora', serif;
+            line-height: 1.8;
+            color: #1a1a1a;
+            background-color: #ffffff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .header {
+            border-bottom: 4px solid #8b0000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .username-list {
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #8b0000;
+        }
+        .username-item {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #1a1a1a;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #1a1a1a; margin: 0;">Username Recovery</h1>
+        </div>
+        <div class="content">
+            <p>Hello,</p>
+            <p>You requested to recover your username(s) for {{ site_name }}.</p>
+            <div class="username-list">
+                <p style="margin-top: 0; font-weight: 600;">Your username(s):</p>
+                {% for username in usernames %}
+                    <div class="username-item">{{ username }}</div>
+                {% endfor %}
+            </div>
+            <p>If you did not request this, please ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>Thank you,<br>{{ site_name }}</p>
+        </div>
+    </div>
+</body>
+</html>
+
