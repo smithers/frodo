@@ -11,7 +11,7 @@
         <div class="card" style="padding: 0; overflow: hidden;">
             <table style="width: 100%; border-collapse: collapse; font-size: 1em;" class="desktop-table">
                 <thead>
-                    <tr style="border-bottom: 3px solid #8b0000; background-color: #ffffff;">
+                    <tr style="border-bottom: 3px solid #8b0000; background-color: #fafafa;">
                         <th style="text-align: left; padding: 20px 25px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Title</th>
                         <th style="text-align: left; padding: 20px 25px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Author</th>
                         <th style="text-align: left; padding: 20px 25px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Added On</th>
@@ -21,13 +21,7 @@
                 <tbody>
                     {% for favorite in favorites %}
                         <tr style="border-bottom: 1px solid #1a1a1a; transition: background-color 0.2s ease;">
-                            <td style="padding: 18px 25px; font-weight: 600; color: #1a1a1a; font-size: 1.05em;">
-                                {% if favorite.book.isbn %}
-                                    <a href="https://www.amazon.com/dp/{{ favorite.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
-                                {% else %}
-                                    <a href="https://www.amazon.com/s?k={{ favorite.book.title|urlencode }}+{{ favorite.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
-                                {% endif %}
-                            </td>
+                            <td style="padding: 18px 25px; font-weight: 600; color: #1a1a1a; font-size: 1.05em;">{{ favorite.book.title }}</td>
                             <td style="padding: 18px 25px; color: #1a1a1a; font-style: italic;">{{ favorite.book.author.name }}</td>
                             <td style="padding: 18px 25px; color: #1a1a1a; font-size: 0.95em;">
                                 {% if favorite.created_at %}
@@ -58,13 +52,7 @@
             <div class="mobile-book-cards">
                 {% for favorite in favorites %}
                     <div class="mobile-book-card">
-                        <div class="book-title">
-                            {% if favorite.book.isbn %}
-                                <a href="https://www.amazon.com/dp/{{ favorite.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
-                            {% else %}
-                                <a href="https://www.amazon.com/s?k={{ favorite.book.title|urlencode }}+{{ favorite.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; border-bottom: 2px solid #8b0000; transition: all 0.3s ease;">{{ favorite.book.title }}</a>
-                            {% endif %}
-                        </div>
+                        <div class="book-title">{{ favorite.book.title }}</div>
                         <div class="book-author">by {{ favorite.book.author.name }}</div>
                         <div class="book-date">
                             {% if favorite.created_at %}
@@ -110,12 +98,6 @@
             border-color: #1a1a1a !important;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        /* Amazon link hover styles */
-        a[href*="amazon.com"]:hover {
-            color: #8b0000 !important;
-            border-bottom-color: #1a1a1a !important;
         }
         
         /* Mobile styles */

@@ -74,6 +74,16 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     
+    /* Amazon link hover styles for book titles */
+    a[href*="amazon.com"] {
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+    
+    a[href*="amazon.com"]:hover {
+        color: #8b0000 !important;
+    }
+    
     @media (max-width: 1024px) {
         /* Make grid single column on mobile */
         .recommendations-grid {
@@ -136,25 +146,26 @@
 
     {% if grouped_recommendations %}
         <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
-        <hr>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
                 <div class="card" style="background: #ffffff;">
-                    <div style="border-bottom: 3px solid #8b0000; padding-bottom: 20px; margin-bottom: 25px;">
+                    <div style="padding-bottom: 10px; margin-bottom: 10px;">
                         <p style="margin: 0; font-size: 1em; color: #1a1a1a; line-height: 1.8;">
-                            <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> loves the following same books you do: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}
+                            You and <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> both love: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}. <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> also loves:
                         </p>
                     </div>
                     
-                    <div style="margin-top: 20px;">
-                        <p style="margin: 0 0 15px 0; font-size: 1em; color: #1a1a1a; line-height: 1.8;">
-                            Here are books that <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> loves that you didn't enter:
-                        </p>
+                    <div style="margin-top: 0;">
                         <ul style="list-style: none; padding: 0; margin: 0;">
                             {% for book_data in group.recommended_books %}
-                                <li style="padding: 8px 0; border-bottom: 1px solid #1a1a1a;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #d0d0d0;">
                                     <div>
-                                        <strong style="color: #1a1a1a; font-size: 1em; font-family: 'Playfair Display', serif;">{{ book_data.book.title }}</strong> <span style="font-size: 0.9em; color: #1a1a1a; font-style: italic;">by {{ book_data.book.author.name }}</span>
+                                        {% if book_data.book.isbn %}
+                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                        {% else %}
+                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                        {% endif %}
+                                        <span style="font-size: 0.9em; color: #1a1a1a; font-style: italic;">by {{ book_data.book.author.name }}</span>
                                         {% if book_data.explanation %}
                                             <div class="accordion-header" onclick="toggleAccordion(this)">
                                                 <span class="accordion-icon">▶</span>
