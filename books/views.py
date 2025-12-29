@@ -263,6 +263,7 @@ def recommendation_view(request):
                 'recommendations_count': 0,
                 'message': 'You need to add at least one book you love to get recommendations!',
             },
+            'show_account_prompt': False,
         }
         return render(request, 'recommendations.html', context)
     
@@ -355,9 +356,17 @@ def recommendation_view(request):
         'recommendations_count': len(recommended_data),
     }
     
+    # Check if user is not authenticated but has favorite books
+    show_account_prompt = not request.user.is_authenticated and total_favorites > 0
+    
+    # Check if there are similar users but no recommendations
+    show_no_new_books_message = diagnostic_info['similar_users_count'] > 0 and len(recommended_data) == 0
+    
     context = {
         'grouped_recommendations': grouped_list,
         'diagnostic': diagnostic_info,
+        'show_account_prompt': show_account_prompt,
+        'show_no_new_books_message': show_no_new_books_message,
     }
     return render(request, 'recommendations.html', context)
 

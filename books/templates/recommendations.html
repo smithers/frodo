@@ -63,6 +63,17 @@
         border-left: 3px solid #8b0000;
     }
     
+    .account-prompt-banner a {
+        transition: all 0.3s ease;
+    }
+    
+    .account-prompt-banner a:hover {
+        background-color: #ffffff !important;
+        color: #8b0000 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
     @media (max-width: 1024px) {
         /* Make grid single column on mobile */
         .recommendations-grid {
@@ -79,13 +90,46 @@
         h1 {
             font-size: 1.8em;
         }
+        
+        .account-prompt-banner {
+            padding: 20px !important;
+        }
+        
+        .account-prompt-banner > div {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        
+        .account-prompt-banner a {
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+    {% if show_account_prompt %}
+    <div class="card account-prompt-banner" style="background: #ffffff; border: 2px solid #8b0000; margin-bottom: 30px; padding: 25px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 250px;">
+                <h3 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 1.3em;">Save Your Recommendations</h3>
+                <p style="color: #1a1a1a; margin: 0; font-size: 1.05em; line-height: 1.6;">
+                    Your recommendations will be lost when you leave the site. Create a free account to save your favorite books and recommendations permanently.
+                </p>
+            </div>
+            <div style="flex-shrink: 0;">
+                <a href="{% url 'register' %}" style="display: inline-block; padding: 12px 30px; background-color: #8b0000; color: #ffffff; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 2px solid #8b0000; transition: all 0.3s ease; white-space: nowrap;">
+                    Create Account
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <h1>Recommended For You</h1>
-    <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, users similar to you also loved:</p>
+    <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
     <hr>
 
     {% if grouped_recommendations %}
@@ -129,19 +173,22 @@
     {% else %}
         <div class="card" style="background: #ffffff;">
             <h3 style="color: #1a1a1a; margin-bottom: 15px;">No matches yet!</h3>
-            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our algorithm matches you with users who share your favorite books.</p>
+            {% if show_no_new_books_message %}
+            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 15px;">We found a reader with some favorite books as you, but they don't have any favorites that you haven't read yet!</p>
+            {% endif %}
+            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our algorithm matches you with readers who share your favorite books.</p>
             
             {% if diagnostic %}
                 <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-left: 4px solid #8b0000; font-size: 1em; line-height: 1.9;">
                     <strong style="color: #1a1a1a;">Your stats:</strong><br>
                     • Total books you love: {{ diagnostic.total_favorites }}<br>
-                    • Similar users found: {{ diagnostic.similar_users_count }}<br>
+                    • Similar readers found: {{ diagnostic.similar_users_count }}<br>
                     {% if diagnostic.message %}
                         <p style="color: #1a1a1a; margin-top: 15px; font-style: italic;"><strong>{{ diagnostic.message }}</strong></p>
                     {% elif diagnostic.total_favorites > 0 and diagnostic.similar_users_count == 0 %}
                         <p style="color: #1a1a1a; margin-top: 15px; font-style: italic;">
-                            <strong>You have favorite books, but no other users have favorited the same books yet.</strong><br>
-                            This could mean the books you love aren't in our seed data, or other users haven't discovered them yet.
+                            <strong>You have favorite books, but no other readers have favorited the same books yet.</strong><br>
+                            This could mean the books you love aren't in our seed data, or other readers haven't discovered them yet.
                         </p>
                     {% endif %}
                 </div>
