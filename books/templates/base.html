@@ -205,6 +205,35 @@
             min-height: 50px;
             align-items: center;
             justify-content: center;
+            position: relative;
+            text-indent: -9999px;
+            overflow: hidden;
+        }
+        
+        .mobile-menu-toggle::before,
+        .mobile-menu-toggle::after,
+        .mobile-menu-toggle span {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-toggle::before {
+            top: 18px;
+        }
+        
+        .mobile-menu-toggle span {
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .mobile-menu-toggle::after {
+            bottom: 18px;
         }
         
         .mobile-menu-toggle:hover {
@@ -353,6 +382,8 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         hr {
@@ -390,6 +421,23 @@
                 min-width: 75px;
                 min-height: 75px;
                 padding: 15px 20px;
+            }
+            
+            .mobile-menu-toggle::before {
+                top: 22px;
+                width: 40px;
+                height: 4px;
+            }
+            
+            .mobile-menu-toggle span {
+                width: 40px;
+                height: 4px;
+            }
+            
+            .mobile-menu-toggle::after {
+                bottom: 22px;
+                width: 40px;
+                height: 4px;
             }
             
             .mobile-menu {
@@ -466,7 +514,7 @@
             {% endif %}
         </div>
         
-        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" type="button"><span></span></button>
     </nav>
     
     <!-- Mobile Menu -->

@@ -18,8 +18,8 @@
         background-attachment: fixed;
         background-repeat: no-repeat;
         color: #ffffff;
-        margin: -40px -40px 0 -40px;
-        padding: 0 40px;
+        margin: 0;
+        padding: 0 20px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
@@ -184,8 +184,8 @@
         .hero-section {
             height: auto;
             min-height: 500px;
-            padding: 40px 20px;
-            margin: -20px 0 0 0;
+            padding: 40px 15px;
+            margin: 0;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
@@ -233,8 +233,16 @@
         
         /* Hero search input */
         #hero-book-search {
-            min-width: 100% !important;
+            min-width: 0 !important;
             width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .hero-content > div[style*="max-width: 700px"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 10px !important;
+            box-sizing: border-box !important;
         }
         
         .hero-content > div {
@@ -258,11 +266,11 @@
         <div class="hero-description">
             Enter books that you absolutely love into the box below. We'll show you recommendations from readers who love the same books you do. The more books you enter, the more likely you find others who love what you love.
         </div>
-        <div style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
-            <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form">
+        <div style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto; width: 100%; padding: 0 10px; box-sizing: border-box;">
+            <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form" style="width: 100%;">
                 {% csrf_token %}
-                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
-                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type slowly)" inputmode="text" style="flex: 1; padding: 15px 20px; border: 2px solid #ffffff; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #1a1a1a; min-width: 300px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; width: 100%; flex-wrap: wrap;">
+                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type slowly)" inputmode="text" style="flex: 1; padding: 15px 20px; border: 2px solid #ffffff; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #1a1a1a; min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
                     <span id="hero-loading-msg" style="display:none; color: #ffffff; font-style: italic; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);"> Searching...</span>
                 </div>
                 <div id="hero-selected-books-list" style="margin-top: 20px; display: none;"></div>
