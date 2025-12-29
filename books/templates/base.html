@@ -218,7 +218,7 @@
             background: #1a1a1a;
             border-bottom: 4px solid #8b0000;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            padding: 0;
             z-index: 999;
         }
         
@@ -231,9 +231,9 @@
             padding: 15px 20px;
             color: #ffffff;
             text-decoration: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            margin-bottom: 5px;
+            border-bottom: 2px solid #8b0000;
+            border-radius: 0;
+            margin-bottom: 0;
             transition: all 0.3s ease;
         }
         
@@ -246,16 +246,43 @@
         
         .mobile-menu .mobile-user-section {
             padding: 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            margin-top: 10px;
+            border-top: 2px solid #8b0000;
+            margin-top: 0;
             color: #ffffff;
-            border-radius: 8px;
+            border-radius: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .mobile-menu .mobile-user-section strong {
             color: #ffffff;
             display: block;
             margin-bottom: 10px;
+        }
+        
+        .mobile-login-btn {
+            display: block;
+            margin-top: 10px;
+            padding: 12px 24px;
+            background-color: #8b0000;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid #8b0000;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .mobile-login-btn:hover {
+            background-color: #ffffff;
+            color: #8b0000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         /* Message Styles (Success/Error alerts) */
@@ -440,7 +467,7 @@
                     <button type="submit" style="background:none; border:none; color:#8b0000; cursor:pointer; text-decoration:underline; font-weight: 400; font-size: 0.95em; margin-top: 10px;">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'home' %}#login" style="display: inline-block; margin-top: 10px; color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Login</a>
+                <a href="{% url 'home' %}#login" class="mobile-login-btn">Login</a>
             {% endif %}
         </div>
     </div>
