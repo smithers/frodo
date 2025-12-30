@@ -553,25 +553,98 @@ def password_reset_confirm_view(request, uidb64, token):
         if default_token_generator.check_token(user, token):
             validlink = True
     
-    if request.method == 'POST' and validlink:
+    # Handle POST request
+    if request.method == 'POST' and validlink and user:
         form = SetPasswordForm(user, request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
             return redirect('password_reset_complete')
+        # If form is invalid, we'll show errors below
     else:
-        form = SetPasswordForm(user) if validlink else None
+        form = SetPasswordForm(user) if validlink and user else None
     
-    # Render our custom template with cache-busting headers
-    response = render(request, 'registration/password_reset_confirm.html', {
-        'form': form,
-        'validlink': validlink,
-    })
+    # Build a simple HTML form directly (bypassing template to avoid any issues)
+    from django.http import HttpResponse
+    from django.middleware.csrf import get_token
     
-    # Add cache-busting headers to prevent browser/Django caching
+    csrf_token = get_token(request)
+    
+    # Build error messages
+    errors_html = ""
+    if form and form.errors:
+        errors_html = '<div style="color: #8b0000; padding: 15px; background: #ffffff; border-left: 4px solid #8b0000; margin-bottom: 25px;">'
+        for field, error_list in form.errors.items():
+            for error in error_list:
+                errors_html += f'<p style="margin: 5px 0;"><strong>{field}:</strong> {error}</p>'
+        errors_html += '</div>'
+    
+    if validlink and form:
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Enter New Password - Great Minds Read Alike</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {{ font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; }}
+                h1 {{ color: #1a1a1a; text-align: center; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; }}
+                .banner {{ background: #8b0000; color: white; padding: 10px; text-align: center; margin-bottom: 20px; font-weight: bold; }}
+                label {{ display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }}
+                input[type="password"] {{ width: 100%; padding: 12px 15px; border: 2px solid #1a1a1a; border-radius: 0; font-size: 1em; box-sizing: border-box; margin-bottom: 25px; }}
+                input[type="password"]:focus {{ outline: none; border-color: #8b0000; border-width: 2px; }}
+                button {{ width: 100%; background-color: #1a1a1a; color: #ffffff; padding: 15px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }}
+                button:hover {{ background-color: #8b0000; border-color: #8b0000; }}
+                .error {{ color: #8b0000; font-size: 0.95em; margin-top: 8px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="banner">✓ CUSTOM PASSWORD RESET PAGE</div>
+                <h1>Enter New Password</h1>
+                <p style="text-align: center; color: #1a1a1a; margin-bottom: 40px; font-style: italic;">Please enter your new password twice so we can verify you typed it correctly.</p>
+                {errors_html}
+                <form method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
+                    <label for="id_new_password1">New Password:</label>
+                    <input type="password" name="new_password1" id="id_new_password1" required>
+                    <label for="id_new_password2">Confirm New Password:</label>
+                    <input type="password" name="new_password2" id="id_new_password2" required>
+                    <button type="submit">Change Password</button>
+                </form>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="/" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Back to Login</a>
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+    else:
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Password Reset Invalid - Great Minds Read Alike</title>
+            <style>
+                body {{ font-family: Arial; padding: 50px; max-width: 600px; margin: 0 auto; }}
+                h1 {{ color: #8b0000; }}
+                .error {{ color: #8b0000; padding: 20px; background: #ffffff; border-left: 4px solid #8b0000; }}
+            </style>
+        </head>
+        <body>
+            <h1>Password Reset Invalid</h1>
+            <div class="error">
+                <p><strong>The password reset link was invalid, possibly because it has already been used.</strong></p>
+                <p>Please request a new password reset.</p>
+            </div>
+            <p><a href="/password-reset/">Request New Reset Link</a></p>
+        </body>
+        </html>
+        """
+    
+    response = HttpResponse(html, content_type="text/html")
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
-    response['X-Custom-Password-Reset'] = 'true'
-    
     return response
