@@ -11,11 +11,10 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.views import PasswordResetConfirmView, reverse_lazy
-from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.forms import SetPasswordForm
 from .models import Book, Author, UserFavoriteBook
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
@@ -536,30 +535,34 @@ def password_reset_view(request):
     
     return render(request, 'registration/password_reset.html', {'form': form})
 
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    """Custom password reset confirm view that uses our template and success URL"""
-    template_name = 'registration/password_reset_confirm.html'
-    success_url = reverse_lazy('password_reset_complete')
-    post_reset_login = False
+def password_reset_confirm_view(request, uidb64, token):
+    """Custom password reset confirm view - completely custom, no Django admin redirects"""
+    if request.user.is_authenticated:
+        return redirect('my_books')
     
-    def get(self, request, *args, **kwargs):
-        # Override get to prevent Django's default redirect to /set-password/
-        # Just show our custom template directly
-        self.user = self.get_user(kwargs['uidb64'])
-        if self.user is not None:
-            token = kwargs['token']
-            if default_token_generator.check_token(self.user, token):
-                # Valid link - show our form
-                context = self.get_context_data()
-                context['validlink'] = True
-                return self.render_to_response(context)
-        
-        # Invalid link - show error
-        context = self.get_context_data()
-        context['validlink'] = False
-        return self.render_to_response(context)
+    # Decode user ID
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid, is_active=True)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
     
-    def form_valid(self, form):
-        # Override to redirect to our success_url instead of the default /set-password/ redirect
-        form.save()
-        return redirect(self.success_url)
+    # Validate token
+    validlink = False
+    if user is not None:
+        if default_token_generator.check_token(user, token):
+            validlink = True
+    
+    if request.method == 'POST' and validlink:
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
+            return redirect('password_reset_complete')
+    else:
+        form = SetPasswordForm(user) if validlink else None
+    
+    return render(request, 'registration/password_reset_confirm.html', {
+        'form': form,
+        'validlink': validlink,
+    })
