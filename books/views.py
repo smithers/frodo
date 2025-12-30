@@ -559,7 +559,9 @@ def password_reset_confirm_view(request, uidb64, token):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
-            return redirect('password_reset_complete')
+            # Redirect to our custom completion page using absolute URL
+            from django.urls import reverse
+            return redirect(reverse('password_reset_complete'))
         # If form is invalid, we'll show errors below
     else:
         form = SetPasswordForm(user) if validlink and user else None
@@ -590,7 +592,6 @@ def password_reset_confirm_view(request, uidb64, token):
                 body {{ font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }}
                 .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; }}
                 h1 {{ color: #1a1a1a; text-align: center; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; }}
-                .banner {{ background: #8b0000; color: white; padding: 10px; text-align: center; margin-bottom: 20px; font-weight: bold; }}
                 label {{ display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }}
                 input[type="password"] {{ width: 100%; padding: 12px 15px; border: 2px solid #1a1a1a; border-radius: 0; font-size: 1em; box-sizing: border-box; margin-bottom: 25px; }}
                 input[type="password"]:focus {{ outline: none; border-color: #8b0000; border-width: 2px; }}
@@ -601,7 +602,6 @@ def password_reset_confirm_view(request, uidb64, token):
         </head>
         <body>
             <div class="container">
-                <div class="banner">✓ CUSTOM PASSWORD RESET PAGE</div>
                 <h1>Enter New Password</h1>
                 <p style="text-align: center; color: #1a1a1a; margin-bottom: 40px; font-style: italic;">Please enter your new password twice so we can verify you typed it correctly.</p>
                 {errors_html}
@@ -651,4 +651,34 @@ def password_reset_confirm_view(request, uidb64, token):
 
 def password_reset_complete_view(request):
     """Custom password reset complete view"""
-    return render(request, 'registration/password_reset_complete.html')
+    # Build HTML directly to avoid any template issues
+    from django.http import HttpResponse
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Password Reset Complete - Great Minds Read Alike</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body { font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; text-align: center; }
+            h1 { color: #1a1a1a; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }
+            p { color: #1a1a1a; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }
+            a { display: inline-block; background-color: #1a1a1a; color: #ffffff; padding: 15px 30px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: all 0.3s ease; margin-top: 40px; }
+            a:hover { background-color: #8b0000; border-color: #8b0000; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Password Reset Complete</h1>
+            <p>Your password has been set. You may go ahead and log in now.</p>
+            <a href="/">Log In</a>
+        </div>
+    </body>
+    </html>
+    """
+    response = HttpResponse(html, content_type="text/html")
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
