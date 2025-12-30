@@ -537,54 +537,33 @@ def password_reset_view(request):
 
 def password_reset_confirm_view(request, uidb64, token):
     """Custom password reset confirm view - completely custom, no Django admin redirects"""
-    # TEMPORARY: Return a simple test to see what's happening
-    from django.http import HttpResponse
-    return HttpResponse(
-        f"""
-        <html>
-        <head><title>Password Reset Test</title></head>
-        <body style="font-family: Arial; padding: 50px;">
-            <h1 style="color: #8b0000;">CUSTOM VIEW IS BEING CALLED</h1>
-            <p>uidb64: {uidb64}</p>
-            <p>token: {token[:30]}...</p>
-            <p>Method: {request.method}</p>
-            <p>Path: {request.path}</p>
-            <hr>
-            <p>If you see this, the view is working. If you see Django admin, something else is intercepting.</p>
-        </body>
-        </html>
-        """,
-        content_type="text/html"
-    )
+    if request.user.is_authenticated:
+        return redirect('my_books')
     
-    # Original code below (will be restored after testing)
-    # if request.user.is_authenticated:
-    #     return redirect('my_books')
-    # 
-    # # Decode user ID
-    # try:
-    #     uid = urlsafe_base64_decode(uidb64).decode()
-    #     user = User.objects.get(pk=uid, is_active=True)
-    # except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-    #     user = None
-    # 
-    # # Validate token
-    # validlink = False
-    # if user is not None:
-    #     if default_token_generator.check_token(user, token):
-    #         validlink = True
-    # 
-    # if request.method == 'POST' and validlink:
-    #     form = SetPasswordForm(user, request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
-    #         return redirect('password_reset_complete')
-    # else:
-    #     form = SetPasswordForm(user) if validlink else None
-    # 
-    # # Render our custom template
-    # return render(request, 'registration/password_reset_confirm.html', {
-    #     'form': form,
-    #     'validlink': validlink,
-    # })
+    # Decode user ID
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid, is_active=True)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    # Validate token
+    validlink = False
+    if user is not None:
+        if default_token_generator.check_token(user, token):
+            validlink = True
+    
+    if request.method == 'POST' and validlink:
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your password has been reset successfully. You can now log in with your new password.')
+            return redirect('password_reset_complete')
+    else:
+        form = SetPasswordForm(user) if validlink else None
+    
+    # Render our custom template
+    return render(request, 'registration/password_reset_confirm.html', {
+        'form': form,
+        'validlink': validlink,
+    })
