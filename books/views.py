@@ -453,10 +453,11 @@ def forgot_username_view(request):
             plain_message = f"Your username(s): {', '.join(usernames)}"
             
             try:
+                from_email = settings.DEFAULT_FROM_EMAIL
                 send_mail(
                     subject,
                     plain_message,
-                    settings.DEFAULT_FROM_EMAIL,
+                    from_email,
                     [email],
                     html_message=html_message,
                     fail_silently=False,
@@ -464,7 +465,8 @@ def forgot_username_view(request):
                 messages.success(request, 'An email with your username(s) has been sent to your email address.')
                 return render(request, 'registration/forgot_username_done.html')
             except Exception as e:
-                messages.error(request, f'Error sending email: {str(e)}. Please try again later.')
+                # Include the from email in error message for debugging
+                messages.error(request, f'Error sending email from {settings.DEFAULT_FROM_EMAIL}: {str(e)}. Please check that this email address is verified in SendGrid.')
         else:
             # Don't reveal if email exists or not (security best practice)
             messages.success(request, 'If an account exists with that email, you will receive an email with your username(s).')
@@ -509,16 +511,18 @@ def password_reset_view(request):
                     plain_message = f"Please go to the following page and choose a new password:\n\n{reset_url}\n\nIf you didn't request this, please ignore this email."
                     
                     try:
+                        from_email = settings.DEFAULT_FROM_EMAIL
                         send_mail(
                             subject,
                             plain_message,
-                            settings.DEFAULT_FROM_EMAIL,
+                            from_email,
                             [email],
                             html_message=html_message,
                             fail_silently=False,
                         )
                     except Exception as e:
-                        messages.error(request, f'Error sending email: {str(e)}. Please try again later.')
+                        # Include the from email in error message for debugging
+                        messages.error(request, f'Error sending email from {settings.DEFAULT_FROM_EMAIL}: {str(e)}. Please check that this email address is verified in SendGrid.')
                         return render(request, 'registration/password_reset.html', {'form': form})
             
             # Always show success message (security best practice - don't reveal if email exists)
