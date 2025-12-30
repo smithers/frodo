@@ -537,27 +537,8 @@ def password_reset_view(request):
 
 def password_reset_confirm_view(request, uidb64, token):
     """Custom password reset confirm view - completely custom, no Django admin redirects"""
-    # CRITICAL TEST: Return immediately to confirm this view is being called
-    from django.http import HttpResponse
-    return HttpResponse(
-        f"""
-        <html>
-        <head><title>Password Reset - Custom View</title></head>
-        <body style="font-family: Arial; padding: 50px; text-align: center;">
-            <h1 style="color: #8b0000;">CUSTOM PASSWORD RESET VIEW IS WORKING!</h1>
-            <p>If you see this, the view is being called correctly.</p>
-            <p>uidb64: {uidb64}</p>
-            <p>token: {token[:30]}...</p>
-            <p style="color: red; font-weight: bold;">If you see Django admin instead, the view is NOT being called.</p>
-        </body>
-        </html>
-        """,
-        content_type="text/html"
-    )
-    
-    # Original code (commented out for testing)
-    # if request.user.is_authenticated:
-    #     return redirect('my_books')
+    if request.user.is_authenticated:
+        return redirect('my_books')
     
     # Decode user ID
     try:
@@ -581,11 +562,8 @@ def password_reset_confirm_view(request, uidb64, token):
     else:
         form = SetPasswordForm(user) if validlink else None
     
-    # Render our custom template - this should NEVER show Django admin
-    response = render(request, 'registration/password_reset_confirm.html', {
+    # Render our custom template
+    return render(request, 'registration/password_reset_confirm.html', {
         'form': form,
         'validlink': validlink,
     })
-    # Add a header to confirm this view rendered the response
-    response['X-Custom-View'] = 'password_reset_confirm_view'
-    return response
