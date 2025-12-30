@@ -564,13 +564,84 @@ def password_reset_confirm_view(request, uidb64, token):
     else:
         form = SetPasswordForm(user) if validlink and user else None
     
-    # Render our custom template (which extends base.html for header/footer)
-    response = render(request, 'registration/password_reset_confirm.html', {
-        'form': form,
-        'validlink': validlink,
-    })
+    # Build HTML directly (this was working before)
+    from django.http import HttpResponse
+    from django.middleware.csrf import get_token
     
-    # Add cache-busting headers
+    csrf_token = get_token(request)
+    
+    # Build error messages
+    errors_html = ""
+    if form and form.errors:
+        errors_html = '<div style="color: #8b0000; padding: 15px; background: #ffffff; border-left: 4px solid #8b0000; margin-bottom: 25px;">'
+        for field, error_list in form.errors.items():
+            for error in error_list:
+                errors_html += f'<p style="margin: 5px 0;"><strong>{field}:</strong> {error}</p>'
+        errors_html += '</div>'
+    
+    if validlink and form:
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Enter New Password - Great Minds Read Alike</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {{ font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; }}
+                h1 {{ color: #1a1a1a; text-align: center; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; }}
+                label {{ display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }}
+                input[type="password"] {{ width: 100%; padding: 12px 15px; border: 2px solid #1a1a1a; border-radius: 0; font-size: 1em; box-sizing: border-box; margin-bottom: 25px; }}
+                input[type="password"]:focus {{ outline: none; border-color: #8b0000; border-width: 2px; }}
+                button {{ width: 100%; background-color: #1a1a1a; color: #ffffff; padding: 15px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }}
+                button:hover {{ background-color: #8b0000; border-color: #8b0000; }}
+                .error {{ color: #8b0000; font-size: 0.95em; margin-top: 8px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Enter New Password</h1>
+                <p style="text-align: center; color: #1a1a1a; margin-bottom: 40px; font-style: italic;">Please enter your new password twice so we can verify you typed it correctly.</p>
+                {errors_html}
+                <form method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
+                    <label for="id_new_password1">New Password:</label>
+                    <input type="password" name="new_password1" id="id_new_password1" required>
+                    <label for="id_new_password2">Confirm New Password:</label>
+                    <input type="password" name="new_password2" id="id_new_password2" required>
+                    <button type="submit">Change Password</button>
+                </form>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="/" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Back to Login</a>
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+    else:
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Password Reset Invalid - Great Minds Read Alike</title>
+            <style>
+                body {{ font-family: Arial; padding: 50px; max-width: 600px; margin: 0 auto; }}
+                h1 {{ color: #8b0000; }}
+                .error {{ color: #8b0000; padding: 20px; background: #ffffff; border-left: 4px solid #8b0000; }}
+            </style>
+        </head>
+        <body>
+            <h1>Password Reset Invalid</h1>
+            <div class="error">
+                <p><strong>The password reset link was invalid, possibly because it has already been used.</strong></p>
+                <p>Please request a new password reset.</p>
+            </div>
+            <p><a href="/password-reset/">Request New Reset Link</a></p>
+        </body>
+        </html>
+        """
+    
+    response = HttpResponse(html, content_type="text/html")
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
@@ -578,10 +649,33 @@ def password_reset_confirm_view(request, uidb64, token):
 
 def password_reset_complete_view(request):
     """Custom password reset complete view"""
-    # Render our custom template (which extends base.html for header/footer)
-    response = render(request, 'registration/password_reset_complete.html')
-    
-    # Add cache-busting headers
+    # Build HTML directly (this was working before)
+    from django.http import HttpResponse
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Password Reset Complete - Great Minds Read Alike</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body { font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; text-align: center; }
+            h1 { color: #1a1a1a; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }
+            p { color: #1a1a1a; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }
+            a { display: inline-block; background-color: #1a1a1a; color: #ffffff; padding: 15px 30px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: all 0.3s ease; margin-top: 40px; }
+            a:hover { background-color: #8b0000; border-color: #8b0000; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Password Reset Complete</h1>
+            <p>Your password has been set. You may go ahead and log in now.</p>
+            <a href="/">Log In</a>
+        </div>
+    </body>
+    </html>
+    """
+    response = HttpResponse(html, content_type="text/html")
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
