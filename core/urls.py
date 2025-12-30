@@ -20,11 +20,12 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
+    # IMPORTANT: Include books.urls FIRST to ensure our custom password reset URLs are matched before admin
+    path('', include('books.urls')),
     path('admin/', admin.site.urls),
     # Add this line! It enables localhost:8000/accounts/login/
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     # Note: We're NOT including 'django.contrib.auth.urls' here because we have custom password reset URLs
     # This prevents conflicts with Django's default password reset views
-    path('', include('books.urls')),
 ]

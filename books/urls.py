@@ -22,8 +22,9 @@ path('api/book-info/', views.book_info_view, name='book_info'),
     path('password-reset/', views.password_reset_view, name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
     # Custom password reset confirm view - completely custom function view
-    path('password-reset-confirm/<uidb64>/<token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
-    path('password-reset-confirm/<uidb64>/<token>/set-password/', views.password_reset_confirm_view, name='password_reset_confirm'),
+    # Put the /set-password/ pattern FIRST so it matches before any potential conflicts
+    path('password-reset-confirm/<str:uidb64>/<str:token>/set-password/', views.password_reset_confirm_view, name='password_reset_confirm_set'),
+    path('password-reset-confirm/<str:uidb64>/<str:token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
 # Username recovery URL
 path('forgot-username/', views.forgot_username_view, name='forgot_username'),

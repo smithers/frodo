@@ -537,6 +537,9 @@ def password_reset_view(request):
 
 def password_reset_confirm_view(request, uidb64, token):
     """Custom password reset confirm view - completely custom, no Django admin redirects"""
+    # DEBUG: If you see Django admin, this function is NOT being called
+    # This means the URL pattern isn't matching or something else is intercepting
+    
     if request.user.is_authenticated:
         return redirect('my_books')
     
