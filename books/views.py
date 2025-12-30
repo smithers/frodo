@@ -648,3 +648,7 @@ def password_reset_confirm_view(request, uidb64, token):
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
     return response
+
+def password_reset_complete_view(request):
+    """Custom password reset complete view"""
+    return render(request, 'registration/password_reset_complete.html')

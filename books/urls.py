@@ -25,7 +25,7 @@ path('api/book-info/', views.book_info_view, name='book_info'),
     # Put the /set-password/ pattern FIRST so it matches before any potential conflicts
     path('password-reset-confirm/<str:uidb64>/<str:token>/set-password/', views.password_reset_confirm_view, name='password_reset_confirm_set'),
     path('password-reset-confirm/<str:uidb64>/<str:token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
-    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
+    path('password-reset-complete/', views.password_reset_complete_view, name='password_reset_complete'),
 # Username recovery URL
 path('forgot-username/', views.forgot_username_view, name='forgot_username'),
 ]
