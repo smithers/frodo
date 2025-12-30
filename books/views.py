@@ -541,3 +541,8 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'registration/password_reset_confirm.html'
     success_url = reverse_lazy('password_reset_complete')
     post_reset_login = False
+    
+    def form_valid(self, form):
+        # Override to redirect to our success_url instead of the default /set-password/ redirect
+        form.save()
+        return redirect(self.success_url)
