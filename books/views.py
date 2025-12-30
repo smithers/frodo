@@ -537,18 +537,8 @@ def password_reset_view(request):
 
 def password_reset_confirm_view(request, uidb64, token):
     """Custom password reset confirm view - completely custom, no Django admin redirects"""
-    # TEMPORARY TEST: If you see this message, the view IS being called
-    # If you still see Django admin, the view is NOT being called (URL pattern not matching)
-    from django.http import HttpResponse
-    return HttpResponse(
-        f"<h1>CUSTOM VIEW CALLED!</h1><p>uidb64: {uidb64}</p><p>token: {token[:20]}...</p>"
-        f"<p>If you see this, the URL pattern is working. If you see Django admin, it's not.</p>",
-        content_type="text/html"
-    )
-    
-    # Original code below (commented out for testing)
-    # if request.user.is_authenticated:
-    #     return redirect('my_books')
+    if request.user.is_authenticated:
+        return redirect('my_books')
     
     # Decode user ID
     try:
