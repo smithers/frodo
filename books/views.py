@@ -537,6 +537,8 @@ def password_reset_view(request):
 
 def password_reset_confirm_view(request, uidb64, token):
     """Custom password reset confirm view - completely custom, no Django admin redirects"""
+    # If you see Django admin, this function is NOT being called
+    # Add a visible marker to confirm this view is rendering
     if request.user.is_authenticated:
         return redirect('my_books')
     
@@ -562,7 +564,11 @@ def password_reset_confirm_view(request, uidb64, token):
     else:
         form = SetPasswordForm(user) if validlink else None
     
-    return render(request, 'registration/password_reset_confirm.html', {
+    # Render our custom template - this should NEVER show Django admin
+    response = render(request, 'registration/password_reset_confirm.html', {
         'form': form,
         'validlink': validlink,
     })
+    # Add a header to confirm this view rendered the response
+    response['X-Custom-View'] = 'password_reset_confirm_view'
+    return response
