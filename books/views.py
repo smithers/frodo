@@ -562,8 +562,16 @@ def password_reset_confirm_view(request, uidb64, token):
     else:
         form = SetPasswordForm(user) if validlink else None
     
-    # Render our custom template
-    return render(request, 'registration/password_reset_confirm.html', {
+    # Render our custom template with cache-busting headers
+    response = render(request, 'registration/password_reset_confirm.html', {
         'form': form,
         'validlink': validlink,
     })
+    
+    # Add cache-busting headers to prevent browser/Django caching
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    response['X-Custom-Password-Reset'] = 'true'
+    
+    return response
