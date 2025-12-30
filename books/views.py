@@ -542,6 +542,23 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('password_reset_complete')
     post_reset_login = False
     
+    def get(self, request, *args, **kwargs):
+        # Override get to prevent Django's default redirect to /set-password/
+        # Just show our custom template directly
+        self.user = self.get_user(kwargs['uidb64'])
+        if self.user is not None:
+            token = kwargs['token']
+            if default_token_generator.check_token(self.user, token):
+                # Valid link - show our form
+                context = self.get_context_data()
+                context['validlink'] = True
+                return self.render_to_response(context)
+        
+        # Invalid link - show error
+        context = self.get_context_data()
+        context['validlink'] = False
+        return self.render_to_response(context)
+    
     def form_valid(self, form):
         # Override to redirect to our success_url instead of the default /set-password/ redirect
         form.save()
