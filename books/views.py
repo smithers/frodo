@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm
+from .forms import UserRegistrationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -9,6 +10,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
 from .models import Book, Author, UserFavoriteBook
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
@@ -37,14 +42,14 @@ def register_view(request):
         return redirect('my_books')
     
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, f"Welcome, {user.username}! Your account has been created successfully.")
             return redirect('my_books')
     else:
-        form = UserCreationForm()
+        form = UserRegistrationForm()
     
     return render(request, 'registration/register.html', {'form': form})
 
@@ -466,3 +471,61 @@ def forgot_username_view(request):
             return render(request, 'registration/forgot_username_done.html')
     
     return render(request, 'registration/forgot_username.html')
+
+def password_reset_view(request):
+    """Custom password reset view that shows success message on same page"""
+    if request.user.is_authenticated:
+        return redirect('my_books')
+    
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            # Get all users with this email
+            users = User.objects.filter(email__iexact=email, is_active=True)
+            
+            if users.exists():
+                # Use Django's password reset email sending
+                for user in users:
+                    # Generate password reset token
+                    token = default_token_generator.make_token(user)
+                    uid = urlsafe_base64_encode(force_bytes(user.pk))
+                    
+                    # Build reset URL
+                    reset_url = request.build_absolute_uri(
+                        reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+                    )
+                    
+                    # Send email
+                    subject = 'Password Reset Request'
+                    html_message = render_to_string('registration/email_password_reset.html', {
+                        'user': user,
+                        'protocol': request.scheme,
+                        'domain': request.get_host(),
+                        'uid': uid,
+                        'token': token,
+                        'reset_url': reset_url,
+                    })
+                    plain_message = f"Please go to the following page and choose a new password:\n\n{reset_url}\n\nIf you didn't request this, please ignore this email."
+                    
+                    try:
+                        send_mail(
+                            subject,
+                            plain_message,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email],
+                            html_message=html_message,
+                            fail_silently=False,
+                        )
+                    except Exception as e:
+                        messages.error(request, f'Error sending email: {str(e)}. Please try again later.')
+                        return render(request, 'registration/password_reset.html', {'form': form})
+            
+            # Always show success message (security best practice - don't reveal if email exists)
+            messages.success(request, 'If an account exists with that email address, you will receive password reset instructions shortly. Please check your email and spam folder.')
+            # Re-render the form (now empty) with success message
+            form = PasswordResetForm()
+    else:
+        form = PasswordResetForm()
+    
+    return render(request, 'registration/password_reset.html', {'form': form})

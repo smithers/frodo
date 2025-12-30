@@ -28,6 +28,23 @@
             </div>
             
             <div style="margin-bottom: 25px;">
+                <label for="id_email" style="display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">
+                    Email:
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div style="color: #8b0000; font-size: 0.95em; margin-top: 8px; font-style: italic;">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+                {% if form.email.help_text %}
+                    <div style="color: #1a1a1a; font-size: 0.9em; margin-top: 8px;">
+                        {{ form.email.help_text }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div style="margin-bottom: 25px;">
                 <label for="id_password1" style="display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">
                     Password:
                 </label>
@@ -79,7 +96,7 @@
 </div>
 
 <style>
-    #id_username, #id_password1, #id_password2 {
+    #id_username, #id_email, #id_password1, #id_password2 {
         width: 100%;
         padding: 12px 15px;
         border: 2px solid #1a1a1a;
@@ -92,7 +109,7 @@
         transition: border-color 0.3s ease;
     }
     
-    #id_username:focus, #id_password1:focus, #id_password2:focus {
+    #id_username:focus, #id_email:focus, #id_password1:focus, #id_password2:focus {
         outline: none;
         border-color: #8b0000;
         border-width: 2px;
@@ -142,10 +159,14 @@
     // Add inputmode to form fields to prevent emoji keyboard on iOS
     document.addEventListener('DOMContentLoaded', function() {
         var usernameInput = document.getElementById('id_username');
+        var emailInput = document.getElementById('id_email');
         var password1Input = document.getElementById('id_password1');
         var password2Input = document.getElementById('id_password2');
         if (usernameInput) {
             usernameInput.setAttribute('inputmode', 'text');
+        }
+        if (emailInput) {
+            emailInput.setAttribute('inputmode', 'email');
         }
         if (password1Input) {
             password1Input.setAttribute('inputmode', 'text');
