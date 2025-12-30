@@ -13,7 +13,9 @@ from django.utils.html import strip_tags
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.views import PasswordResetConfirmView, reverse_lazy
+from django.contrib.auth.views import PasswordResetConfirmView
 from .models import Book, Author, UserFavoriteBook
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
@@ -533,3 +535,9 @@ def password_reset_view(request):
         form = PasswordResetForm()
     
     return render(request, 'registration/password_reset.html', {'form': form})
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    """Custom password reset confirm view that uses our template and success URL"""
+    template_name = 'registration/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+    post_reset_login = False
