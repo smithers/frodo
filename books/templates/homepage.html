@@ -73,6 +73,7 @@
         margin-left: auto;
         margin-right: auto;
         text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        text-align: left;
     }
     
     .hero-button {
@@ -265,7 +266,11 @@
             Great Minds Read Alike
         </div>
         <div class="hero-description">
-            Enter books that you absolutely love into the box below. We'll show you recommendations from readers who love the same books you do. The more books you enter, the more likely you find others who love what you love.
+            <span style="text-decoration: underline;">How It Works:</span><br>
+            1. We know the favorite books of <span style="text-decoration: underline;">{{ unique_users_count }}</span> super active readers.<br>
+            2. You enter several of your favorite books via the white search box below.<br>
+            3. We find readers who share your favorites, then show you what else they love.<br>
+            <span style="font-style: italic; margin-top: 10px; display: inline-block;">(Caveat: This site just launched. The number of users is still pretty small, and most books are contemporary fiction, fantasy, and sci-fi. But our database will grow as more users join.)</span>
         </div>
         <div style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto; width: 100%; padding: 0 10px; box-sizing: border-box;">
             <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form" style="width: 100%;">

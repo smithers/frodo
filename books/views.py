@@ -35,7 +35,10 @@ def homepage_view(request):
             messages.success(request, f"Welcome back, {request.user.username}!")
             return redirect('my_books')
     
-    return render(request, 'homepage.html', {'form': form})
+    # Count unique users who have favorite books
+    unique_users_count = UserFavoriteBook.objects.values('user').distinct().count()
+    
+    return render(request, 'homepage.html', {'form': form, 'unique_users_count': unique_users_count})
 
 def register_view(request):
     """Registration view - allows new users to create accounts"""
