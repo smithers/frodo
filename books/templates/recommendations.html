@@ -84,6 +84,44 @@
         color: #8b0000 !important;
     }
     
+    .card-pagination {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #d0d0d0;
+    }
+    
+    .card-pagination button {
+        background: #8b0000;
+        color: #ffffff;
+        border: 1px solid #8b0000;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.95em;
+        min-width: 80px;
+    }
+    
+    .card-pagination button:hover:not(:disabled) {
+        background: #ffffff;
+        color: #8b0000;
+    }
+    
+    .card-pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .card-pagination .page-info {
+        flex: 1;
+        text-align: center;
+        color: #1a1a1a;
+        font-size: 0.95em;
+    }
+    
     @media (max-width: 1024px) {
         /* Make grid single column on mobile */
         .recommendations-grid {
@@ -148,7 +186,7 @@
         <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
-                <div class="card" style="background: #ffffff;">
+                <div class="card recommendation-card" style="background: #ffffff;">
                     <div style="padding-bottom: 10px; margin-bottom: 10px;">
                         <p style="margin: 0; font-size: 1em; color: #1a1a1a; line-height: 1.8;">
                             You and <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> both love: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}. <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> also loves:
@@ -158,7 +196,7 @@
                     <div style="margin-top: 0;">
                         <ul style="list-style: none; padding: 0; margin: 0;">
                             {% for book_data in group.recommended_books %}
-                                <li style="padding: 8px 0; border-bottom: 1px solid #d0d0d0;">
+                                <li class="book-item" style="padding: 8px 0; border-bottom: 1px solid #d0d0d0;">
                                     <div>
                                         {% if book_data.book.isbn %}
                                             <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
@@ -181,6 +219,11 @@
                                 </li>
                             {% endfor %}
                         </ul>
+                        <div class="card-pagination">
+                            <button type="button" class="prev-page">Prev</button>
+                            <div class="page-info"></div>
+                            <button type="button" class="next-page">Next</button>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
@@ -234,5 +277,51 @@ function toggleAccordion(header) {
         content.classList.add('active');
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const ITEMS_PER_PAGE = 10;
+    
+    document.querySelectorAll('.recommendation-card').forEach(card => {
+        const items = Array.from(card.querySelectorAll('.book-item'));
+        if (items.length <= ITEMS_PER_PAGE) {
+            return; // No pagination needed
+        }
+        
+        const pagination = card.querySelector('.card-pagination');
+        const prevBtn = pagination.querySelector('.prev-page');
+        const nextBtn = pagination.querySelector('.next-page');
+        const pageInfo = pagination.querySelector('.page-info');
+        let currentPage = 1;
+        const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+        
+        const renderPage = () => {
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            items.forEach((item, idx) => {
+                item.style.display = (idx >= start && idx < end) ? 'block' : 'none';
+            });
+            pageInfo.textContent = `Showing ${start + 1}-${Math.min(end, items.length)} of ${items.length}`;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        };
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                renderPage();
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                renderPage();
+            }
+        });
+        
+        pagination.style.display = 'flex';
+        renderPage();
+    });
+});
 </script>
 {% endblock %}
