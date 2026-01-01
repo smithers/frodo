@@ -21,6 +21,31 @@ from .utils import get_book_recommendations, smart_title_case, generate_guest_us
 
 from .services import search_books, get_book_details
 
+
+def _merge_guest_favorites(request, user):
+    """
+    Move favorites from a session-backed guest user into the authenticated user,
+    then clean up the guest account.
+    """
+    guest_id = request.session.pop('guest_user_id', None)
+    if not guest_id or guest_id == user.id:
+        return
+
+    try:
+        guest_user = User.objects.get(id=guest_id)
+    except User.DoesNotExist:
+        return
+
+    for fav in UserFavoriteBook.objects.filter(user=guest_user):
+        UserFavoriteBook.objects.get_or_create(
+            user=user,
+            book=fav.book,
+            defaults={'explanation': fav.explanation},
+        )
+
+    UserFavoriteBook.objects.filter(user=guest_user).delete()
+    guest_user.delete()
+
 def homepage_view(request):
     """Homepage view - accessible to all users, shows login form if not authenticated"""
     form = AuthenticationForm()
@@ -32,6 +57,7 @@ def homepage_view(request):
         form.fields['username'].widget.attrs.pop('autofocus', None)
         if form.is_valid():
             login(request, form.get_user())
+            _merge_guest_favorites(request, request.user)
             messages.success(request, f"Welcome back, {request.user.username}!")
             return redirect('my_books')
     
@@ -50,6 +76,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            _merge_guest_favorites(request, user)
             messages.success(request, f"Welcome, {user.username}! Your account has been created successfully.")
             return redirect('my_books')
     else:
