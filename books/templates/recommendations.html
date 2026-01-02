@@ -5,7 +5,7 @@
 {% block extra_head %}
 <style>
     h1 {
-        border-bottom: 4px solid #8b0000;
+        border-bottom: 4px solid #cc785c;
         padding-bottom: 15px;
         margin-bottom: 20px;
         display: inline-block;
@@ -14,7 +14,7 @@
     .accordion-header {
         cursor: pointer;
         padding: 0;
-        color: #8b0000;
+        color: #cc785c;
         font-size: 0.9em;
         user-select: none;
         display: flex;
@@ -27,7 +27,7 @@
     }
     
     .accordion-header:hover {
-        color: #1a1a1a;
+        color: #40403E;
     }
     
     .accordion-icon {
@@ -55,12 +55,12 @@
     
     .explanation-text {
         font-style: italic;
-        color: #1a1a1a;
+        color: #40403E;
         font-size: 0.9em;
         font-weight: normal;
         line-height: 1.9;
         padding-left: 20px;
-        border-left: 3px solid #8b0000;
+        border-left: 3px solid #cc785c;
     }
     
     .account-prompt-banner a {
@@ -69,19 +69,19 @@
     
     .account-prompt-banner a:hover {
         background-color: #ffffff !important;
-        color: #8b0000 !important;
+        color: #cc785c !important;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     
     /* Amazon link hover styles for book titles */
     a[href*="amazon.com"] {
-        color: #1a1a1a;
+        color: #40403E;
         text-decoration: none;
     }
     
     a[href*="amazon.com"]:hover {
-        color: #8b0000 !important;
+        color: #cc785c !important;
     }
     
     .card-pagination {
@@ -95,9 +95,9 @@
     }
     
     .card-pagination button {
-        background: #8b0000;
+        background: #cc785c;
         color: #ffffff;
-        border: 1px solid #8b0000;
+        border: 1px solid #cc785c;
         padding: 8px 12px;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -107,7 +107,7 @@
     
     .card-pagination button:hover:not(:disabled) {
         background: #ffffff;
-        color: #8b0000;
+        color: #cc785c;
     }
     
     .card-pagination button:disabled {
@@ -118,7 +118,7 @@
     .card-pagination .page-info {
         flex: 1;
         text-align: center;
-        color: #1a1a1a;
+        color: #40403E;
         font-size: 0.95em;
     }
     
@@ -168,16 +168,16 @@
 
 {% block content %}
     {% if show_account_prompt %}
-    <div class="card account-prompt-banner" style="background: #e8e8e8; border: 2px solid #8b0000; margin-bottom: 30px; padding: 25px;">
+    <div class="card account-prompt-banner" style="background: #e8e8e8; border: 2px solid #cc785c; margin-bottom: 30px; padding: 25px;">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
             <div style="flex: 1; min-width: 250px;">
-                <h3 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 1.3em;">Save Your Recommendations</h3>
-                <p style="color: #1a1a1a; margin: 0; font-size: 1.05em; line-height: 1.6;">
+                <h3 style="color: #40403E; margin: 0 0 10px 0; font-size: 1.3em;">Save Your Recommendations</h3>
+                <p style="color: #40403E; margin: 0; font-size: 1.05em; line-height: 1.6;">
                     Your recommendations will be lost when you leave the site. Create a free account to save your favorite books and recommendations permanently.
                 </p>
             </div>
             <div style="flex-shrink: 0;">
-                <a href="{% url 'register' %}" style="display: inline-block; padding: 12px 30px; background-color: #8b0000; color: #ffffff; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 2px solid #8b0000; transition: all 0.3s ease; white-space: nowrap;">
+                <a href="{% url 'register' %}" style="display: inline-block; padding: 12px 30px; background-color: #cc785c; color: #ffffff; text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 2px solid #cc785c; transition: all 0.3s ease; white-space: nowrap;">
                     Create Account
                 </a>
             </div>
@@ -188,13 +188,13 @@
     <h1>Recommended For You</h1>
 
     {% if grouped_recommendations %}
-        <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
+        <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
         <div style="column-count: auto; column-width: 450px; column-gap: 30px; margin-top: 30px;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
                 <div class="card recommendation-card" style="background: #ffffff; break-inside: avoid; margin-bottom: 30px; display: inline-block; width: 100%;">
                     <div style="padding-bottom: 10px; margin-bottom: 10px;">
-                        <p style="margin: 0; font-size: 1em; color: #1a1a1a; line-height: 1.8;">
-                            You and <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> both love: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}. <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> also loves:
+                        <p style="margin: 0; font-size: 1em; color: #40403E; line-height: 1.8;">
+                            You and <strong style="color: #40403E;">{{ group.similar_user.username }}</strong> both love: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}. <strong style="color: #40403E;">{{ group.similar_user.username }}</strong> also loves:
                         </p>
                     </div>
                     
@@ -204,11 +204,11 @@
                                 <li class="book-item" style="padding: 8px 0; border-bottom: 1px solid #d0d0d0;">
                                     <div>
                                         {% if book_data.book.isbn %}
-                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
                                         {% else %}
-                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
                                         {% endif %}
-                                        <span style="font-size: 0.9em; color: #1a1a1a; font-style: italic;">by {{ book_data.book.author.name }}</span>
+                                        <span style="font-size: 0.9em; color: #40403E; font-style: italic;">by {{ book_data.book.author.name }}</span>
                                         {% if book_data.explanation %}
                                             <div class="accordion-header" onclick="toggleAccordion(this)">
                                                 <span class="accordion-icon">▶</span>
@@ -235,21 +235,21 @@
         </div>
     {% else %}
         <div class="card" style="background: #ffffff;">
-            <h3 style="color: #1a1a1a; margin-bottom: 15px;">No matches yet!</h3>
+            <h3 style="color: #40403E; margin-bottom: 15px;">No matches yet!</h3>
             {% if show_no_new_books_message %}
-            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 15px;">We found a reader with some favorite books as you, but they don't have any favorites that you haven't read yet!</p>
+            <p style="color: #40403E; font-size: 1.05em; line-height: 1.9; margin-bottom: 15px;">We found a reader with some favorite books as you, but they don't have any favorites that you haven't read yet!</p>
             {% endif %}
-            <p style="color: #1a1a1a; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our system searches through our hundreds of readers to find ones who have the same favorites as you.</p>
+            <p style="color: #40403E; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our system searches through our hundreds of readers to find ones who have the same favorites as you.</p>
             
             {% if diagnostic %}
-                <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-left: 4px solid #8b0000; font-size: 1em; line-height: 1.9;">
-                    <strong style="color: #1a1a1a;">Your stats:</strong><br>
+                <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-left: 4px solid #cc785c; font-size: 1em; line-height: 1.9;">
+                    <strong style="color: #40403E;">Your stats:</strong><br>
                     • Total books you love: {{ diagnostic.total_favorites }}<br>
                     • Similar readers found: {{ diagnostic.similar_users_count }}<br>
                     {% if diagnostic.message %}
-                        <p style="color: #1a1a1a; margin-top: 15px; font-style: italic;"><strong>{{ diagnostic.message }}</strong></p>
+                        <p style="color: #40403E; margin-top: 15px; font-style: italic;"><strong>{{ diagnostic.message }}</strong></p>
                     {% elif diagnostic.total_favorites > 0 and diagnostic.similar_users_count == 0 %}
-                        <p style="color: #1a1a1a; margin-top: 15px; font-style: italic;">
+                        <p style="color: #40403E; margin-top: 15px; font-style: italic;">
                             <strong>You have favorite books, but no other readers have favorited the same books yet.</strong><br>
                             This could mean the books you love aren't in our seed data, or other readers haven't discovered them yet.
                         </p>
@@ -257,7 +257,7 @@
                 </div>
             {% endif %}
             
-            <p style="margin-top: 30px; color: #1a1a1a; font-size: 1.05em;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Add more books</a> that you love!</p>
+            <p style="margin-top: 30px; color: #40403E; font-size: 1.05em;"><strong>Try this:</strong> <a href="{% url 'add_favorite' %}" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">Add more books</a> that you love!</p>
         </div>
     {% endif %}
 {% endblock %}

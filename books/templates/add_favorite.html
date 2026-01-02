@@ -5,7 +5,7 @@
 {% block extra_head %}
 <style>
     h1 {
-        border-bottom: 4px solid #8b0000;
+        border-bottom: 4px solid #cc785c;
         padding-bottom: 15px;
         margin-bottom: 30px;
         display: inline-block;
@@ -14,7 +14,7 @@
     /* Make the autocomplete dropdown look nice */
     .ui-autocomplete { 
         background-color: #ffffff; 
-        border: 2px solid #1a1a1a; 
+        border: 2px solid #40403E; 
         z-index: 1000; 
         max-height: 250px; 
         overflow-y: auto; 
@@ -26,12 +26,12 @@
     }
     .ui-menu-item {
         padding: 12px 15px;
-        border-bottom: 1px solid #1a1a1a;
+        border-bottom: 1px solid #40403E;
         transition: background-color 0.2s ease;
     }
     .ui-menu-item:hover {
         background-color: #ffffff;
-        border-left: 3px solid #8b0000;
+        border-left: 3px solid #cc785c;
     }
     
     .selected-books {
@@ -40,7 +40,7 @@
     
     .book-item {
         background: #f5f5f5;
-        border: 1px solid #1a1a1a;
+        border: 1px solid #40403E;
         padding: 3px 25px;
         margin-bottom: 20px;
         border-radius: 0;
@@ -50,7 +50,7 @@
     
     .book-item:hover {
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        border-color: #8b0000;
+        border-color: #cc785c;
     }
     
     .book-header {
@@ -69,22 +69,22 @@
     
     .book-info h4 {
         margin: 0 0 8px 0;
-        color: #1a1a1a;
+        color: #40403E;
         font-family: 'Playfair Display', serif;
         font-size: 1.3em;
     }
     
     .book-info p {
         margin: 0;
-        color: #1a1a1a;
+        color: #40403E;
         font-size: 1em;
         font-style: italic;
     }
     
     .remove-btn {
         background: transparent;
-        color: #8b0000;
-        border: 1px solid #8b0000;
+        color: #cc785c;
+        border: 1px solid #cc785c;
         padding: 6px 14px;
         border-radius: 0;
         cursor: pointer;
@@ -97,31 +97,31 @@
     }
     
     .remove-btn:hover {
-        background: #8b0000;
+        background: #cc785c;
         color: #ffffff;
     }
     
     #book-search {
-        border: 2px solid #1a1a1a;
+        border: 2px solid #40403E;
         border-radius: 0;
         padding: 12px 15px;
         font-family: 'Lora', serif;
         font-size: 1em;
         background: #ffffff;
-        color: #1a1a1a;
+        color: #40403E;
         transition: border-color 0.3s ease;
     }
     
     #book-search:focus {
         outline: none;
-        border-color: #8b0000;
+        border-color: #cc785c;
         border-width: 2px;
     }
     
     button[type="submit"] {
-        background-color: #1a1a1a;
+        background-color: #40403E;
         color: #ffffff;
-        border: 2px solid #1a1a1a;
+        border: 2px solid #40403E;
         padding: 15px 30px;
         font-size: 1em;
         font-weight: 400;
@@ -134,8 +134,8 @@
     }
     
     button[type="submit"]:hover {
-        background-color: #8b0000;
-        border-color: #8b0000;
+        background-color: #cc785c;
+        border-color: #cc785c;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
@@ -176,18 +176,18 @@
 
 {% block content %}
     <h1>Add Books You Love</h1>
-    <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Search for books to add them to your favorites.</p>
+    <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 30px;">Search for books to add them to your favorites.</p>
     
     <div style="margin-bottom: 30px; position: relative;">
-        <label style="font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; display: block; margin-bottom: 10px;"><strong>Search by Title:</strong></label>
+        <label style="font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; display: block; margin-bottom: 10px;"><strong>Search by Title:</strong></label>
         <input type="text" id="book-search" placeholder="Enter a book you love (type slowly)" inputmode="text" style="width: 100%; max-width: 500px;">
-        <span id="loading-msg" style="display:none; color: #8b0000; margin-left: 15px; font-style: italic;"> Searching Google...</span>
+        <span id="loading-msg" style="display:none; color: #cc785c; margin-left: 15px; font-style: italic;"> Searching Google...</span>
     </div>
 
     <form method="POST" action="{% url 'save_favorite' %}" id="favorites-form">
         {% csrf_token %}
         <div id="selected-books-container" class="selected-books" style="display: none;">
-            <h3 style="color: #1a1a1a; border-bottom: 3px solid #8b0000; padding-bottom: 0; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
+            <h3 style="color: #40403E; border-bottom: 3px solid #cc785c; padding-bottom: 0; margin-bottom: 25px; display: inline-block;">Selected Books:</h3>
             <div id="selected-books-list"></div>
             <button type="submit" style="margin-top: 25px;">
                 Add to My Favorites

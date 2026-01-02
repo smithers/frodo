@@ -603,7 +603,7 @@ def password_reset_confirm_view(request, uidb64, token):
     # Build error messages
     errors_html = ""
     if form and form.errors:
-        errors_html = '<div style="color: #8b0000; padding: 15px; background: #ffffff; border-left: 4px solid #8b0000; margin-bottom: 25px;">'
+        errors_html = '<div style="color: #cc785c; padding: 15px; background: #ffffff; border-left: 4px solid #cc785c; margin-bottom: 25px;">'
         for field, error_list in form.errors.items():
             for error in error_list:
                 errors_html += f'<p style="margin: 5px 0;"><strong>{field}:</strong> {error}</p>'
@@ -618,20 +618,20 @@ def password_reset_confirm_view(request, uidb64, token):
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <style>
                 body {{ font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }}
-                .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; }}
-                h1 {{ color: #1a1a1a; text-align: center; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; }}
-                label {{ display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }}
-                input[type="password"] {{ width: 100%; padding: 12px 15px; border: 2px solid #1a1a1a; border-radius: 0; font-size: 1em; box-sizing: border-box; margin-bottom: 25px; }}
-                input[type="password"]:focus {{ outline: none; border-color: #8b0000; border-width: 2px; }}
-                button {{ width: 100%; background-color: #1a1a1a; color: #ffffff; padding: 15px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }}
-                button:hover {{ background-color: #8b0000; border-color: #8b0000; }}
-                .error {{ color: #8b0000; font-size: 0.95em; margin-top: 8px; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #40403E; }}
+                h1 {{ color: #40403E; text-align: center; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px; }}
+                label {{ display: block; margin-bottom: 8px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }}
+                input[type="password"] {{ width: 100%; padding: 12px 15px; border: 2px solid #40403E; border-radius: 0; font-size: 1em; box-sizing: border-box; margin-bottom: 25px; }}
+                input[type="password"]:focus {{ outline: none; border-color: #cc785c; border-width: 2px; }}
+                button {{ width: 100%; background-color: #40403E; color: #ffffff; padding: 15px; border: 2px solid #40403E; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }}
+                button:hover {{ background-color: #cc785c; border-color: #cc785c; }}
+                .error {{ color: #cc785c; font-size: 0.95em; margin-top: 8px; }}
             </style>
         </head>
         <body>
             <div class="container">
                 <h1>Enter New Password</h1>
-                <p style="text-align: center; color: #1a1a1a; margin-bottom: 40px; font-style: italic;">Please enter your new password twice so we can verify you typed it correctly.</p>
+                <p style="text-align: center; color: #40403E; margin-bottom: 40px; font-style: italic;">Please enter your new password twice so we can verify you typed it correctly.</p>
                 {errors_html}
                 <form method="post">
                     <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
@@ -642,7 +642,7 @@ def password_reset_confirm_view(request, uidb64, token):
                     <button type="submit">Change Password</button>
                 </form>
                 <p style="text-align: center; margin-top: 25px;">
-                    <a href="/" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Back to Login</a>
+                    <a href="/" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">Back to Login</a>
                 </p>
             </div>
         </body>
@@ -656,8 +656,8 @@ def password_reset_confirm_view(request, uidb64, token):
             <title>Password Reset Invalid - Great Minds Read Alike</title>
             <style>
                 body {{ font-family: Arial; padding: 50px; max-width: 600px; margin: 0 auto; }}
-                h1 {{ color: #8b0000; }}
-                .error {{ color: #8b0000; padding: 20px; background: #ffffff; border-left: 4px solid #8b0000; }}
+                h1 {{ color: #cc785c; }}
+                .error {{ color: #cc785c; padding: 20px; background: #ffffff; border-left: 4px solid #cc785c; }}
             </style>
         </head>
         <body>
@@ -689,11 +689,11 @@ def password_reset_complete_view(request):
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body { font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }
-            .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #1a1a1a; text-align: center; }
-            h1 { color: #1a1a1a; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }
-            p { color: #1a1a1a; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }
-            a { display: inline-block; background-color: #1a1a1a; color: #ffffff; padding: 15px 30px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: all 0.3s ease; margin-top: 40px; }
-            a:hover { background-color: #8b0000; border-color: #8b0000; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #40403E; text-align: center; }
+            h1 { color: #40403E; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }
+            p { color: #40403E; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }
+            a { display: inline-block; background-color: #40403E; color: #ffffff; padding: 15px 30px; border: 2px solid #40403E; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: all 0.3s ease; margin-top: 40px; }
+            a:hover { background-color: #cc785c; border-color: #cc785c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
         </style>
     </head>
     <body>

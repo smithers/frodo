@@ -3,61 +3,61 @@
 
 {% block content %}
 <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-    <div class="card" style="background: #ffffff; padding: 50px; border: 2px solid #1a1a1a;">
-        <h1 style="margin-top: 0; color: #1a1a1a; text-align: center; border-bottom: 4px solid #8b0000; padding-bottom: 20px; margin-bottom: 30px;">Login</h1>
-        <p style="text-align: center; color: #1a1a1a; margin-bottom: 40px; font-style: italic; font-size: 1.1em;">Welcome back! Please sign in to your account.</p>
+    <div class="card" style="background: #ffffff; padding: 50px; border: 2px solid #40403E;">
+        <h1 style="margin-top: 0; color: #40403E; text-align: center; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px;">Login</h1>
+        <p style="text-align: center; color: #40403E; margin-bottom: 40px; font-style: italic; font-size: 1.1em;">Welcome back! Please sign in to your account.</p>
         
         <form method="post">
             {% csrf_token %}
             
             <div style="margin-bottom: 20px;">
-                <label for="id_username" style="display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Username:</label>
+                <label for="id_username" style="display: block; margin-bottom: 8px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Username:</label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <div style="color: #8b0000; font-size: 0.95em; margin-top: 8px; font-style: italic;">
+                    <div style="color: #cc785c; font-size: 0.95em; margin-top: 8px; font-style: italic;">
                         {{ form.username.errors }}
                     </div>
                 {% endif %}
             </div>
             
             <div style="margin-bottom: 25px;">
-                <label for="id_password" style="display: block; margin-bottom: 8px; font-weight: 400; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Password:</label>
+                <label for="id_password" style="display: block; margin-bottom: 8px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em;">Password:</label>
                 {{ form.password }}
                 {% if form.password.errors %}
-                    <div style="color: #8b0000; font-size: 0.95em; margin-top: 8px; font-style: italic;">
+                    <div style="color: #cc785c; font-size: 0.95em; margin-top: 8px; font-style: italic;">
                         {{ form.password.errors }}
                     </div>
                 {% endif %}
             </div>
             
             {% if form.errors %}
-                <div style="color: #8b0000; margin-bottom: 20px; padding: 15px; background: #ffffff; border-left: 4px solid #8b0000; font-size: 0.95em;">
+                <div style="color: #cc785c; margin-bottom: 20px; padding: 15px; background: #ffffff; border-left: 4px solid #cc785c; font-size: 0.95em;">
                     Please enter a correct username and password.
                 </div>
             {% endif %}
             
             {% if form.non_field_errors %}
-                <div style="color: #8b0000; margin-bottom: 25px; padding: 15px; background: #ffffff; border-left: 4px solid #8b0000; font-size: 0.95em;">
+                <div style="color: #cc785c; margin-bottom: 25px; padding: 15px; background: #ffffff; border-left: 4px solid #cc785c; font-size: 0.95em;">
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
             
-            <button type="submit" style="width: 100%; background-color: #1a1a1a; color: #ffffff; padding: 15px; border: 2px solid #1a1a1a; font-size: 1em; font-weight: 400; cursor: pointer; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
+            <button type="submit" style="width: 100%; background-color: #40403E; color: #ffffff; padding: 15px; border: 2px solid #40403E; font-size: 1em; font-weight: 400; cursor: pointer; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
                 Login
             </button>
         </form>
         
         <div style="margin-top: 20px; text-align: center; font-size: 0.9em;">
             <p style="margin-bottom: 10px;">
-                <a href="{% url 'password_reset' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Forgot Password?</a>
+                <a href="{% url 'password_reset' %}" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">Forgot Password?</a>
             </p>
             <p style="margin-bottom: 10px;">
-                <a href="{% url 'forgot_username' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Forgot Username?</a>
+                <a href="{% url 'forgot_username' %}" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">Forgot Username?</a>
             </p>
         </div>
         
-        <p style="text-align: center; font-size: 1em; color: #1a1a1a; margin-top: 25px;">
-            Don't have an account? <a href="{% url 'register' %}" style="color: #8b0000; font-weight: 600; text-decoration: none; border-bottom: 1px solid #8b0000;">Create Account</a>
+        <p style="text-align: center; font-size: 1em; color: #40403E; margin-top: 25px;">
+            Don't have an account? <a href="{% url 'register' %}" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">Create Account</a>
         </p>
     </div>
 </div>
@@ -66,25 +66,25 @@
     #id_username, #id_password {
         width: 100%;
         padding: 12px 15px;
-        border: 2px solid #1a1a1a;
+        border: 2px solid #40403E;
         border-radius: 0;
         font-size: 1em;
         box-sizing: border-box;
         background: #ffffff;
-        color: #1a1a1a;
+        color: #40403E;
         font-family: 'Lora', serif;
         transition: border-color 0.3s ease;
     }
     
     #id_username:focus, #id_password:focus {
         outline: none;
-        border-color: #8b0000;
+        border-color: #cc785c;
         border-width: 2px;
     }
     
     button[type="submit"]:hover {
-        background-color: #8b0000 !important;
-        border-color: #8b0000 !important;
+        background-color: #cc785c !important;
+        border-color: #cc785c !important;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
