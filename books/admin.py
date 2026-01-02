@@ -10,7 +10,7 @@ class AuthorAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'isbn')
+    list_display = ('title', 'author', 'isbn', 'created_at')
     search_fields = ('title', 'isbn')
 
 @admin.register(UserFavoriteBook)

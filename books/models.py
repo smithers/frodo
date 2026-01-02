@@ -37,6 +37,9 @@ class Book(models.Model):
     # Mark popular books for faster local database searches
     is_popular = models.BooleanField(default=False, db_index=True)
 
+    # Track when the book entry was created
+    created_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         # This tells the DB: "You can have many books named 'It',
         # and many books by 'King', but only ONE 'It' by 'King'."
