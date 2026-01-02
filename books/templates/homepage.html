@@ -18,11 +18,12 @@
         background-attachment: fixed;
         background-repeat: no-repeat;
         color: #ffffff;
-        margin: 0;
+        margin: 20px;
         padding: 0 20px;
-        width: 100%;
-        max-width: 100%;
+        width: calc(100% - 40px);
+        max-width: calc(100% - 40px);
         box-sizing: border-box;
+        border-radius: 12px;
     }
     
     .hero-overlay {
@@ -33,6 +34,7 @@
         bottom: 0;
         background: rgba(26, 26, 26, 0.75);
         z-index: 1;
+        border-radius: 12px;
     }
     
     .hero-content {
@@ -187,11 +189,12 @@
             height: auto;
             min-height: 500px;
             padding: 40px 15px;
-            margin: 0;
-            width: 100%;
-            max-width: 100%;
+            margin: 15px;
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
             box-sizing: border-box;
             background-attachment: scroll;
+            border-radius: 12px;
         }
         
         .hero-large-text {
@@ -275,7 +278,7 @@
             <span style="text-decoration: underline;">How It Works:</span><br>
             <span style="display: block; margin-bottom: 8px; line-height: 1.3; padding-left: 1.3em; text-indent: -1.3em;">1. We know the favorite books of <span style="text-decoration: underline;">{{ unique_users_count }}</span> super active readers.</span>
             <span style="display: block; margin-bottom: 8px; line-height: 1.3; padding-left: 1.3em; text-indent: -1.3em;">2. You enter several of your favorite books via the white search box below.</span>
-            <span style="display: block; margin-bottom: 8px; line-height: 1.3; padding-left: 1.3em; text-indent: -1.3em;">3. We find readers who share your favorites, then show you what else they love.</span>
+            <span style="display: block; margin-bottom: 8px; line-height: 1.3; padding-left: 1.3em; text-indent: -1.3em;">3. We look up readers who share your favorites, then show you what else they love.</span>
             <span style="font-style: italic; margin-top: 10px; display: inline-block; font-size: 0.8em;">(Caveat: This site just launched. The number of users is still pretty small, and most books are contemporary fiction, fantasy, and sci-fi. But our database will grow as more users join.)</span>
         </div>
         <div style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto; width: 100%; padding: 0 10px; box-sizing: border-box;">
