@@ -617,7 +617,7 @@ def password_reset_confirm_view(request, uidb64, token):
             <title>Enter New Password - Great Minds Read Alike</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <style>
-                body {{ font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }}
+                body {{ font-family: 'Lora', serif; background: #EBDBBC; padding: 40px 20px; }}
                 .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #40403E; }}
                 h1 {{ color: #40403E; text-align: center; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px; }}
                 label {{ display: block; margin-bottom: 8px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; }}
@@ -688,7 +688,7 @@ def password_reset_complete_view(request):
         <title>Password Reset Complete - Great Minds Read Alike</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-            body { font-family: 'Lora', serif; background: #ffffff; padding: 40px 20px; }
+            body { font-family: 'Lora', serif; background: #EBDBBC; padding: 40px 20px; }
             .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #40403E; text-align: center; }
             h1 { color: #40403E; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }
             p { color: #40403E; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }
