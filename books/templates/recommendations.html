@@ -123,11 +123,16 @@
     }
     
     @media (max-width: 1024px) {
-        /* Make grid single column on mobile */
+        /* Make masonry single column on mobile */
         .recommendations-grid {
-            grid-template-columns: 1fr !important;
-            gap: 20px !important;
+            column-count: 1 !important;
+            column-width: auto !important;
+            column-gap: 20px !important;
             margin-top: 20px !important;
+        }
+        
+        .recommendation-card {
+            margin-bottom: 20px !important;
         }
         
         /* Card adjustments */
@@ -184,9 +189,9 @@
 
     {% if grouped_recommendations %}
         <p style="font-size: 1.1em; color: #1a1a1a; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px;" class="recommendations-grid">
+        <div style="column-count: auto; column-width: 450px; column-gap: 30px; margin-top: 30px;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
-                <div class="card recommendation-card" style="background: #ffffff;">
+                <div class="card recommendation-card" style="background: #ffffff; break-inside: avoid; margin-bottom: 30px; display: inline-block; width: 100%;">
                     <div style="padding-bottom: 10px; margin-bottom: 10px;">
                         <p style="margin: 0; font-size: 1em; color: #1a1a1a; line-height: 1.8;">
                             You and <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> both love: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}. <strong style="color: #1a1a1a;">{{ group.similar_user.username }}</strong> also loves:
