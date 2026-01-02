@@ -4,14 +4,29 @@
     <title>{% block title %}Great Minds Read Alike{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5NJK0EKC35"></script>
+    <!-- Google Analytics - will be loaded only after consent -->
     <script>
+      // Initialize dataLayer for Google Analytics
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-5NJK0EKC35');
+      
+      // Load Google Analytics only if consent has been given
+      function loadGoogleAnalytics() {
+        if (localStorage.getItem('cookieConsent') === 'accepted') {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-5NJK0EKC35';
+          document.head.appendChild(script);
+          
+          gtag('js', new Date());
+          gtag('config', 'G-5NJK0EKC35');
+        }
+      }
+      
+      // Check if consent was already given
+      if (localStorage.getItem('cookieConsent') === 'accepted') {
+        loadGoogleAnalytics();
+      }
     </script>
     
     <style>
@@ -622,11 +637,98 @@
         }
     </style>
 
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsentBanner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; color: #ffffff; padding: 20px; z-index: 10000; box-shadow: 0 -4px 15px rgba(0,0,0,0.3); border-top: 4px solid #8b0000;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 250px;">
+                <p style="margin: 0; font-size: 1em; line-height: 1.6;">
+                    We use cookies to enhance your experience and analyze site usage. By clicking "Accept", you consent to our use of cookies. 
+                    <a href="{% url 'privacy_policy' %}" style="color: #8b0000; text-decoration: underline;">Learn more</a>
+                </p>
+            </div>
+            <div style="display: flex; gap: 15px; flex-shrink: 0;">
+                <button id="cookieConsentReject" style="background: transparent; color: #ffffff; border: 2px solid #ffffff; padding: 10px 20px; cursor: pointer; font-size: 0.95em; font-family: 'Lora', serif; transition: all 0.3s ease;">
+                    Reject
+                </button>
+                <button id="cookieConsentAccept" style="background: #8b0000; color: #ffffff; border: 2px solid #8b0000; padding: 10px 20px; cursor: pointer; font-size: 0.95em; font-family: 'Lora', serif; transition: all 0.3s ease;">
+                    Accept
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        #cookieConsentBanner button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        #cookieConsentBanner #cookieConsentReject:hover {
+            background: #ffffff;
+            color: #1a1a1a;
+        }
+        
+        #cookieConsentBanner #cookieConsentAccept:hover {
+            background: #ffffff;
+            color: #8b0000;
+        }
+        
+        @media (max-width: 1024px) {
+            #cookieConsentBanner {
+                padding: 15px;
+            }
+            
+            #cookieConsentBanner > div {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            #cookieConsentBanner > div > div:last-child {
+                width: 100%;
+            }
+            
+            #cookieConsentBanner button {
+                flex: 1;
+            }
+        }
+    </style>
+
     <script>
     function toggleMobileMenu() {
         const menu = document.getElementById('mobileMenu');
         menu.classList.toggle('active');
     }
+    
+    // Cookie Consent Management
+    (function() {
+        const banner = document.getElementById('cookieConsentBanner');
+        const acceptBtn = document.getElementById('cookieConsentAccept');
+        const rejectBtn = document.getElementById('cookieConsentReject');
+        
+        // Check if user has already made a choice
+        const consent = localStorage.getItem('cookieConsent');
+        
+        if (!consent) {
+            // Show banner if no consent has been given
+            banner.style.display = 'block';
+        } else if (consent === 'accepted') {
+            // Load Google Analytics if consent was previously given
+            loadGoogleAnalytics();
+        }
+        
+        // Handle accept button
+        acceptBtn.addEventListener('click', function() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            banner.style.display = 'none';
+            loadGoogleAnalytics();
+        });
+        
+        // Handle reject button
+        rejectBtn.addEventListener('click', function() {
+            localStorage.setItem('cookieConsent', 'rejected');
+            banner.style.display = 'none';
+        });
+    })();
     </script>
 
 </body>
