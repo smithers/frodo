@@ -413,20 +413,21 @@
 
         /* Skip link */
         .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 10px;
+            position: fixed;
+            top: 80px; /* appear below the navbar */
+            left: -220px; /* hidden off-screen */
+            transform: none;
             background: #40403E;
             color: #ffffff;
             padding: 10px 15px;
             z-index: 2000;
             text-decoration: none;
-            transition: top 0.2s ease;
-            border: 2px solid #000000;
+            transition: left 0.2s ease;
+            border: 1px solid #000000;
         }
         .skip-link:focus,
         .skip-link:focus-visible {
-            top: 80px; /* show below the navbar when focused */
+            left: 10px; /* slide in from the left when focused */
         }
 
         /* Focus outlines */
