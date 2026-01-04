@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>{% block title %}Great Minds Read Alike{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- Google Analytics - will be loaded only after consent -->
     <script>
@@ -410,6 +410,46 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 10px;
+            background: #40403E;
+            color: #ffffff;
+            padding: 10px 15px;
+            z-index: 2000;
+            text-decoration: none;
+            transition: top 0.2s ease;
+            border: 2px solid #000000;
+        }
+        .skip-link:focus,
+        .skip-link:focus-visible {
+            top: 80px; /* show below the navbar when focused */
+        }
+
+        /* Focus outlines */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #cc785c;
+            outline-offset: 2px;
+        }
+
+        /* Visually hidden (for accessible labels) */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
         
         .card:hover {
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
@@ -545,6 +585,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <nav class="navbar">
         <a href="{% url 'home' %}" class="navbar-brand">
@@ -569,7 +610,7 @@
             {% endif %}
         </div>
         
-        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" type="button"><span></span></button>
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileMenu"><span></span></button>
     </nav>
     
     <!-- Mobile Menu -->
@@ -591,18 +632,20 @@
         </div>
     </div>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <main id="main-content">
+        {% if messages %}
+            <ul class="messages" role="status" aria-live="polite">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
 
     {% block scripts %}{% endblock %}
     
@@ -696,8 +739,27 @@
     <script>
     function toggleMobileMenu() {
         const menu = document.getElementById('mobileMenu');
-        menu.classList.toggle('active');
+        const btn = document.querySelector('.mobile-menu-toggle');
+        const isOpen = menu.classList.toggle('active');
+        if (btn) {
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
     }
+
+    // Ensure auth fields have autocomplete hints
+    document.addEventListener('DOMContentLoaded', () => {
+        const authFields = [
+            { id: 'id_username', autocomplete: 'username' },
+            { id: 'id_password', autocomplete: 'current-password' },
+            { id: 'id_password1', autocomplete: 'new-password' },
+            { id: 'id_password2', autocomplete: 'new-password' },
+            { id: 'id_email', autocomplete: 'email' },
+        ];
+        authFields.forEach(({ id, autocomplete }) => {
+            const el = document.getElementById(id);
+            if (el) el.setAttribute('autocomplete', autocomplete);
+        });
+    });
     
     // Cookie Consent Management
     (function() {

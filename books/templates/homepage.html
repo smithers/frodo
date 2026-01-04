@@ -285,7 +285,8 @@
             <form method="POST" action="{% url 'save_favorite' %}" id="hero-favorites-form" style="width: 100%;">
                 {% csrf_token %}
                 <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; width: 100%; flex-wrap: wrap;">
-                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type entire title slowly)" inputmode="text" style="flex: 1; padding: 15px 20px; border: 2px solid #ffffff; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #40403E; min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+                    <label for="hero-book-search" class="sr-only">Search for a book you love</label>
+                    <input type="text" id="hero-book-search" placeholder="Enter a book you love (type entire title slowly)" inputmode="text" autocomplete="off" style="flex: 1; padding: 15px 20px; border: 2px solid #ffffff; border-radius: 0; font-size: 1.1em; font-family: 'Lora', serif; background: rgba(255, 255, 255, 0.95); color: #40403E; min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
                     <span id="hero-loading-msg" style="display:none; color: #ffffff; font-style: italic; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);"> Searching...</span>
                 </div>
                 <div id="hero-selected-books-list" style="margin-top: 20px; display: none;"></div>
