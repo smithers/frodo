@@ -29,4 +29,5 @@ path('api/book-info/', views.book_info_view, name='book_info'),
 # Username recovery URL
 path('forgot-username/', views.forgot_username_view, name='forgot_username'),
 path('sitemap.xml', views.sitemap_view, name='sitemap'),
+path('robots.txt', views.robots_txt, name='robots_txt'),
 ]

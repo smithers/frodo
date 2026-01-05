@@ -108,6 +108,15 @@ def sitemap_view(request):
 """
     return HttpResponse(xml, content_type="application/xml")
 
+
+def robots_txt(request):
+    """Allow all crawlers."""
+    lines = [
+        "User-agent: *",
+        "Disallow:",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
 def register_view(request):
     """Registration view - allows new users to create accounts"""
     if request.user.is_authenticated:
