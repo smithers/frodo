@@ -211,6 +211,10 @@ else:
     DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@bookrecommender.com')
     SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+# Optional: explicitly set the public site base URL for sitemaps, etc.
+# e.g. SITE_BASE_URL = "https://www.greatmindsreadalike.org"
+SITE_BASE_URL = os.environ.get('SITE_BASE_URL', '')
+
 # Cache configuration for Google Books API responses
 # Using local memory cache (fast, but not shared across processes)
 # For production, consider Redis: pip install django-redis

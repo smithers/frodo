@@ -28,4 +28,5 @@ path('api/book-info/', views.book_info_view, name='book_info'),
     path('password-reset-complete/', views.password_reset_complete_view, name='password_reset_complete'),
 # Username recovery URL
 path('forgot-username/', views.forgot_username_view, name='forgot_username'),
+path('sitemap.xml', views.sitemap_view, name='sitemap'),
 ]

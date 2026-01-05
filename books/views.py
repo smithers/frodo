@@ -20,6 +20,9 @@ from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 
 from .services import search_books, get_book_details
+from datetime import date
+from django.http import HttpResponse
+from django.conf import settings
 
 
 def _merge_guest_favorites(request, user):
@@ -70,6 +73,40 @@ def homepage_view(request):
         'unique_users_count': unique_users_count,
         'favorites_count': favorites_count,
     })
+
+
+def sitemap_view(request):
+    """Simple XML sitemap for public pages."""
+    base_urls = [
+        reverse('home'),
+        reverse('add_favorite'),
+        reverse('my_books'),
+        reverse('recommendations'),
+        reverse('register'),
+        reverse('terms_of_use'),
+        reverse('privacy_policy'),
+        reverse('login'),
+    ]
+    today = date.today().isoformat()
+
+    site_base = getattr(settings, 'SITE_BASE_URL', '').rstrip('/')
+
+    entries = []
+    for url in base_urls:
+        loc = f"{site_base}{url}" if site_base else request.build_absolute_uri(url)
+        entries.append(f"""  <url>
+    <loc>{loc}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>""")
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{chr(10).join(entries)}
+</urlset>
+"""
+    return HttpResponse(xml, content_type="application/xml")
 
 def register_view(request):
     """Registration view - allows new users to create accounts"""

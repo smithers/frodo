@@ -38,7 +38,7 @@ class Book(models.Model):
     is_popular = models.BooleanField(default=False, db_index=True)
 
     # Track when the book entry was created
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
         # This tells the DB: "You can have many books named 'It',
