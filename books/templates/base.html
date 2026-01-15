@@ -432,6 +432,93 @@
             left: 10px; /* slide in from the left when focused */
         }
 
+        /* Floating feedback tab */
+        .feedback-tab {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #cc785c;
+            color: #ffffff;
+            padding: 12px 14px;
+            border: 1px solid #40403E;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            z-index: 1800;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .feedback-panel {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 320px;
+            max-width: 90%;
+            background: #ffffff;
+            border: 2px solid #40403E;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            padding: 16px;
+            z-index: 1800;
+            display: none;
+        }
+
+        .feedback-panel.active {
+            display: block;
+        }
+
+        .feedback-panel h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .feedback-panel label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .feedback-panel textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .feedback-panel input,
+        .feedback-panel select,
+        .feedback-panel textarea {
+            font-family: 'Lora', serif;
+        }
+
+        .feedback-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .feedback-actions button {
+            padding: 8px 14px;
+            border: 2px solid #40403E;
+            background: #cc785c;
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .feedback-actions .feedback-cancel {
+            background: transparent;
+            color: #40403E;
+        }
+
+        .feedback-success {
+            margin-top: 10px;
+            color: #2f7d32;
+            display: none;
+            font-weight: 600;
+        }
+
         /* Focus outlines */
         a:focus-visible,
         button:focus-visible,
@@ -479,6 +566,111 @@
             border: none;
             border-top: 2px solid #40403E;
             margin: 30px 0;
+        }
+
+        /* Floating feedback tab */
+        #feedback-tab {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #cc785c;
+            color: #ffffff;
+            padding: 14px 10px;
+            height: 140px;
+            font-family: 'Lora', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border: 2px solid #40403E;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            cursor: pointer;
+            z-index: 1600;
+            transition: right 0.2s ease, box-shadow 0.2s ease;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        #feedback-tab:hover,
+        #feedback-tab:focus-visible {
+            right: 0;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            outline: none;
+        }
+
+        #feedback-panel {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 320px;
+            max-width: calc(100% - 40px);
+            background: #ffffff;
+            border: 2px solid #40403E;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            padding: 16px;
+            z-index: 1601;
+            display: none;
+        }
+
+        #feedback-panel.open {
+            display: block;
+        }
+
+        #feedback-panel h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        #feedback-panel label {
+            display: block;
+            margin: 8px 0 4px;
+            font-weight: 600;
+        }
+
+        #feedback-panel select,
+        #feedback-panel textarea,
+        #feedback-panel input[type="email"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #40403E;
+            font-family: 'Lora', serif;
+            font-size: 1em;
+            border-radius: 4px;
+        }
+
+        #feedback-panel textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #feedback-panel button[type="submit"] {
+            margin-top: 12px;
+            width: 100%;
+            background: #40403E;
+            color: #ffffff;
+            border: 2px solid #40403E;
+            padding: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #feedback-panel button[type="submit"]:hover {
+            background: #ffffff;
+            color: #40403E;
+        }
+
+        #feedback-success {
+            margin-top: 10px;
+            color: #2d7a2d;
+            font-weight: 600;
         }
         
         /* Mobile Responsive Styles */
@@ -633,6 +825,34 @@
                 <a href="{% url 'login' %}" class="mobile-login-btn">Login</a>
             {% endif %}
         </div>
+    </div>
+
+    <!-- Floating Feedback Tab -->
+    <button id="feedback-tab" aria-expanded="false" aria-controls="feedback-panel">Feedback</button>
+    <div id="feedback-panel" role="dialog" aria-modal="true" aria-labelledby="feedback-heading">
+        <h3 id="feedback-heading">How can we improve?</h3>
+        <form id="feedback-form">
+            {% csrf_token %}
+            <label for="feedback-rating">Rating (optional)</label>
+            <select id="feedback-rating" name="rating">
+                <option value="">--</option>
+                <option value="1">1 - Poor</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 - Great</option>
+            </select>
+
+            <label for="feedback-message">Your feedback</label>
+            <textarea id="feedback-message" name="message" maxlength="2000" placeholder="What should we improve?"></textarea>
+
+            <label for="feedback-email">Contact email (optional)</label>
+            <input id="feedback-email" type="email" name="contact_email" placeholder="you@example.com">
+
+            <input type="hidden" name="page_url" id="feedback-page-url" value="">
+            <button type="submit">Send feedback</button>
+            <div id="feedback-success" hidden role="status">Thanks for letting us know!</div>
+        </form>
     </div>
 
     <main id="main-content">
@@ -793,6 +1013,64 @@
         rejectBtn.addEventListener('click', function() {
             localStorage.setItem('cookieConsent', 'rejected');
             banner.style.display = 'none';
+        });
+    })();
+    </script>
+
+    <script>
+    (function() {
+        const tab = document.getElementById('feedback-tab');
+        const panel = document.getElementById('feedback-panel');
+        const form = document.getElementById('feedback-form');
+        const successEl = document.getElementById('feedback-success');
+        const pageUrlInput = document.getElementById('feedback-page-url');
+
+        if (pageUrlInput) {
+            pageUrlInput.value = window.location.href;
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function togglePanel() {
+            const isOpen = panel.classList.contains('open');
+            panel.classList.toggle('open');
+            tab.setAttribute('aria-expanded', String(!isOpen));
+            if (!isOpen) {
+                const firstField = panel.querySelector('textarea, select, input[type="email"]');
+                if (firstField) firstField.focus();
+            } else {
+                tab.focus();
+            }
+        }
+
+        tab.addEventListener('click', togglePanel);
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            successEl.hidden = true;
+            const formData = new FormData(form);
+            formData.set('page_url', window.location.href);
+            const res = await fetch("{% url 'feedback_submit' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken") || "",
+                },
+                body: formData,
+            });
+            if (res.ok) {
+                form.reset();
+                successEl.hidden = false;
+                setTimeout(() => {
+                    panel.classList.remove('open');
+                    tab.setAttribute('aria-expanded', 'false');
+                }, 1200);
+            } else {
+                alert("Sorry, we couldn't send your feedback. Please try again.");
+            }
         });
     })();
     </script>

@@ -68,3 +68,22 @@ class UserFavoriteBook(models.Model):
 
     def __str__(self):
         return f"{self.user.username} loves {self.book.title}"
+
+
+class Feedback(models.Model):
+    """Stores reader feedback submitted from the site UI."""
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="feedback")
+    page_url = models.URLField(max_length=500)
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
+    message = models.TextField(blank=True)
+    contact_email = models.EmailField(blank=True)
+    user_agent = models.TextField(blank=True)
+    session_id = models.CharField(max_length=64, blank=True)
+    ip_hash = models.CharField(max_length=64, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"Feedback {self.id} ({self.rating})"

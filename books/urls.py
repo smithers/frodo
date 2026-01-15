@@ -18,6 +18,7 @@ path('terms-of-use/', views.terms_of_use_view, name='terms_of_use'),
 path('privacy-policy/', views.privacy_policy_view, name='privacy_policy'),
 path('api/search/', views.book_autocomplete, name='book_autocomplete'),
 path('api/book-info/', views.book_info_view, name='book_info'),
+path('feedback/submit/', views.feedback_submit, name='feedback_submit'),
     # Password reset URLs
     path('password-reset/', views.password_reset_view, name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),

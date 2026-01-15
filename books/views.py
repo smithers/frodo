@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, FeedbackForm
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -15,14 +15,15 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import SetPasswordForm
-from .models import Book, Author, UserFavoriteBook
+from .models import Book, Author, UserFavoriteBook, Feedback
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 
 from .services import search_books, get_book_details
 from datetime import date
 from django.http import HttpResponse
-from django.conf import settings
+from django.views.decorators.http import require_POST
+import hashlib
 
 
 def _merge_guest_favorites(request, user):
@@ -463,6 +464,27 @@ def recommendation_view(request):
         'show_no_new_books_message': show_no_new_books_message,
     }
     return render(request, 'recommendations.html', context)
+
+
+@require_POST
+def feedback_submit(request):
+    """Accept feedback submissions from the floating tab."""
+    if not request.session.session_key:
+        request.session.save()
+
+    form = FeedbackForm(request.POST)
+    if form.is_valid():
+        feedback = form.save(commit=False)
+        feedback.user = request.user if request.user.is_authenticated else None
+        feedback.page_url = request.POST.get("page_url", request.META.get("HTTP_REFERER", ""))
+        feedback.user_agent = request.META.get("HTTP_USER_AGENT", "")
+        feedback.session_id = request.session.session_key or ""
+        ip = request.META.get("REMOTE_ADDR", "")
+        feedback.ip_hash = hashlib.sha256(ip.encode()).hexdigest() if ip else ""
+        feedback.save()
+        return JsonResponse({"ok": True})
+
+    return JsonResponse({"ok": False, "errors": form.errors}, status=400)
 
 def terms_of_use_view(request):
     """Terms of Use page"""

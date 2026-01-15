@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from .models import Author, Book, UserFavoriteBook
+from .models import Author, Book, UserFavoriteBook, Feedback
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
@@ -17,6 +17,13 @@ class BookAdmin(admin.ModelAdmin):
 class FavoriteBookAdmin(admin.ModelAdmin):
     list_display = ('user', 'book', 'created_at')
     list_filter = ('created_at',)
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ('created_at', 'user', 'page_url', 'rating', 'contact_email')
+    search_fields = ('message', 'contact_email', 'page_url')
+    list_filter = ('rating', 'created_at')
 
 
 # Show user creation date in the Users admin list
