@@ -18,11 +18,11 @@ from django.contrib.auth.forms import SetPasswordForm
 from .models import Book, Author, UserFavoriteBook, Feedback
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
-
 from .services import search_books, get_book_details
 from datetime import date
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+from django.db.models import Count
 import hashlib
 
 
@@ -68,11 +68,19 @@ def homepage_view(request):
     # Count unique users who have favorite books and total favorites
     unique_users_count = UserFavoriteBook.objects.values('user').distinct().count()
     favorites_count = UserFavoriteBook.objects.count()
+
+    # Top 10 most favorited books (title, author, count)
+    top_favorites = (
+        UserFavoriteBook.objects.values('book__title', 'book__author__name')
+        .annotate(count=Count('id'))
+        .order_by('-count', 'book__title')[:10]
+    )
     
     return render(request, 'homepage.html', {
         'form': form,
         'unique_users_count': unique_users_count,
         'favorites_count': favorites_count,
+        'top_favorites': top_favorites,
     })
 
 
