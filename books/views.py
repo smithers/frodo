@@ -15,7 +15,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import SetPasswordForm
-from .models import Book, Author, UserFavoriteBook, Feedback
+from .models import Book, Author, UserFavoriteBook, Feedback, ToBeReadBook
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 from .services import search_books, get_book_details
@@ -521,6 +521,83 @@ def my_books_view(request):
         else:
             # No guest user yet, return empty list
             return render(request, 'my_books.html', {'favorites': []})
+
+
+@login_required
+def tbr_list_view(request):
+    """Display and manage the user's To Be Read (TBR) list."""
+    if request.method == "POST":
+        title = (request.POST.get("title") or "").strip()
+        author_name = (request.POST.get("author") or "").strip()
+        note = (request.POST.get("note") or "").strip()
+
+        if not title or not author_name:
+            messages.error(request, "Please provide both a title and an author.")
+            return redirect("tbr_list")
+
+        clean_title = smart_title_case(title)
+        clean_author_name = author_name.strip().title()
+
+        # Resolve or create author
+        author = Author.objects.filter(name__iexact=clean_author_name).first()
+        if not author:
+            author = Author.objects.create(name=clean_author_name)
+
+        # Resolve or create book
+        book = Book.objects.filter(title__iexact=clean_title, author=author).first()
+        if not book:
+            book = Book.objects.create(title=clean_title, author=author)
+
+        # Save to TBR list
+        tbr_entry, created = ToBeReadBook.objects.get_or_create(
+            user=request.user,
+            book=book,
+            defaults={"note": note},
+        )
+
+        if not created and note:
+            tbr_entry.note = note
+            tbr_entry.save()
+
+        if created:
+            messages.success(request, f"Added {book.title} to your TBR list.")
+        else:
+            messages.info(request, f"{book.title} is already on your TBR list.")
+
+        return redirect("tbr_list")
+
+    tbr_items = (
+        ToBeReadBook.objects.filter(user=request.user)
+        .select_related("book", "book__author")
+        .order_by("-created_at")
+    )
+    return render(request, "tbr_list.html", {"tbr_items": tbr_items})
+
+
+@login_required
+@require_POST
+def remove_tbr_view(request):
+    """Remove a book from the user's TBR list."""
+    title = (request.POST.get("title") or "").strip()
+    author_name = (request.POST.get("author") or "").strip()
+
+    if title and author_name:
+        clean_title = smart_title_case(title)
+        clean_author_name = author_name.strip().title()
+
+        author = Author.objects.filter(name__iexact=clean_author_name).first()
+        if author:
+            book = Book.objects.filter(title__iexact=clean_title, author=author).first()
+            if book:
+                deleted, _ = ToBeReadBook.objects.filter(user=request.user, book=book).delete()
+                if deleted:
+                    messages.success(request, f"Removed {book.title} from your TBR list.")
+                else:
+                    messages.warning(request, "That book was not found in your TBR list.")
+                return redirect("tbr_list")
+
+    messages.warning(request, "Could not find that book in your TBR list.")
+    return redirect("tbr_list")
 
 def book_info_view(request):
     """API endpoint to get book information from Google Books"""

@@ -70,6 +70,25 @@ class UserFavoriteBook(models.Model):
         return f"{self.user.username} loves {self.book.title}"
 
 
+class ToBeReadBook(models.Model):
+    """Tracks books users plan to read next."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tbr_books")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="wanted_by")
+    note = models.TextField(max_length=500, blank=True, help_text="Optional notes or why it's on your TBR")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "book")
+        indexes = [
+            models.Index(fields=["user"]),
+            models.Index(fields=["book"]),
+        ]
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.user.username} wants to read {self.book.title}"
+
+
 class Feedback(models.Model):
     """Stores reader feedback submitted from the site UI."""
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="feedback")

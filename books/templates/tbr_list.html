@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}TBR List{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;" class="tbr-header">
+    <h1 style="border-bottom: 4px solid #cc785c; padding-bottom: 15px; display: inline-block;">To Be Read</h1>
+    <span style="color: #40403E; font-size: 1.05em; margin-left: 20px;">Plan the books you want to read next.</span>
+</div>
+
+{% if tbr_items %}
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 1em;" class="desktop-table">
+            <thead>
+                <tr style="border-bottom: 3px solid #cc785c; background-color: #fafafa;">
+                    <th style="text-align: left; padding: 18px 22px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Title</th>
+                    <th style="text-align: left; padding: 18px 22px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Author</th>
+                    <th style="text-align: left; padding: 18px 22px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Added On</th>
+                    <th style="text-align: left; padding: 18px 22px; font-weight: 400; color: #40403E; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in tbr_items %}
+                    <tr style="border-bottom: 1px solid #40403E; transition: background-color 0.2s ease;">
+                        <td style="padding: 16px 22px; font-weight: 600; color: #40403E; font-size: 1.05em;">{{ item.book.title }}</td>
+                        <td style="padding: 16px 22px; color: #40403E; font-style: italic;">{{ item.book.author.name }}</td>
+                        <td style="padding: 16px 22px; color: #40403E; font-size: 0.95em;">
+                            {% if item.created_at %}
+                                {{ item.created_at|date:"F j, Y" }}
+                            {% else %}
+                                Recently added
+                            {% endif %}
+                        </td>
+                        <td style="padding: 16px 22px;">
+                            <form method="post" action="{% url 'remove_tbr' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="title" value="{{ item.book.title }}">
+                                <input type="hidden" name="author" value="{{ item.book.author.name }}">
+                                <button type="submit" style="background: transparent; color: #cc785c; border: 1px solid #cc785c; padding: 8px 16px; cursor: pointer; font-size: 0.9em; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; font-family: 'Lora', serif;">
+                                    Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Mobile cards -->
+        <div class="mobile-book-cards">
+            {% for item in tbr_items %}
+                <div class="mobile-book-card">
+                    <div class="book-title">{{ item.book.title }}</div>
+                    <div class="book-author">by {{ item.book.author.name }}</div>
+                    <div class="book-date">
+                        {% if item.created_at %}
+                            Added {{ item.created_at|date:"F j, Y" }}
+                        {% else %}
+                            Recently added
+                        {% endif %}
+                    </div>
+                    <div class="book-actions">
+                        <form method="post" action="{% url 'remove_tbr' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="title" value="{{ item.book.title }}">
+                            <input type="hidden" name="author" value="{{ item.book.author.name }}">
+                            <button type="submit" style="background: transparent; color: #cc785c; border: 1px solid #cc785c; padding: 8px 18px; cursor: pointer; font-size: 0.9em; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; font-family: 'Lora', serif; width: 100%;">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; background: #ffffff;">
+        <h3 style="color: #40403E; margin-bottom: 15px;">Your TBR list is empty.</h3>
+        <p style="color: #40403E; font-size: 1.1em; margin-bottom: 30px;">Add a few titles above to keep track of what to read next.</p>
+    </div>
+{% endif %}
+
+<style>
+    tbody tr:hover {
+        background-color: #fafafa !important;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #cc785c !important;
+        color: #ffffff !important;
+    }
+
+    .mobile-book-cards {
+        display: none;
+    }
+
+    .mobile-book-card {
+        background: #ffffff;
+        border: 2px solid #40403E;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .mobile-book-card .book-title {
+        font-weight: 600;
+        color: #40403E;
+        font-size: 1.1em;
+        margin-bottom: 8px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .mobile-book-card .book-author {
+        color: #40403E;
+        font-style: italic;
+        margin-bottom: 12px;
+    }
+
+    .mobile-book-card .book-date,
+    .mobile-book-card .book-note {
+        color: #40403E;
+        font-size: 0.95em;
+        margin-bottom: 10px;
+    }
+
+    .mobile-book-card .book-actions {
+        margin-top: 12px;
+    }
+
+    @media (max-width: 1024px) {
+        .desktop-table {
+            display: none;
+        }
+
+        .mobile-book-cards {
+            display: block;
+        }
+
+        .tbr-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 0;
+        }
+
+        body {
+            font-size: 18px;
+        }
+
+        form[action="{% url 'tbr_list' %}"] {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (min-width: 1025px) {
+        .mobile-book-cards {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
