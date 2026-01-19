@@ -27,65 +27,50 @@ class Command(BaseCommand):
             for item in category_list:
                 capitalize_map[item.lower()] = item.capitalize()
         
-        # Try to find and replace components
+        # Find and replace all occurrences of words to capitalize, even if embedded
         result = base_username
         remaining_lower = base_username.lower()
         
         # Sort items by length (longest first) to match longer items first
+        # This prevents shorter matches from interfering with longer ones
         all_capitalize_items = animals + book_chars + day_abbrevs + colors
         sorted_items = sorted(all_capitalize_items, key=len, reverse=True)
         
-        # Find all matches and their positions
+        # Find all matches and their positions (allow embedded matches)
         matches = []
         for item in sorted_items:
             item_lower = item.lower()
-            # Find all occurrences
+            # Find all occurrences (no word boundary checks)
             start = 0
             while True:
                 pos = remaining_lower.find(item_lower, start)
                 if pos == -1:
                     break
-                # Check if this is a valid match (word boundary)
-                is_valid = True
-                if pos > 0 and base_username[pos-1].isalnum():
-                    is_valid = False
-                if pos + len(item_lower) < len(base_username) and base_username[pos + len(item_lower)].isalnum():
-                    is_valid = False
                 
-                if is_valid:
-                    # Check if this position overlaps with an existing match
-                    overlap = False
-                    for existing_pos, existing_item, _ in matches:
-                        if not (pos + len(item_lower) <= existing_pos or pos >= existing_pos + len(existing_item)):
-                            overlap = True
-                            break
-                    if not overlap:
-                        matches.append((pos, item, item_lower))
+                # Check if this position overlaps with an existing match
+                overlap = False
+                for existing_pos, existing_item, _ in matches:
+                    # Check if ranges overlap
+                    if not (pos + len(item_lower) <= existing_pos or pos >= existing_pos + len(existing_item)):
+                        overlap = True
+                        break
+                
+                if not overlap:
+                    matches.append((pos, item, item_lower))
+                
                 start = pos + 1
         
-        # Sort matches by position
-        matches.sort(key=lambda x: x[0])
+        # Sort matches by position (reverse order for safe replacement)
+        matches.sort(key=lambda x: x[0], reverse=True)
         
-        # Build the result by replacing matches
-        if matches:
-            result_parts = []
-            last_pos = 0
-            
-            for pos, original_item, item_lower in matches:
-                # Add text before this match
-                if pos > last_pos:
-                    result_parts.append(base_username[last_pos:pos])
-                
-                # Add capitalized version
-                result_parts.append(capitalize_map[item_lower])
-                
-                last_pos = pos + len(item_lower)
-            
-            # Add remaining text
-            if last_pos < len(base_username):
-                result_parts.append(base_username[last_pos:])
-            
-            result = ''.join(result_parts)
+        # Replace matches from end to beginning to preserve positions
+        result_list = list(base_username)
+        for pos, original_item, item_lower in matches:
+            capitalized = capitalize_map[item_lower]
+            # Replace the slice
+            result_list[pos:pos + len(item_lower)] = list(capitalized)
+        
+        result = ''.join(result_list)
         
         # Add back trailing underscore
         return result + '_'
