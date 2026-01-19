@@ -162,12 +162,14 @@
             border-radius: 2px;
         }
         
-        .navbar-links a:hover { 
+        .navbar-links a:hover,
+        .navbar-links a.active { 
             color: #40403E;
             background: #ffffff;
         }
         
-        .navbar-links a:hover::after {
+        .navbar-links a:hover::after,
+        .navbar-links a.active::after {
             width: 80%;
             background: #cc785c;
         }
@@ -988,6 +990,16 @@
         authFields.forEach(({ id, autocomplete }) => {
             const el = document.getElementById(id);
             if (el) el.setAttribute('autocomplete', autocomplete);
+        });
+        
+        // Mark active navbar link
+        const currentPath = window.location.pathname;
+        const navbarLinks = document.querySelectorAll('.navbar-links a');
+        navbarLinks.forEach(link => {
+            const linkPath = new URL(link.href).pathname;
+            if (linkPath === currentPath || (currentPath === '/' && linkPath === '/')) {
+                link.classList.add('active');
+            }
         });
     });
     
