@@ -31,6 +31,8 @@ path('feedback/submit/', views.feedback_submit, name='feedback_submit'),
     path('password-reset-complete/', views.password_reset_complete_view, name='password_reset_complete'),
 # Username recovery URL
 path('forgot-username/', views.forgot_username_view, name='forgot_username'),
+# Unsubscribe from recommendation emails
+path('unsubscribe/<str:uidb64>/<str:token>/', views.unsubscribe_recommendations_view, name='unsubscribe_recommendations'),
 path('sitemap.xml', views.sitemap_view, name='sitemap'),
 path('robots.txt', views.robots_txt, name='robots_txt'),
 ]

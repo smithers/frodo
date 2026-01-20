@@ -12,14 +12,15 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils.encoding import force_bytes, force_str
+from django.utils import timezone
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import SetPasswordForm
-from .models import Book, Author, UserFavoriteBook, Feedback, ToBeReadBook
+from .models import Book, Author, UserFavoriteBook, Feedback, ToBeReadBook, UserEmailPreferences
 from django.http import JsonResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 from .services import search_books, get_book_details
-from datetime import date
+from datetime import date, timedelta
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count
@@ -71,25 +72,60 @@ def _send_new_recommendation_emails(request):
     if not site_url:
         site_url = request.build_absolute_uri('/').rstrip('/')
     
-    # For each similar user (User A), check if they have books User B has that they don't
+    # For each similar user (User A), check if they should receive a weekly email
     emails_sent = 0
     for user_a in similar_users:
+        # Check if user has unsubscribed from recommendation emails
+        email_prefs, _ = UserEmailPreferences.objects.get_or_create(user=user_a)
+        if not email_prefs.receive_recommendation_emails:
+            continue  # Skip this user, they've unsubscribed
+        
+        # Check if it's been at least 7 days since the last recommendation email
+        now = timezone.now()
+        if email_prefs.last_recommendation_email_sent:
+            time_since_last_email = now - email_prefs.last_recommendation_email_sent
+            if time_since_last_email < timedelta(days=7):
+                continue  # Skip this user, it hasn't been a week yet
+        
         # Get User A's favorite book IDs
         user_a_favorite_book_ids = set(
             UserFavoriteBook.objects.filter(user=user_a).values_list("book_id", flat=True)
         )
         
-        # Find books User B has that User A doesn't have
-        new_books_for_user_a = user_b_favorite_book_ids - user_a_favorite_book_ids
+        # Find ALL users who share favorites with User A (not just User B)
+        # This collects all recommendations from the past week
+        all_similar_users = (
+            User.objects.filter(
+                favorite_books__book_id__in=user_a_favorite_book_ids
+            )
+            .exclude(id=user_a.id)
+            .distinct()
+        )
         
-        if new_books_for_user_a:
+        # Collect all books from all similar users that User A doesn't have
+        all_new_books = set()
+        for similar_user in all_similar_users:
+            similar_user_favorite_book_ids = set(
+                UserFavoriteBook.objects.filter(user=similar_user).values_list("book_id", flat=True)
+            )
+            new_books_from_user = similar_user_favorite_book_ids - user_a_favorite_book_ids
+            all_new_books.update(new_books_from_user)
+        
+        if all_new_books:
             # Get the Book objects
-            new_books = Book.objects.filter(id__in=new_books_for_user_a).select_related('author')
+            new_books = Book.objects.filter(id__in=all_new_books).select_related('author')
             
             # Only send email if there are new books
             if new_books.exists():
                 try:
                     subject = 'New Book Recommendations for You!'
+                    
+                    # Generate unsubscribe token
+                    token = default_token_generator.make_token(user_a)
+                    uid = urlsafe_base64_encode(force_bytes(user_a.pk))
+                    unsubscribe_url = request.build_absolute_uri(
+                        reverse('unsubscribe_recommendations', kwargs={'uidb64': uid, 'token': token})
+                    )
                     
                     # Create email content
                     html_message = render_to_string('registration/email_new_recommendations.html', {
@@ -97,13 +133,15 @@ def _send_new_recommendation_emails(request):
                         'new_books': new_books,
                         'site_url': site_url,
                         'site_name': 'Great Minds Read Alike',
+                        'unsubscribe_url': unsubscribe_url,
                     })
                     plain_message = f"Hi {user_a.username},\n\n"
-                    plain_message += "Great news! Another reader who shares some of your favorite books has added new favorites that you might love too.\n\n"
+                    plain_message += "Great news! Other readers who share some of your favorite books have added new favorites that you might love, too.\n\n"
                     plain_message += "Here are the books they added that you haven't listed as favorites yet:\n\n"
                     for book in new_books:
                         plain_message += f"- {book.title} by {book.author.name}\n"
                     plain_message += f"\nVisit {site_url}{reverse('recommendations')} to see more recommendations!\n\n"
+                    plain_message += f"\nIf you no longer wish to receive these emails, you can unsubscribe here: {unsubscribe_url}\n\n"
                     plain_message += "Happy reading!\n— Great Minds Read Alike"
                     
                     from_email = settings.DEFAULT_FROM_EMAIL
@@ -115,6 +153,11 @@ def _send_new_recommendation_emails(request):
                         html_message=html_message,
                         fail_silently=True,  # Don't break the flow if email fails
                     )
+                    
+                    # Update the timestamp for when the email was sent
+                    email_prefs.last_recommendation_email_sent = now
+                    email_prefs.save()
+                    
                     emails_sent += 1
                 except Exception as e:
                     # Log error but don't break the flow
@@ -968,3 +1011,82 @@ def password_reset_complete_view(request):
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
     return response
+
+def unsubscribe_recommendations_view(request, uidb64, token):
+    """Handle unsubscribe from recommendation emails"""
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        # Token is valid, unsubscribe the user
+        email_prefs, created = UserEmailPreferences.objects.get_or_create(user=user)
+        email_prefs.receive_recommendation_emails = False
+        email_prefs.unsubscribed_at = timezone.now()
+        email_prefs.save()
+        
+        # Render success page
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Unsubscribed - Great Minds Read Alike</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {{ font-family: 'Lora', serif; background: #EBDBBC; padding: 40px 20px; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #40403E; text-align: center; }}
+                h1 {{ color: #40403E; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }}
+                p {{ color: #40403E; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }}
+                a {{ display: inline-block; background-color: #40403E; color: #ffffff; padding: 15px 30px; border: 2px solid #40403E; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: all 0.3s ease; margin-top: 40px; }}
+                a:hover {{ background-color: #cc785c; border-color: #cc785c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Unsubscribed</h1>
+                <p>You have been successfully unsubscribed from recommendation emails.</p>
+                <p>You will no longer receive emails when other readers add new favorites that match your interests.</p>
+                <a href="{reverse('home')}">Return to Home</a>
+            </div>
+        </body>
+        </html>
+        """
+        response = HttpResponse(html, content_type="text/html")
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
+    else:
+        # Invalid token
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Invalid Link - Great Minds Read Alike</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {{ font-family: 'Lora', serif; background: #EBDBBC; padding: 40px 20px; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: #ffffff; padding: 50px; border: 2px solid #40403E; text-align: center; }}
+                h1 {{ color: #40403E; border-bottom: 4px solid #cc785c; padding-bottom: 20px; margin-bottom: 30px; margin-top: 0; }}
+                p {{ color: #40403E; margin-bottom: 20px; font-size: 1.1em; line-height: 1.8; }}
+                a {{ display: inline-block; background-color: #40403E; color: #ffffff; padding: 15px 30px; border: 2px solid #40403E; font-size: 1em; font-weight: 400; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: all 0.3s ease; margin-top: 40px; }}
+                a:hover {{ background-color: #cc785c; border-color: #cc785c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Invalid Link</h1>
+                <p>This unsubscribe link is invalid or has expired.</p>
+                <p>If you continue to receive emails, please contact support.</p>
+                <a href="{reverse('home')}">Return to Home</a>
+            </div>
+        </body>
+        </html>
+        """
+        response = HttpResponse(html, content_type="text/html")
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response

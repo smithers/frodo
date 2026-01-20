@@ -106,3 +106,21 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback {self.id} ({self.rating})"
+
+
+class UserEmailPreferences(models.Model):
+    """Tracks user email preferences, including unsubscribe status for recommendation emails."""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="email_preferences")
+    receive_recommendation_emails = models.BooleanField(default=True, help_text="Whether to receive new book recommendation emails")
+    unsubscribed_at = models.DateTimeField(null=True, blank=True, help_text="When the user unsubscribed from recommendation emails")
+    last_recommendation_email_sent = models.DateTimeField(null=True, blank=True, help_text="When the last recommendation email was sent to this user")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "User Email Preferences"
+        verbose_name_plural = "User Email Preferences"
+
+    def __str__(self):
+        status = "subscribed" if self.receive_recommendation_emails else "unsubscribed"
+        return f"{self.user.username} - {status}"
