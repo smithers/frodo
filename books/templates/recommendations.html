@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load book_extras %}
 
 {% block title %}Recommendations{% endblock %}
 
@@ -123,16 +124,11 @@
     }
     
     @media (max-width: 1024px) {
-        /* Make masonry single column on mobile */
+        /* Make grid single column on mobile */
         .recommendations-grid {
-            column-count: 1 !important;
-            column-width: auto !important;
-            column-gap: 20px !important;
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
             margin-top: 20px !important;
-        }
-        
-        .recommendation-card {
-            margin-bottom: 20px !important;
         }
         
         /* Card adjustments */
@@ -209,12 +205,20 @@
 
     {% if grouped_recommendations %}
         <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
-        <div style="column-count: auto; column-width: 450px; column-gap: 30px; margin-top: 30px;" class="recommendations-grid">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px; grid-auto-flow: row;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
-                <div class="card recommendation-card" style="background: #ffffff; break-inside: avoid; margin-bottom: 30px; display: inline-block; width: 100%;">
+                <div class="card recommendation-card" style="background: #ffffff;">
                     <div style="padding-bottom: 10px; margin-bottom: 10px;">
+                        <p style="margin: 0; font-size: 1em; color: #40403E; line-height: 1.8; margin-bottom: 12px;">
+                            You and <strong style="color: #40403E;">{{ group.similar_user.username }}</strong> both love:
+                        </p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                            {% for title in group.overlapping_titles %}
+                                <span class="book-pill" style="display: inline-block; background-color: {{ title|get_pill_color }}; color: #40403E; padding: 4px 10px; border-radius: 20px; font-size: 0.7em; font-weight: 500; white-space: nowrap;">{{ title }}</span>
+                            {% endfor %}
+                        </div>
                         <p style="margin: 0; font-size: 1em; color: #40403E; line-height: 1.8;">
-                            You and <strong style="color: #40403E;">{{ group.similar_user.username }}</strong> both love: {% for title in group.overlapping_titles %}<em style="text-decoration: underline;">{{ title }}</em>{% if not forloop.last %}, {% endif %}{% endfor %}. <strong style="color: #40403E;">They</strong> also love:
+                            <strong style="color: #40403E;">They</strong> also love:
                         </p>
                     </div>
                     
