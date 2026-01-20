@@ -24,7 +24,104 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count
 import hashlib
+import logging
 
+
+def _send_new_recommendation_emails(request):
+    """
+    Send email notifications to users when another user (authenticated or guest) 
+    adds favorites that overlap with their favorites and includes new books they don't have.
+    """
+    # Get the user who just added favorites (User B)
+    if request.user.is_authenticated:
+        user_b = request.user
+    else:
+        # Get guest user from session
+        guest_user_id = request.session.get('guest_user_id')
+        if not guest_user_id:
+            return  # No user to check
+        try:
+            user_b = User.objects.get(id=guest_user_id)
+        except User.DoesNotExist:
+            return  # Guest user doesn't exist
+    
+    # Get all of User B's favorite book IDs
+    user_b_favorite_book_ids = set(
+        UserFavoriteBook.objects.filter(user=user_b).values_list("book_id", flat=True)
+    )
+    
+    if not user_b_favorite_book_ids:
+        return  # User B has no favorites
+    
+    # Find all other users (User A) who share at least one favorite with User B
+    # and have an email address (authenticated users only)
+    similar_users = (
+        User.objects.filter(
+            favorite_books__book_id__in=user_b_favorite_book_ids,
+            email__isnull=False,
+            email__gt='',  # Email is not empty
+            is_active=True
+        )
+        .exclude(id=user_b.id)  # Exclude User B
+        .distinct()
+    )
+    
+    # Get site URL for email links
+    site_url = getattr(settings, 'SITE_BASE_URL', '')
+    if not site_url:
+        site_url = request.build_absolute_uri('/').rstrip('/')
+    
+    # For each similar user (User A), check if they have books User B has that they don't
+    emails_sent = 0
+    for user_a in similar_users:
+        # Get User A's favorite book IDs
+        user_a_favorite_book_ids = set(
+            UserFavoriteBook.objects.filter(user=user_a).values_list("book_id", flat=True)
+        )
+        
+        # Find books User B has that User A doesn't have
+        new_books_for_user_a = user_b_favorite_book_ids - user_a_favorite_book_ids
+        
+        if new_books_for_user_a:
+            # Get the Book objects
+            new_books = Book.objects.filter(id__in=new_books_for_user_a).select_related('author')
+            
+            # Only send email if there are new books
+            if new_books.exists():
+                try:
+                    subject = 'New Book Recommendations for You!'
+                    
+                    # Create email content
+                    html_message = render_to_string('registration/email_new_recommendations.html', {
+                        'user': user_a,
+                        'new_books': new_books,
+                        'site_url': site_url,
+                        'site_name': 'Great Minds Read Alike',
+                    })
+                    plain_message = f"Hi {user_a.username},\n\n"
+                    plain_message += "Great news! Another reader who shares some of your favorite books has added new favorites that you might love too.\n\n"
+                    plain_message += "Here are the books they added that you haven't listed as favorites yet:\n\n"
+                    for book in new_books:
+                        plain_message += f"- {book.title} by {book.author.name}\n"
+                    plain_message += f"\nVisit {site_url}{reverse('recommendations')} to see more recommendations!\n\n"
+                    plain_message += "Happy reading!\n— Great Minds Read Alike"
+                    
+                    from_email = settings.DEFAULT_FROM_EMAIL
+                    send_mail(
+                        subject,
+                        plain_message,
+                        from_email,
+                        [user_a.email],
+                        html_message=html_message,
+                        fail_silently=True,  # Don't break the flow if email fails
+                    )
+                    emails_sent += 1
+                except Exception as e:
+                    # Log error but don't break the flow
+                    logger = logging.getLogger(__name__)
+                    logger.error(f"Error sending recommendation email to {user_a.email}: {str(e)}")
+    
+    return emails_sent
 
 def _merge_guest_favorites(request, user):
     """
@@ -296,6 +393,9 @@ def save_favorite_view(request):
                 messages.success(request, f"Added {Book.objects.filter(title__iexact=smart_title_case(titles[0].strip())).first().title if titles else 'book'} to your favorites!")
             else:
                 messages.success(request, f"Added {saved_count} book(s) to your favorites!")
+            
+            # Send email notifications to users who share favorites
+            _send_new_recommendation_emails(request)
         else:
             messages.warning(request, "No valid books were submitted.")
 
