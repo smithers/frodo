@@ -92,23 +92,32 @@ def _send_new_recommendation_emails(request):
             UserFavoriteBook.objects.filter(user=user_a).values_list("book_id", flat=True)
         )
         
-        # Find ALL users who share favorites with User A (not just User B)
-        # This collects all recommendations from the past week
-        all_similar_users = (
+        # Calculate the date 7 days ago
+        seven_days_ago = now - timedelta(days=7)
+        
+        # Find ALL users who share favorites with User A AND added those favorites in the past 7 days
+        # This collects only recent recommendations
+        recent_similar_users = (
             User.objects.filter(
-                favorite_books__book_id__in=user_a_favorite_book_ids
+                favorite_books__book_id__in=user_a_favorite_book_ids,
+                favorite_books__created_at__gte=seven_days_ago
             )
             .exclude(id=user_a.id)
             .distinct()
         )
         
-        # Collect all books from all similar users that User A doesn't have
+        # Collect all books from recent similar users that User A doesn't have
+        # Only include books that were added as favorites in the past 7 days
         all_new_books = set()
-        for similar_user in all_similar_users:
-            similar_user_favorite_book_ids = set(
-                UserFavoriteBook.objects.filter(user=similar_user).values_list("book_id", flat=True)
-            )
-            new_books_from_user = similar_user_favorite_book_ids - user_a_favorite_book_ids
+        for similar_user in recent_similar_users:
+            # Get books this user added as favorites in the past 7 days
+            recent_favorites = UserFavoriteBook.objects.filter(
+                user=similar_user,
+                created_at__gte=seven_days_ago
+            ).values_list("book_id", flat=True)
+            
+            similar_user_recent_favorite_book_ids = set(recent_favorites)
+            new_books_from_user = similar_user_recent_favorite_book_ids - user_a_favorite_book_ids
             all_new_books.update(new_books_from_user)
         
         if all_new_books:
