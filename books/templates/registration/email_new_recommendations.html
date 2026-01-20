@@ -49,18 +49,6 @@
             color: #40403E;
             font-size: 0.95em;
         }
-        .cta-button {
-            display: inline-block;
-            background-color: #cc785c;
-            color: #ffffff;
-            padding: 12px 25px;
-            text-decoration: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 20px;
-            border: 2px solid #cc785c;
-        }
         .footer {
             margin-top: 30px;
             padding-top: 20px;
@@ -72,11 +60,17 @@
 </head>
 <body>
     <div class="email-container">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="font-family: 'Playfair Display', serif; font-size: 1.5em; font-weight: 500; color: #40403E; letter-spacing: 1px; border: 1px solid #40403E; display: inline-block; padding: 6px 10px;">
+                Great Minds<br>Read Alike
+            </div>
+        </div>
+        
         <h1>New Book Recommendations for You!</h1>
         
         <p>Hi {{ user.username }},</p>
         
-        <p>Great news! Another reader who shares some of your favorite books has added new favorites that you might love too.</p>
+        <p>Great news! Another reader who shares some of your favorite books has added new favorites that you might love, too.</p>
         
         <p><strong>Here are the books they added that you haven't listed as favorites yet:</strong></p>
         
@@ -89,9 +83,7 @@
             {% endfor %}
         </div>
         
-        <p>Want to see more recommendations? Visit your recommendations page to discover even more books you might love!</p>
-        
-        <a href="{{ site_url }}{% url 'recommendations' %}" class="cta-button">View Recommendations</a>
+        <p>Want to see more recommendations? <a href="{{ site_url }}{% url 'recommendations' %}" style="text-decoration: underline; color: #40403E;">Visit your recommendations page</a> to discover even more books you might love!</p>
         
         <div class="footer">
             <p>Happy reading!</p>
