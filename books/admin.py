@@ -10,8 +10,9 @@ class AuthorAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'isbn', 'created_at')
+    list_display = ('title', 'author', 'genre', 'sub_genre', 'isbn', 'created_at')
     search_fields = ('title', 'isbn')
+    list_filter = ('genre', 'sub_genre', 'created_at')
 
 @admin.register(UserFavoriteBook)
 class FavoriteBookAdmin(admin.ModelAdmin):
