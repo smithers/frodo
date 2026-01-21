@@ -17,6 +17,42 @@ class Book(models.Model):
         (GENRE_NONFICTION, "Non-fiction"),
     ]
 
+    SUB_GENRE_MYSTERY_THRILLER = "Mystery & Thriller"
+    SUB_GENRE_SCIFI = "Sci-Fi"
+    SUB_GENRE_FANTASY = "Fantasy"
+    SUB_GENRE_HISTORICAL_FICTION = "Historical Fiction"
+    SUB_GENRE_HORROR = "Horror"
+    SUB_GENRE_GENERAL_FICTION = "General Fiction"
+    SUB_GENRE_BIOGRAPHY = "Biography"
+    SUB_GENRE_HISTORY = "History"
+    SUB_GENRE_SCIENCE = "Science"
+    SUB_GENRE_PHILOSOPHY_RELIGION = "Philosophy & Religion"
+    SUB_GENRE_PSYCHOLOGY_SELFHELP = "Psychology & Self-Help"
+    SUB_GENRE_BUSINESS_FINANCE = "Business & Finance"
+    SUB_GENRE_POLITICS = "Politics"
+    SUB_GENRE_HUMOR = "Humor"
+    SUB_GENRE_TRUE_CRIME = "True Crime"
+    SUB_GENRE_REFERENCE = "Reference"
+    
+    SUB_GENRE_CHOICES = [
+        (SUB_GENRE_MYSTERY_THRILLER, "Mystery & Thriller"),
+        (SUB_GENRE_SCIFI, "Sci-Fi"),
+        (SUB_GENRE_FANTASY, "Fantasy"),
+        (SUB_GENRE_HISTORICAL_FICTION, "Historical Fiction"),
+        (SUB_GENRE_HORROR, "Horror"),
+        (SUB_GENRE_GENERAL_FICTION, "General Fiction"),
+        (SUB_GENRE_BIOGRAPHY, "Biography"),
+        (SUB_GENRE_HISTORY, "History"),
+        (SUB_GENRE_SCIENCE, "Science"),
+        (SUB_GENRE_PHILOSOPHY_RELIGION, "Philosophy & Religion"),
+        (SUB_GENRE_PSYCHOLOGY_SELFHELP, "Psychology & Self-Help"),
+        (SUB_GENRE_BUSINESS_FINANCE, "Business & Finance"),
+        (SUB_GENRE_POLITICS, "Politics"),
+        (SUB_GENRE_HUMOR, "Humor"),
+        (SUB_GENRE_TRUE_CRIME, "True Crime"),
+        (SUB_GENRE_REFERENCE, "Reference"),
+    ]
+
     title = models.CharField(max_length=255)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
 
@@ -27,8 +63,13 @@ class Book(models.Model):
         default=GENRE_FICTION,
     )
 
-    # Optional, more specific category (e.g., "Fantasy", "Biography")
-    sub_genre = models.CharField(max_length=100, null=True, blank=True)
+    # Optional, more specific category
+    sub_genre = models.CharField(
+        max_length=100,
+        choices=SUB_GENRE_CHOICES,
+        null=True,
+        blank=True,
+    )
 
     # We make ISBN nullable/blank because if we find a duplicate Title+Author,
     # we might choose to ignore the new ISBN, or we might insert a book manually without one.
