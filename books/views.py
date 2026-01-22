@@ -126,8 +126,34 @@ def _send_new_recommendation_emails(request):
             
             # Only send email if there are new books
             if new_books.exists():
+                # Calculate total recommendations count (similar to recommendation_view logic)
+                # Find all users who share favorites with User A
+                all_similar_users = (
+                    User.objects.filter(
+                        favorite_books__book_id__in=user_a_favorite_book_ids,
+                    )
+                    .exclude(id=user_a.id)
+                    .distinct()
+                )
+                
+                # Count all unique recommended books (not just from past 7 days)
+                all_recommended_book_ids = set()
+                for similar_user in all_similar_users:
+                    their_favorite_book_ids = set(
+                        UserFavoriteBook.objects.filter(user=similar_user).values_list("book_id", flat=True)
+                    )
+                    # Books they love that User A doesn't have
+                    recommended_from_user = their_favorite_book_ids - user_a_favorite_book_ids
+                    all_recommended_book_ids.update(recommended_from_user)
+                
+                total_recommendations_count = len(all_recommended_book_ids)
+                
+                # Limit to 10 books for the email
+                books_for_email = new_books[:10]
+                additional_count = max(0, total_recommendations_count - 10)
+                
                 try:
-                    subject = 'New Book Recommendations for You!'
+                    subject = 'Your Weekly Book Recommendations!'
                     
                     # Generate unsubscribe token
                     token = default_token_generator.make_token(user_a)
@@ -139,7 +165,9 @@ def _send_new_recommendation_emails(request):
                     # Create email content
                     html_message = render_to_string('registration/email_new_recommendations.html', {
                         'user': user_a,
-                        'new_books': new_books,
+                        'new_books': books_for_email,
+                        'total_recommendations_count': total_recommendations_count,
+                        'additional_count': additional_count,
                         'site_url': site_url,
                         'site_name': 'Great Minds Read Alike',
                         'unsubscribe_url': unsubscribe_url,
@@ -147,8 +175,10 @@ def _send_new_recommendation_emails(request):
                     plain_message = f"Hi {user_a.username},\n\n"
                     plain_message += "Great news! Other readers who share some of your favorite books have added new favorites that you might love, too.\n\n"
                     plain_message += "Here are the books they added that you haven't listed as favorites yet:\n\n"
-                    for book in new_books:
+                    for book in books_for_email:
                         plain_message += f"- {book.title} by {book.author.name}\n"
+                    if additional_count > 0:
+                        plain_message += f"\nThere are {additional_count} more recommendations waiting for you on your recommendations page!\n"
                     plain_message += f"\nVisit {site_url}{reverse('recommendations')} to see more recommendations!\n\n"
                     plain_message += f"\nIf you no longer wish to receive these emails, you can unsubscribe here: {unsubscribe_url}\n\n"
                     plain_message += "Happy reading!\n— Great Minds Read Alike"

@@ -66,13 +66,13 @@
             </div>
         </div>
         
-        <h1>New Book Recommendations for You!</h1>
+        <h1>Your Weekly Book Recommendations!</h1>
         
         <p>Hi {{ user.username }},</p>
         
         <p>Great news! Other readers who share some of your favorite books have added new favorites that you might love, too.</p>
         
-        <p><strong>Here are the books they added that you haven't listed as favorites yet:</strong></p>
+        <p><strong>Here are some recent recommendations from the past week:</strong></p>
         
         <div class="book-list">
             {% for book in new_books %}
@@ -82,6 +82,10 @@
             </div>
             {% endfor %}
         </div>
+        
+        {% if additional_count > 0 %}
+        <p style="margin-top: 20px; font-weight: 600; color: #40403E;">There are {{ additional_count }} more recommendation{{ additional_count|pluralize }} waiting for you on your recommendations page!</p>
+        {% endif %}
         
         <p>Want to see more recommendations? <a href="{{ site_url }}{% url 'recommendations' %}" style="text-decoration: underline; color: #40403E;">Visit your recommendations page</a> to discover even more books you might love!</p>
         
