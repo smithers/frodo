@@ -120,7 +120,7 @@ class Command(BaseCommand):
         # Get site URL
         site_url = getattr(settings, 'SITE_BASE_URL', '')
         if not site_url or site_url == '/' or site_url.startswith('http:///') or site_url.startswith('https:///'):
-            site_url = 'https://greatmindsreadalike.org'
+            site_url = 'https://www.greatmindsreadalike.org'
         # Ensure site_url doesn't end with a slash
         if site_url.endswith('/'):
             site_url = site_url.rstrip('/')

@@ -75,9 +75,9 @@ def _send_new_recommendation_emails(request):
             site_url = request.build_absolute_uri('/').rstrip('/')
             # If site_url is malformed (e.g., just '/'), use default
             if not site_url or site_url.startswith('http:///') or site_url.startswith('https:///'):
-                site_url = 'https://greatmindsreadalike.org'
+                site_url = 'https://www.greatmindsreadalike.org'
         except:
-            site_url = 'https://greatmindsreadalike.org'
+            site_url = 'https://www.greatmindsreadalike.org'
     
     # Ensure site_url doesn't end with a slash (except for root)
     if site_url and site_url != '/' and site_url.endswith('/'):
