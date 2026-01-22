@@ -70,7 +70,18 @@ def _send_new_recommendation_emails(request):
     # Get site URL for email links
     site_url = getattr(settings, 'SITE_BASE_URL', '')
     if not site_url:
-        site_url = request.build_absolute_uri('/').rstrip('/')
+        # Try to build from request, otherwise use default Heroku domain
+        try:
+            site_url = request.build_absolute_uri('/').rstrip('/')
+            # If site_url is malformed (e.g., just '/'), use default
+            if not site_url or site_url.startswith('http:///') or site_url.startswith('https:///'):
+                site_url = 'https://greatmindsreadalike.org'
+        except:
+            site_url = 'https://greatmindsreadalike.org'
+    
+    # Ensure site_url doesn't end with a slash (except for root)
+    if site_url and site_url != '/' and site_url.endswith('/'):
+        site_url = site_url.rstrip('/')
     
     # For each similar user (User A), check if they should receive a weekly email
     emails_sent = 0
@@ -158,9 +169,12 @@ def _send_new_recommendation_emails(request):
                     # Generate unsubscribe token
                     token = default_token_generator.make_token(user_a)
                     uid = urlsafe_base64_encode(force_bytes(user_a.pk))
-                    unsubscribe_url = request.build_absolute_uri(
-                        reverse('unsubscribe_recommendations', kwargs={'uidb64': uid, 'token': token})
-                    )
+                    unsubscribe_path = reverse('unsubscribe_recommendations', kwargs={'uidb64': uid, 'token': token})
+                    # Use site_url if available, otherwise build from request
+                    if site_url:
+                        unsubscribe_url = f"{site_url}{unsubscribe_path}"
+                    else:
+                        unsubscribe_url = request.build_absolute_uri(unsubscribe_path)
                     
                     # Create email content
                     html_message = render_to_string('registration/email_new_recommendations.html', {
