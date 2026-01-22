@@ -79,6 +79,11 @@ def _send_new_recommendation_emails(request):
         except:
             site_url = 'https://www.greatmindsreadalike.org'
     
+    # Ensure site_url includes "www." if it's greatmindsreadalike.org
+    if site_url and 'greatmindsreadalike.org' in site_url and 'www.' not in site_url:
+        site_url = site_url.replace('https://greatmindsreadalike.org', 'https://www.greatmindsreadalike.org')
+        site_url = site_url.replace('http://greatmindsreadalike.org', 'https://www.greatmindsreadalike.org')
+    
     # Ensure site_url doesn't end with a slash (except for root)
     if site_url and site_url != '/' and site_url.endswith('/'):
         site_url = site_url.rstrip('/')

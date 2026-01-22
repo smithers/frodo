@@ -121,6 +121,12 @@ class Command(BaseCommand):
         site_url = getattr(settings, 'SITE_BASE_URL', '')
         if not site_url or site_url == '/' or site_url.startswith('http:///') or site_url.startswith('https:///'):
             site_url = 'https://www.greatmindsreadalike.org'
+        
+        # Ensure site_url includes "www." if it's greatmindsreadalike.org
+        if site_url and 'greatmindsreadalike.org' in site_url and 'www.' not in site_url:
+            site_url = site_url.replace('https://greatmindsreadalike.org', 'https://www.greatmindsreadalike.org')
+            site_url = site_url.replace('http://greatmindsreadalike.org', 'https://www.greatmindsreadalike.org')
+        
         # Ensure site_url doesn't end with a slash
         if site_url.endswith('/'):
             site_url = site_url.rstrip('/')
