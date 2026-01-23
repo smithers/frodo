@@ -290,6 +290,18 @@ def homepage_view(request):
     })
 
 
+def how_it_works_view(request):
+    """How It Works page - explains the system to first-time visitors"""
+    # Count unique users who have favorite books and total favorites
+    unique_users_count = UserFavoriteBook.objects.values('user').distinct().count()
+    favorites_count = UserFavoriteBook.objects.count()
+    
+    return render(request, 'how_it_works.html', {
+        'unique_users_count': unique_users_count,
+        'favorites_count': favorites_count,
+    })
+
+
 def sitemap_view(request):
     """Simple XML sitemap for public pages."""
     base_urls = [

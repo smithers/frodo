@@ -1,10 +1,26 @@
 import requests
+import hashlib
 from django.core.cache import cache
 from django.db.models import Q
 from books.models import Book, Author
 
 # Create a session for connection pooling (reuses TCP connections)
 _session = requests.Session()
+
+def sanitize_cache_key(query):
+    """
+    Sanitize a query string for use in cache keys.
+    Replaces spaces and other problematic characters with safe alternatives.
+    """
+    # Normalize: lowercase and strip
+    normalized = query.lower().strip()
+    # Replace spaces and other problematic characters with underscores
+    # This ensures memcached compatibility
+    sanitized = normalized.replace(' ', '_').replace(':', '_').replace(';', '_')
+    # For very long queries, use a hash to keep keys manageable
+    if len(sanitized) > 200:
+        return hashlib.md5(sanitized.encode('utf-8')).hexdigest()
+    return sanitized
 
 def search_database_books(query):
     """
@@ -72,9 +88,9 @@ def search_google_books(query):
     Searches Google Books API with caching to reduce latency.
     Uses connection pooling and caching for better performance.
     """
-    # Normalize query for cache key
-    query_normalized = query.lower().strip()
-    cache_key = f"google_books_search:{query_normalized}"
+    # Sanitize query for cache key to avoid memcached issues
+    query_sanitized = sanitize_cache_key(query)
+    cache_key = f"google_books_search:{query_sanitized}"
     
     # Check cache first (cache hits are <50ms vs 500-1000ms for API calls)
     cached_results = cache.get(cache_key)
@@ -128,8 +144,9 @@ def get_book_details(title, author):
     """
     # Create a search query from title and author
     query = f"{title} {author}"
-    query_normalized = query.lower().strip()
-    cache_key = f"google_books_details:{query_normalized}"
+    # Sanitize query for cache key to avoid memcached issues
+    query_sanitized = sanitize_cache_key(query)
+    cache_key = f"google_books_details:{query_sanitized}"
     
     # Check cache first
     cached_result = cache.get(cache_key)

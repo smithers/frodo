@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
 path('', views.homepage_view, name='home'),
+path('how-it-works/', views.how_it_works_view, name='how_it_works'),
 path('register/', views.register_view, name='register'),
 # Redirect old rating URLs to new favorite URLs for backward compatibility
 path('rate/', RedirectView.as_view(url='/add-favorite/', permanent=True)),
