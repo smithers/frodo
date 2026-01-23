@@ -186,7 +186,7 @@
         .tbr-btn {
             background: #ffffff;
             color: #cc785c;
-            border: 1px solid #cc785c;
+            border: none;
             padding: 3px 6px;
             cursor: pointer;
             font-size: 0.7em;
@@ -226,36 +226,38 @@
                         <ul style="list-style: none; padding: 0; margin: 0;">
                             {% for book_data in group.recommended_books %}
                                 <li class="book-item" style="padding: 8px 0; border-bottom: 1px solid #d0d0d0;">
-                                    <div>
-                                        {% if book_data.book.isbn %}
-                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
-                                        {% else %}
-                                            <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
-                                        {% endif %}
-                                        <span style="font-size: 0.9em; color: #40403E; font-style: italic;">by {{ book_data.book.author.name }}</span>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            {% if book_data.book.isbn %}
+                                                <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                            {% else %}
+                                                <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                            {% endif %}
+                                            <span style="font-size: 0.9em; color: #40403E; font-style: italic;">by {{ book_data.book.author.name }}</span>
+                                        </div>
                                         {% if user.is_authenticated %}
-                                            <form method="post" action="{% url 'tbr_list' %}" style="display: inline-block; margin-left: 12px;">
+                                            <form method="post" action="{% url 'tbr_list' %}" style="display: inline-block;">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="title" value="{{ book_data.book.title }}">
                                                 <input type="hidden" name="author" value="{{ book_data.book.author.name }}">
                                                 <input type="hidden" name="note" value="">
                                                 <button type="submit" class="tbr-btn">
-                                                    Add to TBR
+                                                    + TBR
                                                 </button>
                                             </form>
                                         {% endif %}
-                                        {% if book_data.explanation %}
-                                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                                <span class="accordion-icon">▶</span>
-                                                <span>Why {{ group.similar_user.username }} loves this book</span>
-                                            </div>
-                                            <div class="accordion-content">
-                                                <div class="explanation-text">
-                                                    {{ book_data.explanation }}
-                                                </div>
-                                            </div>
-                                        {% endif %}
                                     </div>
+                                    {% if book_data.explanation %}
+                                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                                            <span class="accordion-icon">▶</span>
+                                            <span>Why {{ group.similar_user.username }} loves this book</span>
+                                        </div>
+                                        <div class="accordion-content">
+                                            <div class="explanation-text">
+                                                {{ book_data.explanation }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>
@@ -328,6 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const pagination = card.querySelector('.card-pagination');
+        if (!pagination) {
+            return; // Pagination element not found
+        }
+        
         const prevBtn = pagination.querySelector('.prev-page');
         const nextBtn = pagination.querySelector('.next-page');
         const pageInfo = pagination.querySelector('.page-info');

@@ -23,7 +23,7 @@ from .services import search_books, get_book_details
 from datetime import date, timedelta
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
-from django.db.models import Count
+from django.db.models import Count, Max
 import hashlib
 import logging
 
@@ -274,11 +274,19 @@ def homepage_view(request):
         .order_by('-count', 'book__title')[:10]
     )
     
+    # 10 most recently favorited books (unique books, ordered by most recent favorite date)
+    recent_favorites = (
+        UserFavoriteBook.objects.values('book__title', 'book__author__name')
+        .annotate(most_recent=Max('created_at'))
+        .order_by('-most_recent')[:10]
+    )
+    
     return render(request, 'homepage.html', {
         'form': form,
         'unique_users_count': unique_users_count,
         'favorites_count': favorites_count,
         'top_favorites': top_favorites,
+        'recent_favorites': recent_favorites,
     })
 
 
