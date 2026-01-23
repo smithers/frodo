@@ -214,7 +214,7 @@
                         </p>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
                             {% for title in group.overlapping_titles %}
-                                <span class="book-pill" style="display: inline-block; background-color: {{ title|get_pill_color }}; color: #40403E; padding: 4px 10px; border-radius: 0; font-size: 0.7em; font-weight: 500; white-space: nowrap;">{{ title }}</span>
+                                <span class="book-pill" style="display: inline-block; background-color: #e0e0e0; color: #40403E; padding: 4px 10px; border-radius: 0; font-size: 0.7em; font-weight: 500; white-space: nowrap;">{{ title }}</span>
                             {% endfor %}
                         </div>
                         <p style="margin: 0; font-size: 1em; color: #40403E; line-height: 1.8;">
@@ -234,6 +234,9 @@
                                                 <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
                                             {% endif %}
                                             <span style="font-size: 0.9em; color: #40403E; font-style: italic;">by {{ book_data.book.author.name }}</span>
+                                            {% if book_data.book.sub_genre %}
+                                                <span class="sub-genre-pill" style="display: inline-block; background-color: {{ book_data.book.sub_genre|get_sub_genre_color }}; color: #40403E; padding: 2px 8px; border-radius: 12px; font-size: 0.6em; font-weight: 500; margin-left: 8px; white-space: nowrap;">{{ book_data.book.sub_genre }}</span>
+                                            {% endif %}
                                         </div>
                                         {% if user.is_authenticated %}
                                             <form method="post" action="{% url 'tbr_list' %}" style="display: inline-block;">

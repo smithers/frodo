@@ -49,3 +49,30 @@ def get_pill_color(value):
         return colors[idx]
     except (ValueError, TypeError):
         return colors[0]
+
+@register.filter(name='get_sub_genre_color')
+def get_sub_genre_color(sub_genre):
+    """Get a light, washed out color for a sub-genre pill button"""
+    # Map each sub-genre to a specific light color
+    sub_genre_colors = {
+        'Mystery & Thriller': '#E3F2FD',  # light blue
+        'Sci-Fi': '#E8F5E9',  # light green
+        'Fantasy': '#F3E5F5',  # light purple
+        'Historical Fiction': '#FFF9C4',  # light yellow
+        'Horror': '#FFEBEE',  # light pink
+        'General Fiction': '#E0F2F1',  # light teal
+        'Biography': '#FFF3E0',  # light orange
+        'History': '#E1F5FE',  # light cyan
+        'Science': '#F1F8E9',  # light lime
+        'Philosophy & Religion': '#FCE4EC',  # light rose
+        'Psychology & Self-Help': '#E8EAF6',  # light indigo
+        'Business & Finance': '#FFF8E1',  # light amber
+        'Politics': '#EDE7F6',  # light deep purple
+        'Humor': '#E0F7FA',  # light aqua
+        'True Crime': '#F9FBE7',  # light light green
+        'Reference': '#FFFDE7',  # light light yellow
+    }
+    
+    if sub_genre:
+        return sub_genre_colors.get(sub_genre, '#E0E0E0')  # default light gray
+    return '#E0E0E0'  # default light gray
