@@ -28,20 +28,20 @@ def sanitize_cache_key(query):
 
 def search_database_books(query):
     """
-    Search for books in the local database (popular books only, for speed).
+    Search for books in the local database: popular books first, then any book
+    if we have fewer than 5 results. This ensures books like Piranesi appear
+    even if they're not marked as popular.
     Returns results in the same format as search_google_books.
     """
     if not query.strip():
         return []
     
-    # Search in popular books only (fast local search)
-    # Use case-insensitive search on title and author name
+    match = Q(title__icontains=query) | Q(author__name__icontains=query)
+    
+    # 1) Search popular books first (fast, prioritized)
     popular_books = Book.objects.filter(
         is_popular=True
-    ).filter(
-        Q(title__icontains=query) | 
-        Q(author__name__icontains=query)
-    ).select_related('author')[:5]  # Limit to 5 results like Google API
+    ).filter(match).select_related('author')[:5]
     
     results = []
     for book in popular_books:
@@ -51,6 +51,27 @@ def search_database_books(query):
                 'author': book.author.name,
                 'isbn': book.isbn,
                 'google_id': None  # Not from Google
+            })
+    
+    # 2) If we have fewer than 5 results, search all books (not just popular)
+    # This ensures books in the database appear even if not marked popular
+    if len(results) < 5:
+        seen_titles_author = {(r['title'].lower(), r['author'].lower()) for r in results}
+        all_books = Book.objects.filter(match).select_related('author')
+        
+        for book in all_books:
+            if len(results) >= 5:
+                break
+            key = (book.title.lower(), book.author.name.lower())
+            if key in seen_titles_author:
+                continue
+            seen_titles_author.add(key)
+            # Include books with or without ISBN (so all books in DB can appear)
+            results.append({
+                'title': book.title,
+                'author': book.author.name,
+                'isbn': book.isbn or '',
+                'google_id': None
             })
     
     return results
@@ -67,8 +88,14 @@ def search_books(query):
     db_results = search_database_books(query)
     logger.debug(f"Database search returned {len(db_results)} results")
     
-    # Always search Google API to ensure we have comprehensive results
-    # (even if we have 5 DB results, Google might have better/exact matches)
+    # If we found enough results (5), return them immediately (fast path)
+    # This avoids unnecessary API calls and rate limiting issues
+    if len(db_results) >= 5:
+        logger.debug(f"Returning {len(db_results)} database results (skipping Google Books API)")
+        return db_results
+    
+    # Otherwise, search Google API and combine results
+    # This fills in gaps when database has fewer than 5 results
     google_results = search_google_books(query)
     logger.debug(f"Google Books search returned {len(google_results)} results")
     
@@ -77,9 +104,9 @@ def search_books(query):
     seen_title_author = {(r['title'].lower(), r['author'].lower()) for r in db_results}
     combined_results = db_results.copy()
 
-    # Add Google results, prioritizing them if we have fewer than 5 total
+    # Add Google results to fill up to 5 total
     for result in google_results:
-        if len(combined_results) >= 10:  # Increased limit since we fetch 10 from Google
+        if len(combined_results) >= 5:
             break
         isbn = result.get('isbn') or ''
         key = (result.get('title', '').lower(), result.get('author', '').lower())
@@ -94,11 +121,10 @@ def search_books(query):
             seen_isbns.add(isbn)
         seen_title_author.add(key)
 
-    logger.debug(f"Combined search returning {len(combined_results[:5])} results")
+    logger.debug(f"Combined search returning {len(combined_results)} results")
     
-    # Return top 5 results (prioritize Google results if we have both)
-    # If we have DB results, keep them but add Google results up to 5 total
-    return combined_results[:5]
+    # Return combined results (up to 5)
+    return combined_results
 
 
 def search_google_books(query):
