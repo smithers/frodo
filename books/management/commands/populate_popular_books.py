@@ -177,6 +177,8 @@ class Command(BaseCommand):
             'Maya Angelou',
             'Malcolm Gladwell',
             'Bill Bryson',
+            'Brandon Sanderson',
+            'Mistborn',
         ]
         
         session = requests.Session()

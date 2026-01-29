@@ -377,20 +377,33 @@ def book_autocomplete(request):
     if len(query) < 3:
         return JsonResponse([], safe=False)
 
-    # Use the unified search function (database first, then Google API)
-    results = search_books(query)
-    
-    # Reformat data specifically for jQuery UI Autocomplete
-    suggestions = []
-    for book in results:
-        suggestions.append({
-            'label': f"{book['title']} ({book['author']})", # What the user sees in the dropdown
-            'value': book['title'],      # What fills the box when they click
-            'author': book['author'],    # Hidden data we need
-            'isbn': book['isbn']         # Hidden data we need
-        })
+    try:
+        # Use the unified search function (database first, then Google API)
+        results = search_books(query)
         
-    return JsonResponse(suggestions, safe=False)
+        # Reformat data specifically for jQuery UI Autocomplete
+        suggestions = []
+        for book in results:
+            # Ensure all required fields are present
+            title = book.get('title', '').strip()
+            author = book.get('author', '').strip()
+            isbn = book.get('isbn', '') or ''
+            
+            if title and author:  # Only include books with both title and author
+                suggestions.append({
+                    'label': f"{title} ({author})", # What the user sees in the dropdown
+                    'value': title,      # What fills the box when they click
+                    'author': author,    # Hidden data we need
+                    'isbn': isbn         # Hidden data we need
+                })
+        
+        return JsonResponse(suggestions, safe=False)
+    except Exception as e:
+        # Log error but return empty results so autocomplete doesn't break
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in book_autocomplete for query '{query}': {e}", exc_info=True)
+        return JsonResponse([], safe=False)
 
 def save_favorite_view(request):
     if request.method == "POST":
