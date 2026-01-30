@@ -23,6 +23,7 @@ class Book(models.Model):
     SUB_GENRE_HISTORICAL_FICTION = "Historical Fiction"
     SUB_GENRE_HORROR = "Horror"
     SUB_GENRE_GENERAL_FICTION = "General Fiction"
+    SUB_GENRE_CLASSIC = "Classic"
     SUB_GENRE_BIOGRAPHY = "Biography"
     SUB_GENRE_HISTORY = "History"
     SUB_GENRE_SCIENCE = "Science"
@@ -41,6 +42,7 @@ class Book(models.Model):
         (SUB_GENRE_HISTORICAL_FICTION, "Historical Fiction"),
         (SUB_GENRE_HORROR, "Horror"),
         (SUB_GENRE_GENERAL_FICTION, "General Fiction"),
+        (SUB_GENRE_CLASSIC, "Classic"),
         (SUB_GENRE_BIOGRAPHY, "Biography"),
         (SUB_GENRE_HISTORY, "History"),
         (SUB_GENRE_SCIENCE, "Science"),

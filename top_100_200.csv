@@ -1,0 +1,104 @@
+rank,favorite_count,title,author,isbn,genre,sub_genre
+100,4,Tomorrow And Tomorrow And Tomorrow,Gabrielle Zevin,,fiction,General Fiction
+101,3,A Deadly Education,Naomi Novik,9780593128497,fiction,Fantasy
+102,3,All Fours,Miranda July,,fiction,General Fiction
+103,3,All Systems Red,Martha Wells,,fiction,Sci-Fi
+104,3,American Gods,Neil Gaiman,,fiction,Fantasy
+105,3,A Psalm For The Wild-Built,Becky Chambers,9781250236227,fiction,
+106,3,A Room Of One's Own,Virginia Woolf,,fiction,General Fiction
+107,3,A Short Stay In Hell,Steven L. Peck,,fiction,General Fiction
+108,3,Atomic Habits,James Clear,9781473537804,fiction,
+109,3,Babel,R. F. Kuang,9780063021440,fiction,
+110,3,Cloud Cuckoo Land,Anthony Doerr,9781804220146,fiction,
+111,3,Convenience Store Woman,Sayaka Murata,,fiction,General Fiction
+112,3,Cutting For Stone,Abraham Verghese,9780375414497,fiction,
+113,3,Daisy Jones & The Six: Reese's Book Club,Taylor Jenkins Reid,9780593598429,fiction,
+114,3,Frankenstein,Mary Shelley,,fiction,General Fiction
+115,3,Funny Story,Emily Henry,9780241624142,fiction,
+116,3,Gates Of Fire,Steven Pressfield,,fiction,General Fiction
+117,3,Hail Mary,Andy Weir,,fiction,Sci-Fi
+118,3,Harry Potter,J. K. Rowling,9781408812525,fiction,
+119,3,Infinite Jest,David Foster Wallace,,fiction,General Fiction
+120,3,Jurassic Park : [Novel],Michael Crichton,9780345370778,fiction,
+121,3,Just Mercy,Bryan Stevenson,,fiction,General Fiction
+122,3,Kafka On The Shore,Haruki Murakami,9781400044818,fiction,
+123,3,Kim Jiyoung Born 1982,Cho Nam-Joo,,fiction,General Fiction
+124,3,Kitchen Confidential,Anthony Bourdain,,nonfiction,Memoir/Biography
+125,3,Klara And The Sun,Kazuo Ishiguro,,fiction,General Fiction
+126,3,Know My Name,Chanel Miller,,fiction,General Fiction
+127,3,Margo's Got Money Troubles,Rufi Thorpe,,fiction,General Fiction
+128,3,Moby Dick,Herman Melville,,fiction,General Fiction
+129,3,My Year Of Rest And Relaxation,Ottessa Moshfegh,,fiction,General Fiction
+130,3,No Country For Old Men,Cormac Mccarthy,,fiction,General Fiction
+131,3,North Woods,Daniel Mason,,fiction,General Fiction
+132,3,Parable Of The Sower,Octavia E. Butler,,fiction,General Fiction
+133,3,Roadside Picnic,Arkady Strugatsky,,fiction,Sci-Fi
+134,3,Say Nothing,Patrick Radden Keefe,,nonfiction,History
+135,3,She's Come Undone,Wally Lamb,,fiction,General Fiction
+136,3,Slaughterhouse-Five,Kurt Vonnegut,9780385333849,fiction,
+137,3,Stories Of Your Life And Others,Ted Chiang,9781101972120,fiction,
+138,3,Tender Is The Flesh,Agustina Bazterrica,,fiction,General Fiction
+139,3,The Devils,Joe Abercrombie,,fiction,Fantasy
+140,3,The Dispossessed,Ursula K. Le Guin,,fiction,Sci-Fi
+141,3,The Dungeon Anarchist's Cookbook,Matt Dinniman,,fiction,Fantasy
+142,3,The Dutch House,Ann Patchett,,fiction,General Fiction
+143,3,The First Fifteen Lives Of Harry August,Claire North,,fiction,General Fiction
+144,3,The Great Alone,Kristin Hannah,,fiction,General Fiction
+145,3,The Hunger Games,Suzanne Collins,,fiction,Sci-Fi
+146,3,The Martian,Andy Weir,,fiction,Sci-Fi
+147,3,The Mountain In The Sea,Ray Nayler,,fiction,General Fiction
+148,3,The Name Of The Wind,Patrick Rothfuss,,fiction,Fantasy
+149,3,The One,John Marrs,9781488084874,fiction,
+150,3,The Shadow Of The Wind,Carlos Ruiz Zafon,9780143126393,fiction,
+151,3,The Stranger,Albert Camus,,fiction,General Fiction
+152,3,The Sun Also Rises,Ernest Hemingway,,fiction,General Fiction
+153,3,The Vanishing Half,Brit Bennett,9780525536291,fiction,
+154,3,The Vegetarian,Han Kang,,fiction,General Fiction
+155,3,Tuesdays With Morrie,Mitch Albom,,nonfiction,
+156,3,Unbroken,Laura Hillenbrand,9780606355988,fiction,
+157,3,War And Peace By Leo Tolstoy,Leo Tolstoy,9798552195701,fiction,
+158,3,Where The Crawdads Sing,Delia Owens,9780593105412,fiction,
+159,3,Witchcraft For Wayward Girls,Grady Hendrix,,fiction,Horror
+160,3,World War Z,Max Brooks,,fiction,Sci-Fi
+161,3,Yellowface,R.F. Kuang,,fiction,General Fiction
+162,2,1Q84,Haruki Murakami,9780307957023,fiction,
+163,2,A Clockwork Orange,Anthony Burgess,,fiction,General Fiction
+164,2,A Court Of Thorns And Roses,Sarah J. Maas,9781526634245,fiction,
+165,2,A Discovery Of Witches,Deborah Harkness,,fiction,Fantasy
+166,2,A House With Good Bones,T. Kingfisher,,fiction,General Fiction
+167,2,Alias Grace,Margaret Atwood,,fiction,General Fiction
+168,2,All Quiet On The Western Front,Erich Maria Remarque,9780812985535,fiction,
+169,2,All The Pretty Horses,Cormac Mccarthy,,fiction,General Fiction
+170,2,All The Sinners Bleed,S.A. Cosby,,fiction,General Fiction
+171,2,Americanah,Chimamanda Ngozi Adichie,9780345807465,fiction,
+172,2,American Psycho,Bret Easton Ellis,,fiction,General Fiction
+173,2,A Million Little Pieces,James Frey,9780307276902,fiction,
+174,2,A Monster Calls,Patrick Ness,,fiction,General Fiction
+175,2,Anna Karenina,Leo Tolstoy,,fiction,General Fiction
+176,2,Annie Bot,Sierra Greer,,fiction,General Fiction
+177,2,A River Enchanted,Rebecca Ross,,fiction,General Fiction
+178,2,A Short Stay In Hell,Steven Peck,,fiction,General Fiction
+179,2,Atmosphere,Taylor Jenkins Reid,9780385695831,fiction,
+180,2,Babel,R.F. Kuang,,fiction,General Fiction
+181,2,Beautyland,Marie-Helene Bertino,,fiction,General Fiction
+182,2,Beloved,Toni Morrison,,fiction,General Fiction
+183,2,Big Swiss,Jen Beagin,,fiction,General Fiction
+184,2,Blood Over Bright Haven,M. L. Wang,9780593873366,fiction,Fantasy
+185,2,Blue Sisters,Coco Mellors,,fiction,General Fiction
+186,2,Book Lovers,Emily Henry,,fiction,Romance
+187,2,Bright Young Women,Jessica Knoll,9781501153228,fiction,
+188,2,Broken Country,Clare Leslie Hall,,fiction,General Fiction
+189,2,Bury Our Bones In The Midnight Soil,V. E. Schwab,9781250320537,fiction,
+190,2,Carrie Soto Is Back,Taylor Jenkins Reid,9780593158708,fiction,
+191,2,Case Histories,Kate Atkinson,,fiction,Mystery/Thrillers
+192,2,Child Of God,Cormac Mccarthy,,fiction,General Fiction
+193,2,Children Of Time,Adrian Tchaikovsky,,fiction,General Fiction
+194,2,Cinder,Marissa Meyer,9780312641894,fiction,
+195,2,Crying In H Mart,Michelle Zauner,,fiction,General Fiction
+196,2,Cujo,Stephen King,,fiction,Horror
+197,2,Dark Places,Gillian Flynn,,fiction,General Fiction
+198,2,Elder Race,Adrian Tchaikovsky,,fiction,General Fiction
+199,2,Emily Wilde's Compendium Of Lost Tales,Heather Fawcett,,fiction,General Fiction
+200,2,Endurance,Alfred Lansing,9780786706211,fiction,
+
+Exported 101 books (ranks 100-200)

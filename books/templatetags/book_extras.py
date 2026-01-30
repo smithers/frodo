@@ -61,6 +61,7 @@ def get_sub_genre_color(sub_genre):
         'Historical Fiction': '#FFF9C4',  # light yellow
         'Horror': '#FFEBEE',  # light pink
         'General Fiction': '#E0F2F1',  # light teal
+        'Classic': '#EFEBE9',  # light brown/stone
         'Literary Fiction': '#E0F2F1',  # same as General Fiction
         'Literary Fiction ': '#E0F2F1',  # same as General Fiction (trailing space)
         'Biography': '#FFF3E0',  # light orange
