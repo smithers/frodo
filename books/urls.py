@@ -36,4 +36,5 @@ path('forgot-username/', views.forgot_username_view, name='forgot_username'),
 path('unsubscribe/<str:uidb64>/<str:token>/', views.unsubscribe_recommendations_view, name='unsubscribe_recommendations'),
 path('sitemap.xml', views.sitemap_view, name='sitemap'),
 path('robots.txt', views.robots_txt, name='robots_txt'),
+path('export/top-favorited-books-100-200.csv', views.export_top_favorited_csv_view, name='export_top_favorited_csv'),
 ]

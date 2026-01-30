@@ -17,13 +17,15 @@ from django.utils import timezone
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import SetPasswordForm
 from .models import Book, Author, UserFavoriteBook, Feedback, ToBeReadBook, UserEmailPreferences
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 from .services import search_books, get_book_details
 from datetime import date, timedelta
-from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Count, Max
+from django.contrib.admin.views.decorators import staff_member_required
+import csv
+import io
 import hashlib
 import logging
 
@@ -343,6 +345,38 @@ def robots_txt(request):
         "Disallow:",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+@staff_member_required
+def export_top_favorited_csv_view(request):
+    """Download CSV of the 100-200 most favorited books (staff only)."""
+    offset = 99
+    limit = 101
+    top_books = (
+        Book.objects
+        .annotate(favorite_count=Count('favorited_by'))
+        .filter(favorite_count__gt=0)
+        .order_by('-favorite_count', 'title')
+        .select_related('author')[offset:offset + limit]
+    )
+    books_list = list(top_books)
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(['rank', 'favorite_count', 'title', 'author', 'isbn', 'genre', 'sub_genre'])
+    for i, book in enumerate(books_list, start=offset + 1):
+        writer.writerow([
+            i,
+            book.favorite_count,
+            book.title,
+            book.author.name,
+            book.isbn or '',
+            book.genre or '',
+            book.sub_genre or '',
+        ])
+    response = HttpResponse(buffer.getvalue(), content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="top_favorited_books_100-200.csv"'
+    return response
+
 
 def register_view(request):
     """Registration view - allows new users to create accounts"""
