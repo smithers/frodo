@@ -204,6 +204,23 @@
     </style>
 
     {% if grouped_recommendations %}
+        <form method="get" action="{% url 'recommendations' %}" id="genre-filter-form" style="margin-bottom: 25px;">
+            <label for="sub_genre" style="font-size: 1em; color: #40403E; margin-right: 10px;">Filter by genre:</label>
+            <select name="sub_genre" id="sub_genre" style="padding: 8px 12px; border: 2px solid #40403E; border-radius: 0; font-size: 1em; font-family: 'Lora', serif; background: #ffffff; color: #40403E; min-width: 200px;">
+                <option value="">All genres</option>
+                {% for value, label in sub_genre_choices %}
+                    <option value="{{ value }}" {% if current_sub_genre == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <noscript>
+                <button type="submit" style="margin-left: 10px; padding: 8px 16px; background: #cc785c; color: #ffffff; border: 2px solid #cc785c; font-size: 1em; cursor: pointer;">Apply</button>
+            </noscript>
+        </form>
+        <script>
+            document.getElementById('sub_genre').addEventListener('change', function() {
+                document.getElementById('genre-filter-form').submit();
+            });
+        </script>
         <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px; grid-auto-flow: row;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
@@ -235,7 +252,7 @@
                                             {% endif %}
                                             <span style="font-size: 0.9em; color: #40403E; font-style: italic;">by {{ book_data.book.author.name }}</span>
                                             {% if book_data.book.sub_genre %}
-                                                <span class="sub-genre-pill" style="display: inline-block; background-color: {{ book_data.book.sub_genre|get_sub_genre_color }}; color: #40403E; padding: 2px 8px; border-radius: 12px; font-size: 0.6em; font-weight: 500; margin-left: 8px; white-space: nowrap;">{{ book_data.book.sub_genre }}</span>
+                                                <span class="sub-genre-pill" style="display: inline-block; background-color: {{ book_data.book.sub_genre|get_sub_genre_color }}; color: #40403E; padding: 2px 8px; border-radius: 12px; font-size: 0.6em; font-weight: 500; margin-left: 8px; white-space: nowrap;">{{ book_data.book.sub_genre|sub_genre_display }}</span>
                                             {% endif %}
                                         </div>
                                         {% if user.is_authenticated %}
@@ -274,12 +291,35 @@
             {% endfor %}
         </div>
     {% else %}
+        {% if current_sub_genre %}
+        <form method="get" action="{% url 'recommendations' %}" id="genre-filter-form" style="margin-bottom: 25px;">
+            <label for="sub_genre" style="font-size: 1em; color: #40403E; margin-right: 10px;">Filter by genre:</label>
+            <select name="sub_genre" id="sub_genre" style="padding: 8px 12px; border: 2px solid #40403E; border-radius: 0; font-size: 1em; font-family: 'Lora', serif; background: #ffffff; color: #40403E; min-width: 200px;">
+                <option value="">All genres</option>
+                {% for value, label in sub_genre_choices %}
+                    <option value="{{ value }}" {% if current_sub_genre == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <noscript>
+                <button type="submit" style="margin-left: 10px; padding: 8px 16px; background: #cc785c; color: #ffffff; border: 2px solid #cc785c; font-size: 1em; cursor: pointer;">Apply</button>
+            </noscript>
+        </form>
+        <script>
+            document.getElementById('sub_genre').addEventListener('change', function() {
+                document.getElementById('genre-filter-form').submit();
+            });
+        </script>
+        {% endif %}
         <div class="card" style="background: #ffffff;">
-            <h3 style="color: #40403E; margin-bottom: 15px;">No matches yet!</h3>
-            {% if show_no_new_books_message %}
+            <h3 style="color: #40403E; margin-bottom: 15px;">{% if current_sub_genre %}No recommendations in this genre{% else %}No matches yet!{% endif %}</h3>
+            {% if current_sub_genre %}
+            <p style="color: #40403E; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Try "All genres" or another sub-genre above.</p>
+            {% elif show_no_new_books_message %}
             <p style="color: #40403E; font-size: 1.05em; line-height: 1.9; margin-bottom: 15px;">We found a reader with some favorite books as you, but they don't have any favorites that you haven't read yet!</p>
             {% endif %}
+            {% if not current_sub_genre %}
             <p style="color: #40403E; font-size: 1.05em; line-height: 1.9; margin-bottom: 25px;">Our system searches through our hundreds of readers to find ones who have the same favorites as you.</p>
+            {% endif %}
             
             {% if diagnostic %}
                 <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-left: 4px solid #cc785c; font-size: 1em; line-height: 1.9;">

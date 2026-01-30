@@ -571,6 +571,17 @@ def remove_favorite_view(request):
     
     return redirect('my_books')
 
+
+def _book_matches_sub_genre_filter(book_sub_genre, filter_value):
+    """Return True if the book's sub_genre matches the filter. Treats 'Literary Fiction' as 'General Fiction'."""
+    if not book_sub_genre:
+        return False
+    book_val = (book_sub_genre or '').strip()
+    if filter_value == 'General Fiction':
+        return book_val in ('General Fiction', 'Literary Fiction', 'Literary Fiction ')
+    return book_val == filter_value
+
+
 def recommendation_view(request):
     # Get favorite book IDs (from database or guest user)
     if request.user.is_authenticated:
@@ -601,6 +612,8 @@ def recommendation_view(request):
                 'message': 'You need to add at least one book you love to get recommendations!',
             },
             'show_account_prompt': False,
+            'sub_genre_choices': Book.SUB_GENRE_CHOICES,
+            'current_sub_genre': '',
         }
         return render(request, 'recommendations.html', context)
     
@@ -685,6 +698,17 @@ def recommendation_view(request):
     grouped_list = list(grouped_recommendations.values())
     grouped_list.sort(key=lambda x: x['overlap_count'], reverse=True)
     
+    # Optional sub-genre filter (query param)
+    # Treat "Literary Fiction" as "General Fiction" for filtering
+    sub_genre_filter = (request.GET.get('sub_genre') or '').strip()
+    if sub_genre_filter:
+        for group in grouped_list:
+            group['recommended_books'] = [
+                b for b in group['recommended_books']
+                if _book_matches_sub_genre_filter(b['book'].sub_genre, sub_genre_filter)
+            ]
+        grouped_list = [g for g in grouped_list if g['recommended_books']]
+    
     # Diagnostic info
     total_favorites = len(my_favorite_book_ids)
     diagnostic_info = {
@@ -704,6 +728,8 @@ def recommendation_view(request):
         'diagnostic': diagnostic_info,
         'show_account_prompt': show_account_prompt,
         'show_no_new_books_message': show_no_new_books_message,
+        'sub_genre_choices': Book.SUB_GENRE_CHOICES,
+        'current_sub_genre': sub_genre_filter,
     }
     return render(request, 'recommendations.html', context)
 

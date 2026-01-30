@@ -61,6 +61,8 @@ def get_sub_genre_color(sub_genre):
         'Historical Fiction': '#FFF9C4',  # light yellow
         'Horror': '#FFEBEE',  # light pink
         'General Fiction': '#E0F2F1',  # light teal
+        'Literary Fiction': '#E0F2F1',  # same as General Fiction
+        'Literary Fiction ': '#E0F2F1',  # same as General Fiction (trailing space)
         'Biography': '#FFF3E0',  # light orange
         'History': '#E1F5FE',  # light cyan
         'Science': '#F1F8E9',  # light lime
@@ -76,3 +78,14 @@ def get_sub_genre_color(sub_genre):
     if sub_genre:
         return sub_genre_colors.get(sub_genre, '#E0E0E0')  # default light gray
     return '#E0E0E0'  # default light gray
+
+
+@register.filter(name='sub_genre_display')
+def sub_genre_display(sub_genre):
+    """Display 'General Fiction' for 'Literary Fiction' (or with trailing space)."""
+    if not sub_genre:
+        return ''
+    val = (sub_genre or '').strip()
+    if val in ('Literary Fiction', 'Literary Fiction '):
+        return 'General Fiction'
+    return sub_genre
