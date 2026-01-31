@@ -132,6 +132,24 @@ class ToBeReadBook(models.Model):
         return f"{self.user.username} wants to read {self.book.title}"
 
 
+class UserReadBook(models.Model):
+    """Tracks books a user has marked as read (from recommendations)."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="read_books")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="read_by")
+    marked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "book")
+        indexes = [
+            models.Index(fields=["user"]),
+            models.Index(fields=["book"]),
+        ]
+        ordering = ("-marked_at",)
+
+    def __str__(self):
+        return f"{self.user.username} read {self.book.title}"
+
+
 class Feedback(models.Model):
     """Stores reader feedback submitted from the site UI."""
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="feedback")

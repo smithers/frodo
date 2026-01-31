@@ -16,7 +16,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils import timezone
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import SetPasswordForm
-from .models import Book, Author, UserFavoriteBook, Feedback, ToBeReadBook, UserEmailPreferences
+from .models import Book, Author, UserFavoriteBook, Feedback, ToBeReadBook, UserReadBook, UserEmailPreferences
 from django.http import JsonResponse, HttpResponse
 from .utils import get_book_recommendations, smart_title_case, generate_guest_username
 from .services import search_books, get_book_details
@@ -637,6 +637,9 @@ def recommendation_view(request):
             my_favorite_book_ids = set()
     
     if not my_favorite_book_ids:
+        read_book_ids = set(
+            UserReadBook.objects.filter(user=request.user).values_list("book_id", flat=True)
+        ) if request.user.is_authenticated else set()
         context = {
             'grouped_recommendations': [],
             'diagnostic': {
@@ -648,6 +651,7 @@ def recommendation_view(request):
             'show_account_prompt': False,
             'sub_genre_choices': Book.SUB_GENRE_CHOICES,
             'current_sub_genre': '',
+            'read_book_ids': read_book_ids,
         }
         return render(request, 'recommendations.html', context)
     
@@ -757,6 +761,14 @@ def recommendation_view(request):
     # Check if there are similar users but no recommendations
     show_no_new_books_message = diagnostic_info['similar_users_count'] > 0 and len(recommended_data) == 0
     
+    # Books the current user has marked as read (for strikethrough and "Mark as read" link)
+    if request.user.is_authenticated:
+        read_book_ids = set(
+            UserReadBook.objects.filter(user=request.user).values_list("book_id", flat=True)
+        )
+    else:
+        read_book_ids = set()
+    
     context = {
         'grouped_recommendations': grouped_list,
         'diagnostic': diagnostic_info,
@@ -764,6 +776,7 @@ def recommendation_view(request):
         'show_no_new_books_message': show_no_new_books_message,
         'sub_genre_choices': Book.SUB_GENRE_CHOICES,
         'current_sub_genre': sub_genre_filter,
+        'read_book_ids': read_book_ids,
     }
     return render(request, 'recommendations.html', context)
 
@@ -892,6 +905,34 @@ def remove_tbr_view(request):
 
     messages.warning(request, "Could not find that book in your TBR list.")
     return redirect("tbr_list")
+
+
+@login_required
+@require_POST
+def mark_book_read_view(request):
+    """Mark a recommended book as read. Redirects back to recommendations (preserves genre filter)."""
+    book_id = request.POST.get("book_id")
+    if not book_id:
+        messages.warning(request, "No book specified.")
+        return _redirect_recommendations(request)
+    try:
+        book = Book.objects.get(id=int(book_id))
+    except (Book.DoesNotExist, ValueError, TypeError):
+        messages.warning(request, "Book not found.")
+        return _redirect_recommendations(request)
+    UserReadBook.objects.get_or_create(user=request.user, book=book)
+    messages.success(request, f"Marked “{book.title}” as read.")
+    return _redirect_recommendations(request)
+
+
+def _redirect_recommendations(request):
+    """Redirect to recommendations page, preserving sub_genre query param."""
+    sub_genre = (request.POST.get("sub_genre") or request.GET.get("sub_genre") or "").strip()
+    url = reverse("recommendations")
+    if sub_genre:
+        url += f"?sub_genre={sub_genre}"
+    return redirect(url)
+
 
 def book_info_view(request):
     """API endpoint to get book information from Google Books"""

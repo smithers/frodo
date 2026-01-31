@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from .models import Author, Book, UserFavoriteBook, Feedback, ToBeReadBook
+from .models import Author, Book, UserFavoriteBook, Feedback, ToBeReadBook, UserReadBook
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
@@ -24,6 +24,12 @@ class FavoriteBookAdmin(admin.ModelAdmin):
 class ToBeReadBookAdmin(admin.ModelAdmin):
     list_display = ('user', 'book', 'created_at')
     list_filter = ('created_at',)
+
+
+@admin.register(UserReadBook)
+class UserReadBookAdmin(admin.ModelAdmin):
+    list_display = ('user', 'book', 'marked_at')
+    list_filter = ('marked_at',)
 
 
 @admin.register(Feedback)

@@ -123,6 +123,15 @@
         font-size: 0.95em;
     }
     
+    .hide-recommendations-link {
+        color: #999 !important;
+        transition: color 0.2s ease;
+    }
+    
+    .hide-recommendations-link:hover {
+        color: #666 !important;
+    }
+    
     @media (max-width: 1024px) {
         /* Make grid single column on mobile */
         .recommendations-grid {
@@ -224,7 +233,7 @@
         <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px; grid-auto-flow: row;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
-                <div class="card recommendation-card" style="background: #ffffff;">
+                <div class="card recommendation-card" style="background: #ffffff;" data-similar-user-id="{{ group.similar_user.id }}">
                     <div style="padding-bottom: 10px; margin-bottom: 10px;">
                         <p style="margin: 0; font-size: 1em; color: #40403E; line-height: 1.8; margin-bottom: 12px;">
                             You and <strong style="color: #40403E;">{{ group.similar_user.username }}</strong> both love:
@@ -244,11 +253,11 @@
                             {% for book_data in group.recommended_books %}
                                 <li class="book-item" style="padding: 8px 0; border-bottom: 1px solid #d0d0d0;">
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
+                                        <div {% if book_data.book.id in read_book_ids %}style="text-decoration: line-through;"{% endif %}>
                                             {% if book_data.book.isbn %}
-                                                <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                                <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/dp/{{ book_data.book.isbn }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: inherit; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
                                             {% else %}
-                                                <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: none; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
+                                                <strong style="font-size: 1em; font-family: 'Playfair Display', serif;"><a href="https://www.amazon.com/s?k={{ book_data.book.title|urlencode }}+{{ book_data.book.author.name|urlencode }}" target="_blank" rel="noopener noreferrer" style="color: #40403E; text-decoration: inherit; transition: color 0.3s ease;">{{ book_data.book.title }}</a></strong>
                                             {% endif %}
                                             <span style="font-size: 0.9em; color: #40403E; font-style: italic;">by {{ book_data.book.author.name }}</span>
                                             {% if book_data.book.sub_genre %}
@@ -267,6 +276,20 @@
                                             </form>
                                         {% endif %}
                                     </div>
+                                    {% if user.is_authenticated %}
+                                        {% if book_data.book.id in read_book_ids %}
+                                            <span style="font-size: 0.85em; color: #999;">Marked as read</span>
+                                        {% else %}
+                                            <form method="post" action="{% url 'mark_book_read' %}" style="display: inline-block; margin-top: 4px;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="book_id" value="{{ book_data.book.id }}">
+                                                {% if current_sub_genre %}
+                                                <input type="hidden" name="sub_genre" value="{{ current_sub_genre }}">
+                                                {% endif %}
+                                                <button type="submit" style="background: none; border: none; padding: 0; color: #999; font-size: 0.9em; cursor: pointer; text-decoration: none; font-family: inherit;">Mark as read</button>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
                                     {% if book_data.explanation %}
                                         <div class="accordion-header" onclick="toggleAccordion(this)">
                                             <span class="accordion-icon">▶</span>
@@ -286,6 +309,9 @@
                             <div class="page-info"></div>
                             <button type="button" class="next-page">Next</button>
                         </div>
+                        <p style="margin-top: 15px; margin-bottom: 0;">
+                            <a href="#" class="hide-recommendations-link" style="color: #999; font-size: 0.9em; text-decoration: none;">Hide these recommendations</a>
+                        </p>
                     </div>
                 </div>
             {% endfor %}
@@ -365,6 +391,50 @@ function toggleAccordion(header) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const ITEMS_PER_PAGE = 10;
+    const STORAGE_KEY = 'hiddenRecommendationCards';
+    
+    function getHiddenIds() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+    
+    function setHiddenIds(ids) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+        } catch (e) {}
+    }
+    
+    // On load: hide any cards the user previously hid
+    const hiddenIds = getHiddenIds();
+    document.querySelectorAll('.recommendation-card').forEach(card => {
+        const id = card.getAttribute('data-similar-user-id');
+        if (id && hiddenIds.indexOf(String(id)) !== -1) {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Hide card when "Hide these recommendations" is clicked, and remember for next visit
+    document.querySelectorAll('.hide-recommendations-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const card = this.closest('.recommendation-card');
+            if (card) {
+                const id = card.getAttribute('data-similar-user-id');
+                if (id) {
+                    const ids = getHiddenIds();
+                    if (ids.indexOf(String(id)) === -1) {
+                        ids.push(String(id));
+                        setHiddenIds(ids);
+                    }
+                }
+                card.style.display = 'none';
+            }
+        });
+    });
     
     document.querySelectorAll('.recommendation-card').forEach(card => {
         const items = Array.from(card.querySelectorAll('.book-item'));
