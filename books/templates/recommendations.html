@@ -230,7 +230,10 @@
                 document.getElementById('genre-filter-form').submit();
             });
         </script>
-        <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 30px;">Based on books you love, readers similar to you also loved:</p>
+        <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 10px;">Based on books you love, readers similar to you also loved:</p>
+        {% if diagnostic.new_similar_users_this_week > 0 %}
+        <p style="font-size: 0.95em; color: #40403E; margin-bottom: 20px;">{{ diagnostic.new_similar_users_this_week }} new reader{{ diagnostic.new_similar_users_this_week|pluralize }} with similar taste joined this week.</p>
+        {% endif %}
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px; grid-auto-flow: row;" class="recommendations-grid">
             {% for group in grouped_recommendations %}
                 <div class="card recommendation-card" style="background: #ffffff;" data-similar-user-id="{{ group.similar_user.id }}">
@@ -352,6 +355,7 @@
                     <strong style="color: #40403E;">Your stats:</strong><br>
                     • Total books you love: {{ diagnostic.total_favorites }}<br>
                     • Similar readers found: {{ diagnostic.similar_users_count }}<br>
+                    • New readers with similar taste this week: {{ diagnostic.new_similar_users_this_week }}<br>
                     {% if diagnostic.message %}
                         <p style="color: #40403E; margin-top: 15px; font-style: italic;"><strong>{{ diagnostic.message }}</strong></p>
                     {% elif diagnostic.total_favorites > 0 and diagnostic.similar_users_count == 0 %}

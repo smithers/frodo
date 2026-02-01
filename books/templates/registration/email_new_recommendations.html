@@ -72,6 +72,10 @@
         
         <p>Great news! Other readers who share some of your favorite books have added new favorites that you might love, too.</p>
         
+        {% if new_similar_users_this_week > 0 %}
+        <p><strong>{{ new_similar_users_this_week }} new reader{{ new_similar_users_this_week|pluralize }} with similar taste joined this week.</strong></p>
+        {% endif %}
+        
         <p><strong>Here are some recent recommendations from the past week:</strong></p>
         
         <div class="book-list">

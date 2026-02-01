@@ -170,6 +170,17 @@ def _send_new_recommendation_emails(request):
                 books_for_email = new_books[:10]
                 additional_count = max(0, total_recommendations_count - 10)
                 
+                # New users (authenticated + guest) who joined in the last 7 days with mutual favorites
+                new_similar_users_this_week = (
+                    User.objects.filter(
+                        favorite_books__book_id__in=user_a_favorite_book_ids,
+                        date_joined__gte=seven_days_ago,
+                    )
+                    .exclude(id=user_a.id)
+                    .distinct()
+                    .count()
+                )
+                
                 try:
                     subject = 'Your Weekly Book Recommendations!'
                     
@@ -189,12 +200,15 @@ def _send_new_recommendation_emails(request):
                         'new_books': books_for_email,
                         'total_recommendations_count': total_recommendations_count,
                         'additional_count': additional_count,
+                        'new_similar_users_this_week': new_similar_users_this_week,
                         'site_url': site_url,
                         'site_name': 'Great Minds Read Alike',
                         'unsubscribe_url': unsubscribe_url,
                     })
                     plain_message = f"Hi {user_a.username},\n\n"
                     plain_message += "Great news! Other readers who share some of your favorite books have added new favorites that you might love, too.\n\n"
+                    if new_similar_users_this_week > 0:
+                        plain_message += f"{new_similar_users_this_week} new reader(s) with similar taste joined this week.\n\n"
                     plain_message += "Here are the books they added that you haven't listed as favorites yet:\n\n"
                     for book in books_for_email:
                         plain_message += f"- {book.title} by {book.author.name}\n"
@@ -646,6 +660,7 @@ def recommendation_view(request):
                 'total_favorites': 0,
                 'similar_users_count': 0,
                 'recommendations_count': 0,
+                'new_similar_users_this_week': 0,
                 'message': 'You need to add at least one book you love to get recommendations!',
             },
             'show_account_prompt': False,
@@ -747,12 +762,29 @@ def recommendation_view(request):
             ]
         grouped_list = [g for g in grouped_list if g['recommended_books']]
     
+    # New users (authenticated + guest) who joined in the last 7 days and have mutual favorites
+    seven_days_ago = timezone.now() - timedelta(days=7)
+    current_user_ids = set()
+    if request.user.is_authenticated:
+        current_user_ids.add(request.user.id)
+    guest_user_id = request.session.get('guest_user_id')
+    if guest_user_id:
+        current_user_ids.add(int(guest_user_id))
+    new_similar_users_qs = User.objects.filter(
+        favorite_books__book_id__in=my_favorite_book_ids,
+        date_joined__gte=seven_days_ago,
+    ).distinct()
+    if current_user_ids:
+        new_similar_users_qs = new_similar_users_qs.exclude(id__in=current_user_ids)
+    new_similar_users_this_week = new_similar_users_qs.count()
+
     # Diagnostic info
     total_favorites = len(my_favorite_book_ids)
     diagnostic_info = {
         'total_favorites': total_favorites,
         'similar_users_count': similar_users.count(),
         'recommendations_count': len(recommended_data),
+        'new_similar_users_this_week': new_similar_users_this_week,
     }
     
     # Check if user is not authenticated but has favorite books

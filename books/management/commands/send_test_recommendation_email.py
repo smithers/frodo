@@ -117,6 +117,17 @@ class Command(BaseCommand):
         books_for_email = new_books[:10]
         additional_count = max(0, total_recommendations_count - 10)
         
+        # New users this week (joined in last 7 days) with mutual favorites
+        new_similar_users_this_week = (
+            User.objects.filter(
+                favorite_books__book_id__in=user_a_favorite_book_ids,
+                date_joined__gte=seven_days_ago,
+            )
+            .exclude(id=user.id)
+            .distinct()
+            .count()
+        )
+        
         # Get site URL
         site_url = getattr(settings, 'SITE_BASE_URL', '')
         if not site_url or site_url == '/' or site_url.startswith('http:///') or site_url.startswith('https:///'):
@@ -142,6 +153,7 @@ class Command(BaseCommand):
             'new_books': books_for_email,
             'total_recommendations_count': total_recommendations_count,
             'additional_count': additional_count,
+            'new_similar_users_this_week': new_similar_users_this_week,
             'site_url': site_url,
             'site_name': 'Great Minds Read Alike',
             'unsubscribe_url': unsubscribe_url,
@@ -149,6 +161,8 @@ class Command(BaseCommand):
         
         plain_message = f"Hi {user.username},\n\n"
         plain_message += "Great news! Other readers who share some of your favorite books have added new favorites that you might love, too.\n\n"
+        if new_similar_users_this_week > 0:
+            plain_message += f"{new_similar_users_this_week} new reader(s) with similar taste joined this week.\n\n"
         plain_message += "Here are some recent recommendations from the past week:\n\n"
         for book in books_for_email:
             plain_message += f"- {book.title} by {book.author.name}\n"
