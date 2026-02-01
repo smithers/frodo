@@ -214,6 +214,9 @@
 
     {% if grouped_recommendations %}
         <form method="get" action="{% url 'recommendations' %}" id="genre-filter-form" style="margin-bottom: 25px;">
+            {% if viewing_new_this_week %}
+            <input type="hidden" name="new_this_week" value="1">
+            {% endif %}
             <label for="sub_genre" style="font-size: 1em; color: #40403E; margin-right: 10px;">Filter by genre:</label>
             <select name="sub_genre" id="sub_genre" style="padding: 8px 12px; border: 2px solid #40403E; border-radius: 0; font-size: 1em; font-family: 'Lora', serif; background: #ffffff; color: #40403E; min-width: 200px;">
                 <option value="">All genres</option>
@@ -231,8 +234,16 @@
             });
         </script>
         <p style="font-size: 1.1em; color: #40403E; font-style: italic; margin-bottom: 10px;">Based on books you love, readers similar to you also loved:</p>
-        {% if diagnostic.new_similar_users_this_week > 0 %}
-        <p style="font-size: 0.95em; color: #40403E; margin-bottom: 20px;">{{ diagnostic.new_similar_users_this_week }} new reader{{ diagnostic.new_similar_users_this_week|pluralize }} with similar taste joined this week.</p>
+        {% if viewing_new_this_week %}
+        <p style="font-size: 0.95em; color: #40403E; margin-bottom: 20px;">
+            Showing only recommendations from new users who joined this week.
+            <a href="{% url 'recommendations' %}{% if current_sub_genre %}?sub_genre={{ current_sub_genre|urlencode }}{% endif %}" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">Show all recommendations</a>
+        </p>
+        {% elif diagnostic.new_similar_users_this_week > 0 %}
+        <p style="font-size: 0.95em; color: #40403E; margin-bottom: 20px;">
+            {{ diagnostic.new_similar_users_this_week }} new reader{{ diagnostic.new_similar_users_this_week|pluralize }} with similar taste joined this week.
+            <a href="{% url 'recommendations' %}?new_this_week=1{% if current_sub_genre %}&sub_genre={{ current_sub_genre|urlencode }}{% endif %}" style="color: #cc785c; font-weight: 600; text-decoration: none; border-bottom: 1px solid #cc785c;">View their recommendations</a>
+        </p>
         {% endif %}
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 30px; margin-top: 30px; grid-auto-flow: row;" class="recommendations-grid">
             {% for group in grouped_recommendations %}

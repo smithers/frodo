@@ -667,6 +667,7 @@ def recommendation_view(request):
             'sub_genre_choices': Book.SUB_GENRE_CHOICES,
             'current_sub_genre': '',
             'read_book_ids': read_book_ids,
+            'viewing_new_this_week': False,
         }
         return render(request, 'recommendations.html', context)
     
@@ -751,6 +752,9 @@ def recommendation_view(request):
     grouped_list = list(grouped_recommendations.values())
     grouped_list.sort(key=lambda x: x['overlap_count'], reverse=True)
     
+    # New users (authenticated + guest) who joined in the last 7 days and have mutual favorites
+    seven_days_ago = timezone.now() - timedelta(days=7)
+    
     # Optional sub-genre filter (query param)
     # Treat "Literary Fiction" as "General Fiction" for filtering
     sub_genre_filter = (request.GET.get('sub_genre') or '').strip()
@@ -762,8 +766,12 @@ def recommendation_view(request):
             ]
         grouped_list = [g for g in grouped_list if g['recommended_books']]
     
-    # New users (authenticated + guest) who joined in the last 7 days and have mutual favorites
-    seven_days_ago = timezone.now() - timedelta(days=7)
+    # Optional: show only recommendations from new users (joined in last 7 days)
+    if request.GET.get('new_this_week'):
+        grouped_list = [
+            g for g in grouped_list
+            if g['similar_user'].date_joined >= seven_days_ago
+        ]
     current_user_ids = set()
     if request.user.is_authenticated:
         current_user_ids.add(request.user.id)
@@ -809,6 +817,7 @@ def recommendation_view(request):
         'sub_genre_choices': Book.SUB_GENRE_CHOICES,
         'current_sub_genre': sub_genre_filter,
         'read_book_ids': read_book_ids,
+        'viewing_new_this_week': bool(request.GET.get('new_this_week')),
     }
     return render(request, 'recommendations.html', context)
 
