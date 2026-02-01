@@ -791,9 +791,9 @@
         
         <div class="navbar-links">
             <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'recommendations' %}">Recommendations</a>
             <a href="{% url 'how_it_works' %}">How It Works</a>
             <a href="{% url 'my_books' %}">My Favorite Books</a>
-            <a href="{% url 'recommendations' %}">Recommendations</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'tbr_list' %}">TBR List</a>
             {% endif %}
@@ -817,9 +817,9 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'recommendations' %}">Recommendations</a>
         <a href="{% url 'how_it_works' %}">How It Works</a>
         <a href="{% url 'my_books' %}">My Favorite Books</a>
-        <a href="{% url 'recommendations' %}">Recommendations</a>
         {% if user.is_authenticated %}
             <a href="{% url 'tbr_list' %}">TBR List</a>
         {% endif %}
